@@ -1,0 +1,26 @@
+Dispositivos:
+1. Despliega listas de tipos de dispositivo y dentro de ellos están los dispositivos que provee mininet
+2. Listar dispositivos.
+3. Para poner un dispositivo es con doble click.
+
+Cables:
+1. Click en la opcion conectar, click en el primer dispositivo y por último click en el segundo dispositivo.
+
+
+Dibujo:
+1. Cuando se desee cambiar la ubicacion de un dispositivo, el mouse cambie de color hasta que el click sea soltado con lo que mueve el dispositivo al sitio indicado por el mouse.
+2. Con click derecho despliegue las propiedades, después en un cuadro de texto recibe el nuevo parametro para la propiedad del dispositivo.
+3. Cada dispositivo debe MOSTRAR un label modificable.
+4. Al dar click derecho debe mostrar la opción de eliminar dispositivo.
+
+Propiedades:
+1. Mantiene deshabilitado hasta que se le da click a un dispositivo.
+2. Debe ser un botón que despliegue un dialogo que muestre todas las especificaciones del dispositivo que se seleccionó
+
+Cargar:
+1. Permite cargar un archivo de mininet que se haya hecho antes con la herramienta, para cargar las ubicaciones. En caso de no tener ubicaciones, carga unas por defecto o aleatorias.
+
+Guardar
+1. Tiene que guardar el script con la informacion tanto de dispositivos como de ubicaciones y correr mininet con el script de la topología propuesta. 
+
+
