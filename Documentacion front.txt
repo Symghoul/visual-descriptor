@@ -2,6 +2,7 @@ Dispositivos:
 1. Despliega listas de tipos de dispositivo y dentro de ellos están los dispositivos que provee mininet
 2. Listar dispositivos.
 3. Para poner un dispositivo es con doble click.
+4. En la configuracion puedes cambiar el nombre, el ancho de banda, el delay, configurar la ip de los dispositivos.
 
 Cables:
 1. Click en la opcion conectar, click en el primer dispositivo y por último click en el segundo dispositivo.
