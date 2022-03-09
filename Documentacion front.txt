@@ -24,4 +24,6 @@ Cargar:
 Guardar
 1. Tiene que guardar el script con la informacion tanto de dispositivos como de ubicaciones y correr mininet con el script de la topología propuesta. 
 
+Diagrama
+https://www.figma.com/file/Bx0jAdlVuSO4KViBoswI9t/VND---Design?node-id=0%3A1
 
