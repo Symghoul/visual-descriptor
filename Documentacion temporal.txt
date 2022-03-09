@@ -17,4 +17,6 @@ Criterios a tener en cuenta Back:
 
 Criterios generales
 1. El descriptor gráfico genera scripts los cuales ejecuta al iniciar Mininet
-2. 
+2. Comandos a los que debemos enfocarnos, junto a los comandos que les modifican:
+	--topo, --controller, --switch, --host, --link
+3. 
