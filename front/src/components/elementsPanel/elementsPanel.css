@@ -1,0 +1,43 @@
+.elementsContainer {
+  display: flex;
+  flex-direction: column;
+  max-width: 260px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-top: 10px;
+  padding-left: 5px;
+  border-color: rgba(0, 0, 0, 1);
+  border-width: 1px;
+  border-style: solid;
+  background-color: rgba(196, 196, 196, 1);
+}
+.labDevices {
+  display: flex;
+  color: rgba(0, 0, 0, 1);
+  font-size: 15px;
+  letter-spacing: 0%;
+  text-align: left;
+  font-family: Inter, sans-serif;
+}
+.row {
+  display: flex;
+  max-width: 250px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.card {
+  display: flex;
+  margin: 1% 0;
+  padding: 1%;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.label {
+  color: rgba(0, 0, 0, 1);
+  font-size: 13px;
+  letter-spacing: 0%;
+  text-align: left;
+  font-family: Inter, sans-serif;
+}
