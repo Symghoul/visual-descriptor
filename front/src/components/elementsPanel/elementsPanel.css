@@ -4,12 +4,11 @@
   max-width: 260px;
   justify-content: flex-start;
   align-items: flex-start;
-  padding-top: 10px;
-  padding-left: 5px;
+  padding: 5px;
   border-color: rgba(0, 0, 0, 1);
   border-width: 1px;
   border-style: solid;
-  background-color: rgba(196, 196, 196, 1);
+  background-color: #2AA1E4;
 }
 .labDevices {
   display: flex;

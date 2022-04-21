@@ -3,13 +3,15 @@
   flex-direction: row;
   max-width: 260px;
   justify-content: center;
-  background-color: rgba(210, 229, 231, 1);
+  background-color: #2AA1E4;
 
   align-items: flex-start;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-right: 5px;
+  padding: 5px;
   border-color: rgba(0, 0, 0, 1);
   border-width: 1px;
   border-style: solid;
+}
+
+.prefItems{
+  margin-left: 5px;
 }

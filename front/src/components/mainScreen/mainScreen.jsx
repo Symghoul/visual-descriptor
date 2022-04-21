@@ -1,4 +1,5 @@
 import React, { useEffect, useContext } from "react";
+import "./mainScreen.css"
 import Preferences from "../preferences/preferences";
 import ConfigPanel from "../configPanel/configPanel";
 import ElementsPanel from "../elementsPanel/elementsPanel";
