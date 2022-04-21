@@ -1,0 +1,13 @@
+.container {
+  margin: 5px;
+  padding: 5px;
+}
+
+.field{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}

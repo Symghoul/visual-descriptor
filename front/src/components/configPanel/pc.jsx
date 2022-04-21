@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { styled } from '@mui/material/styles';
 import { Autocomplete, Checkbox, FormControlLabel, TextField } from "@mui/material";
 
-import "./configPanel.css";
+import "./pc.css";
 
 const CssTextField = styled(TextField)({
   '& label.Mui-focused': {
@@ -33,22 +33,22 @@ function ConfigPanel() {
   const controllerTypes = [
     {label: "Ovs-Controller"},
   ];
+
   return (
-    <div className="configContainer">
-      <div className="labConfiguration">Configuration</div>
+    <div className="container">
       
       <div className="field">      
       <CssTextField
-        //required={true}
+        id="cntrlName_txtfield"
         value={txtName}
         onChange={(event) => setTxtName(event.target.value)}
         label={"Controller Name"}
         />
       </div>
       
-      <div className="field">      
+      <div className="field" >      
       <CssTextField
-        //required={true}
+        id="cntrlPort_txtfield"
         value={txtPort}
         onChange={(event) => setTxtPort(event.target.value)}
         label={"Port Number"}
@@ -57,8 +57,8 @@ function ConfigPanel() {
 
       <div className="field">
       <Autocomplete
+        id="cntrlType"
         disablePortal
-        id="cmbBoxTypeCtrl"
         options={controllerTypes}
         color="primary"
         sx={{ width: 200 }}
@@ -66,25 +66,16 @@ function ConfigPanel() {
         />  
       </div>
 
-      <div className="field">
-      <FormControlLabel 
-        color="primary"
-        control={<Checkbox/>} label="Active"  labelPlacement="start" 
-        />
-      </div>
       
       <div className="field">
       <CssTextField
-        //required={true}
+        id="cntrlIp_txtField"
         value={txtIP}
         onChange={(event) => setTxtIP(event.target.value)}
         label={"IP Adress"}
         />
       </div>
-      
-      <div className="field">
-        <FormControlLabel color="primary" control={<Checkbox/>} label="Remote Controller"  labelPlacement="start" />
-      </div>
+
     </div>
   );
 }

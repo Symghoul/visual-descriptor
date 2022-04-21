@@ -1,7 +1,8 @@
 import React, { useEffect, useContext } from "react";
 import "./mainScreen.css"
 import Preferences from "../preferences/preferences";
-import ConfigPanel from "../configPanel/configPanel";
+import Router from "../configPanel/router";
+import Pc from "../configPanel/pc"
 import ElementsPanel from "../elementsPanel/elementsPanel";
 
 const MainScreen = () => {
@@ -10,7 +11,11 @@ const MainScreen = () => {
         <div className="mainScreen">
             <Preferences />
             <ElementsPanel />
-            <ConfigPanel />
+            <div className="configPanel">
+             Configuration
+            <Router />
+            <Pc />
+            </div>
         </div>
     );
 }
