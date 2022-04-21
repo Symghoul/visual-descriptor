@@ -1,41 +1,55 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express')
+const app = express()
+const port = 3000
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 
-var app = express();
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.post('export', function (req, res){
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+  let topo = new topo({
+    custom : req.body.custom,
+    tree : req.body.tree,
+    lineal : req.body.lineal,
+    nameArchive : req.body.nameArchive
+    })
+  if(topo.custom != null) {
+    topocustom(custom)
+  }
+  else if(topo.tree != null){
+    topotree(tree)
+  } 
+  else if(topo.lineal != null){
+    topolineal(lineal)
+  }
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+   // El comando para ejecutar mininet, recordar usar el nombre del archivo para nombrar el script
+   
+  res.status(200).send()
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+function topocustom(custom){
+  let cus = new cus({
+    controllers: cus.body.controllers,
+    switches:cus.body.switches,
+    host:cus.body.host,
+    links:cus.body.links
+  })
+  
+  // Aqui iría el comando para crear el script createScript();
+ 
+}
 
-module.exports = app;
+function topolineal(lineal){
+//Aquí va la recepción especifica de los parametros para correr los ejemplos y con eso va el script
+}
+
+function topotree(tree){
+//Aquí va la recepción especifica de los parametros para correr los ejemplos y con eso va el script
+}
