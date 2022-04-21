@@ -18,34 +18,47 @@ function Preferences() {
   return (
     <ThemeProvider theme={theme}>
       <div className="prefContainer">
-        <Button
-          className="btnFile"
-          variant="contained"
-          color="primary"
-        >
-          File
-        </Button>
-        <Button
-          className="btnOptions"
-          variant="contained"
-          color="primary"
+        <div className="prefItems">
+          <Button
+            id="btnFile"
+            font
+            size="small"
+            variant="contained"
+            color="primary"
           >
-          Options
-        </Button>
-        <Button
-          className="btnBack"
-          variant="contained"
-          color="primary"
-          >
-          Undo
-        </Button>
-        <Button
-          className="btnAhead"
-          variant="contained"
-          color="primary"
-          >
-          Redo
-        </Button>
+            File
+          </Button>
+        </div>
+        <div className="prefItems">
+          <Button
+            id="btnOptions"
+            size="small"
+            variant="contained"
+            color="primary"
+            >
+            Options
+          </Button>
+        </div>
+        <div className="prefItems">
+          <Button
+            id="btnBack"
+            size="small"
+            variant="contained"
+            color="primary"
+            >
+            Undo
+          </Button>
+        </div>
+        <div className="prefItems">
+          <Button
+            id="btnAhead"
+            size="small"
+            variant="contained"
+            color="primary"
+            >
+            Redo
+          </Button>
+        </div>
       </div>
     </ThemeProvider>
   );

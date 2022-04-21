@@ -36,7 +36,8 @@ function ConfigPanel() {
   return (
     <div className="configContainer">
       <div className="labConfiguration">Configuration</div>
-      <div className="field">
+      
+      <div className="field">      
       <CssTextField
         //required={true}
         value={txtName}
@@ -44,7 +45,8 @@ function ConfigPanel() {
         label={"Controller Name"}
         />
       </div>
-      <div className="field">
+      
+      <div className="field">      
       <CssTextField
         //required={true}
         value={txtPort}
@@ -52,6 +54,7 @@ function ConfigPanel() {
         label={"Port Number"}
       />
       </div>
+
       <div className="field">
       <Autocomplete
         disablePortal
@@ -62,12 +65,14 @@ function ConfigPanel() {
         renderInput={(params) => <TextField {...params} label="Controller Type" />}
         />  
       </div>
+
       <div className="field">
       <FormControlLabel 
         color="primary"
         control={<Checkbox/>} label="Active"  labelPlacement="start" 
         />
       </div>
+      
       <div className="field">
       <CssTextField
         //required={true}
@@ -76,6 +81,7 @@ function ConfigPanel() {
         label={"IP Adress"}
         />
       </div>
+      
       <div className="field">
         <FormControlLabel color="primary" control={<Checkbox/>} label="Remote Controller"  labelPlacement="start" />
       </div>

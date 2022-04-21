@@ -1,7 +1,7 @@
 .elementsContainer {
   display: flex;
   flex-direction: column;
-  max-width: 260px;
+  max-width: 270px;
   justify-content: flex-start;
   align-items: flex-start;
   padding: 5px;

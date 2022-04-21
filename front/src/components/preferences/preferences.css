@@ -1,11 +1,11 @@
 .prefContainer {
   display: flex;
+  align-items: flex-start;
   flex-direction: row;
-  max-width: 260px;
   justify-content: center;
+  max-width: 270px;
   background-color: #2AA1E4;
 
-  align-items: flex-start;
   padding: 5px;
   border-color: rgba(0, 0, 0, 1);
   border-width: 1px;
@@ -13,5 +13,5 @@
 }
 
 .prefItems{
-  margin-left: 5px;
+  margin: 1px;
 }
