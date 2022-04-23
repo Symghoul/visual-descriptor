@@ -2,35 +2,41 @@ const express = require('express')
 const app = express()
 const port = 3000
 
+app.use(express.json());
+
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`app listening on port ${port}`)
 })
 
-app.post('export', function (req, res){
+app.post('/export', function (req, res){
 
-  let topo = new topo({
-    custom : req.body.custom,
-    tree : req.body.tree,
-    lineal : req.body.lineal,
-    nameArchive : req.body.nameArchive
-    })
-  if(topo.custom != null) {
-    topocustom(custom)
-  }
-  else if(topo.tree != null){
-    topotree(tree)
-  } 
-  else if(topo.lineal != null){
-    topolineal(lineal)
-  }
-
+  console.log(req.body.custom)
+  console.log(req.body.tree)
+  console.log(req.body.lineal)
+  console.log(req.body.nameArchive)
+// let topo = new topo({
+//   custom : req.body.custom,
+//   tree : req.body.tree,
+//   lineal : req.body.lineal,
+//   nameArchive : req.body.nameArchive
+//   })
+//  if(topo.custom != null) {
+//    topocustom(custom)
+//  }
+//  else if(topo.tree != null){
+//    topotree(tree)
+//  } 
+//  else if(topo.lineal != null){
+//    topolineal(lineal)
+//  }
+//
    // El comando para ejecutar mininet, recordar usar el nombre del archivo para nombrar el script
-   
-  res.status(200).send()
+  console.log('topo')
+  res.status(200).send('Todo listo patrón')
 });
 
 
