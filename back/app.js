@@ -18,22 +18,22 @@ app.post('/export', function (req, res){
   console.log(req.body.tree)
   console.log(req.body.lineal)
   console.log(req.body.nameArchive)
-// let topo = new topo({
-//   custom : req.body.custom,
-//   tree : req.body.tree,
-//   lineal : req.body.lineal,
-//   nameArchive : req.body.nameArchive
-//   })
-//  if(topo.custom != null) {
-//    topocustom(custom)
-//  }
-//  else if(topo.tree != null){
-//    topotree(tree)
-//  } 
-//  else if(topo.lineal != null){
-//    topolineal(lineal)
-//  }
-//
+  let topo ={
+    custom : req.body.custom,
+    tree : req.body.tree,
+    lineal : req.body.lineal,
+    nameArchive : req.body.nameArchive
+    }
+   if(topo.custom != null) {
+     topocustom(custom)
+   }
+   else if(topo.tree != null){
+     topotree(tree)
+   } 
+   else if(topo.lineal != null){
+     topolineal(lineal)
+   }
+
    // El comando para ejecutar mininet, recordar usar el nombre del archivo para nombrar el script
   console.log('topo')
   res.status(200).send('Todo listo patrón')
@@ -41,12 +41,12 @@ app.post('/export', function (req, res){
 
 
 function topocustom(custom){
-  let cus = new cus({
+  let cus = {
     controllers: cus.body.controllers,
     switches:cus.body.switches,
     host:cus.body.host,
     links:cus.body.links
-  })
+  }
   
   // Aqui iría el comando para crear el script createScript();
  
