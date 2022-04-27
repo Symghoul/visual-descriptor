@@ -32,7 +32,7 @@ app.post('/export', function (req, res){
    }
 
    // El comando para ejecutar mininet, recordar usar el nombre del archivo para nombrar el script
-  console.log('topo')
+
   res.status(200).send(`Todo listo patrón`)
 });
 
@@ -44,14 +44,59 @@ function topocustom(custom, nameArchive ){
     host:[custom.host],
     links:[custom.links]
   }
-  console.log(custom);
+  
   let writeStream = fs.createWriteStream(`${nameArchive}.sh`);
   writeStream.write(
     `from mininet.topo import Topo \n`+
     `from mininet.net import Mininet \n`+
-    `from mininet.log import log \n`+
+    `from mininet.log import info, setLogLevel \n`+
     `from mininet.cli import CLI \n`+
-    `from mininet.util import irange \n`
+    `from mininet.node import Controller, RemoteComntroller \n`+
+`\n`+
+    `def topology(): \n`+
+    ` "Create a network."\n`+
+    ` net = Mininet_wifi( controller=Controller )\n`+
+`\n`+
+  //  ` info("*** Creating nodes")\n`);
+  //  console.log(controllers.Object)
+  //for (let device =0; device<Object.keys(controllers).length; device++){
+  //  
+  //  writeStream.write(` ${controllers[device]} = net.addController('c${device}', ip='${controllers}')`);
+  //  }
+  //writeStream.write(
+    ` c1 = net.addController( 'c1', ip='127.0.0.1', port=6653 )\n`+
+    ` s2 = net.addSwitch( 's2', protocols='OpenFlow10', listenPort=6673, mac='00:00:00:00:00:02' )\n`+
+    ` s3 = net.addSwitch( 's3', protocols='OpenFlow10', listenPort=6674, mac='00:00:00:00:00:03' )\n`+
+    ` h4 = net.addHost( 'h4', mac='00:00:00:00:00:04', ip='10.0.0.4/8' )\n`+
+    ` h5 = net.addHost( 'h5', mac='00:00:00:00:00:05', ip='10.0.0.5/8' )\n`+
+    ` h6 = net.addHost( 'h6', mac='00:00:00:00:00:06', ip='10.0.0.6/8' )\n`+
+    ` h7 = net.addHost( 'h7', mac='00:00:00:00:00:07', ip='10.0.0.7/8' )\n`+
+`\n`+
+    ` info("*** Creating links")\n`+
+    ` net.addLink(h4, s2)\n`+
+    ` net.addLink(h5, s2)\n`+
+    ` net.addLink(h6, s3)\n`+
+    ` net.addLink(h7, s3)\n`+
+`\n`+
+    ` info("*** Starting network")\n`+
+    ` net.configureWifiNodes()\n`+
+`\n`+
+    ` net.build()\n`+
+    ` c1.start()\n`+
+    ` s3.start( [c1] )\n`+
+    ` s2.start( [c1] )\n`+
+`\n`+
+`\n`+
+    ` info("*** Running CLI")\n`+
+    ` CLI_wifi( net )\n`+
+`\n`+
+    ` info("*** Stopping network")\n`+
+    ` net.stop()\n`+
+
+    `if __name__ == '__main__':\n`+
+    ` setLogLevel( 'info' )\n`+
+    ` topology()\n`
+
     );
   writeStream.on('finish', ()=>{
     console.log('I wrote all data to file');
