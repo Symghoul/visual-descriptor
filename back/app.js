@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const port = 3000
+const fs = require('fs')
 
 app.use(express.json());
 
@@ -14,10 +15,6 @@ app.listen(port, () => {
 
 app.post('/export', function (req, res){
 
-  console.log(req.body.custom)
-  console.log(req.body.tree)
-  console.log(req.body.lineal)
-  console.log(req.body.nameArchive)
   let topo ={
     custom : req.body.custom,
     tree : req.body.tree,
@@ -25,29 +22,42 @@ app.post('/export', function (req, res){
     nameArchive : req.body.nameArchive
     }
    if(topo.custom != null) {
-     topocustom(custom)
+     topocustom(topo.custom, topo.nameArchive)
    }
    else if(topo.tree != null){
-     topotree(tree)
+     topotree(topo.tree, topo.nameArchive)
    } 
    else if(topo.lineal != null){
-     topolineal(lineal)
+     topolineal(topo.lineal, topo.nameArchive)
    }
 
    // El comando para ejecutar mininet, recordar usar el nombre del archivo para nombrar el script
   console.log('topo')
-  res.status(200).send('Todo listo patrón')
+  res.status(200).send(`Todo listo patrón`)
 });
 
 
-function topocustom(custom){
+function topocustom(custom, nameArchive ){
   let cus = {
-    controllers: cus.body.controllers,
-    switches:cus.body.switches,
-    host:cus.body.host,
-    links:cus.body.links
+    controllers: [custom.controllers],
+    switches: [custom.switches],
+    host:[custom.host],
+    links:[custom.links]
   }
-  
+  console.log(custom);
+  let writeStream = fs.createWriteStream(`${nameArchive}.sh`);
+  writeStream.write(
+    `from mininet.topo import Topo \n`+
+    `from mininet.net import Mininet \n`+
+    `from mininet.log import log \n`+
+    `from mininet.cli import CLI \n`+
+    `from mininet.util import irange \n`
+    );
+  writeStream.on('finish', ()=>{
+    console.log('I wrote all data to file');
+  });
+
+  writeStream.end();
   // Aqui iría el comando para crear el script createScript();
  
 }
