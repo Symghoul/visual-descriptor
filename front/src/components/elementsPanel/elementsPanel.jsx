@@ -11,7 +11,7 @@ function ElementsPanel() {
             <CardMedia
               component="img"
               height="60"
-              image="../static/images/elements/test.jpg"
+              image={process.env.PUBLIC_URL + '/images/test.jpg'}
             />
               <div className="label">Controller</div>
             </div>
