@@ -1,0 +1,64 @@
+{
+    "custom": {
+      "controllers": [
+        {
+          "id": "c1",
+          "object": "controller",
+          "name": "controller1",
+          "port": "5000",
+          "type": "ovs-controlller",
+          "ip": "192.168.4.1",
+          "remote": "false"
+        }
+        ]
+      ,
+      "switches": [
+        {
+          "id": "s1",
+          "object": "switch"
+        }
+        ]
+      ,
+      "hosts": [
+        {
+          "id": "h1",
+          "object": "host",
+          "name": "pc1",
+          "ip": "192.168.4.50",
+          "mask": "255.255.255.0",
+          "mac": "00::01",
+          "active": "true"
+          
+        }
+        ]
+      ,
+      "links": [
+        {
+          "id": "l1",
+          "object": "ethernet",
+          "name": "ethernet1",
+          "source": "h1",
+          "destination": "s1",
+          "delay": "15",
+          "loss": "5",
+          "bandwith": "1MB"
+        },
+        {
+          "id": "l2",
+          "object": "fiber",
+          "name": "fiber1",
+          "source": "s1",
+          "destination": "c1",
+          "delay": "2ms",
+          "loss": "1%",
+          "bandwith": "10MB"
+        }
+        ]
+    },
+    "tree": {
+      
+    },
+    "lineal": {
+      
+    },
+    "nameArchive": "nombreTopo"}

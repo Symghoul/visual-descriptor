@@ -1,20 +1,17 @@
 {
   "name": "back",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "Backend of the visual descriptor project",
+  "main": "index.js",
   "scripts": {
-    "start": "node ./bin/www",
-    "start:dev": "nodemon ./bin/www"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
+  "author": "Estacio_Figueroa_Vera",
+  "license": "MIT",
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
-    "morgan": "~1.9.1"
-  },
-  "devDependencies": {
+    "express": "^4.18.0",
+    "fs": "^0.0.1-security",
     "nodemon": "^2.0.15"
   }
 }
