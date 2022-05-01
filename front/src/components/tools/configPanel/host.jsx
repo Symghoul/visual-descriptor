@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
-import { Autocomplete, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 
-import "./pc.css";
+import "./host.css";
 
 const CssTextField = styled(TextField)({
   "& label.Mui-focused": {
@@ -26,50 +26,45 @@ const CssTextField = styled(TextField)({
 
 function ConfigPanel() {
   const [txtName, setTxtName] = useState("");
-  const [txtPort, setTxtPort] = useState("");
   const [txtIP, setTxtIP] = useState("");
-
-  const controllerTypes = [{ label: "Ovs-Controller" }];
+  const [txtSubNetMask, setTxtSubNetMask] = useState("");
+  const [txtMac, setTxtMac] = useState("");
 
   return (
     <div className="container">
       <div className="field">
         <CssTextField
-          id="cntrlName_txtfield"
+          id="hostName_txtfield"
           value={txtName}
           onChange={(event) => setTxtName(event.target.value)}
-          label={"Controller Name"}
+          label={"Host Name"}
         />
       </div>
 
       <div className="field">
         <CssTextField
-          id="cntrlPort_txtfield"
-          value={txtPort}
-          onChange={(event) => setTxtPort(event.target.value)}
-          label={"Port Number"}
-        />
-      </div>
-
-      <div className="field">
-        <Autocomplete
-          id="cntrlType"
-          disablePortal
-          options={controllerTypes}
-          color="primary"
-          sx={{ width: 200 }}
-          renderInput={(params) => (
-            <TextField {...params} label="Controller Type" />
-          )}
-        />
-      </div>
-
-      <div className="field">
-        <CssTextField
-          id="cntrlIp_txtField"
+          id="hostIp_txtField"
           value={txtIP}
           onChange={(event) => setTxtIP(event.target.value)}
           label={"IP Adress"}
+        />
+      </div>
+
+      <div className="field">
+        <CssTextField
+          id="hostSubMask_txtfield"
+          value={txtSubNetMask}
+          onChange={(event) => setTxtSubNetMask(event.target.value)}
+          label={"Subnet Mask"}
+        />
+      </div>
+
+      <div className="field">
+        <CssTextField
+          id="hostMac_txtfield"
+          value={txtMac}
+          onChange={(event) => setTxtMac(event.target.value)}
+          label={"Mac Address"}
         />
       </div>
     </div>

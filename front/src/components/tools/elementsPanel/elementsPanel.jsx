@@ -11,7 +11,7 @@ function ElementsPanel() {
           <CardMedia
             component="img"
             height="60"
-            image={process.env.PUBLIC_URL + "/images/test.jpg"}
+            image={process.env.PUBLIC_URL + "/images/controller.png"}
           />
           <div className="label">Controller</div>
         </div>
@@ -19,7 +19,7 @@ function ElementsPanel() {
           <CardMedia
             component="img"
             height="60"
-            image={process.env.PUBLIC_URL + "/images/test.jpg"}
+            image={process.env.PUBLIC_URL + "/images/switch.png"}
           />
           <div className="label">Switch</div>
         </div>
@@ -27,7 +27,7 @@ function ElementsPanel() {
           <CardMedia
             component="img"
             height="60"
-            image={process.env.PUBLIC_URL + "/images/test.jpg"}
+            image={process.env.PUBLIC_URL + "/images/host.png"}
           />
           <div className="label">Host</div>
         </div>
@@ -37,7 +37,7 @@ function ElementsPanel() {
           <CardMedia
             component="img"
             height="60"
-            image={process.env.PUBLIC_URL + "/images/test.jpg"}
+            image={process.env.PUBLIC_URL + "/images/ethernet.png"}
           />
           <div className="label">Ethernet</div>
         </div>
@@ -45,7 +45,7 @@ function ElementsPanel() {
           <CardMedia
             component="img"
             height="60"
-            image={process.env.PUBLIC_URL + "/images/test.jpg"}
+            image={process.env.PUBLIC_URL + "/images/fiber.png"}
           />
           <div className="label">Fiber</div>
         </div>
