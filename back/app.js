@@ -1,7 +1,10 @@
 const express = require('express')
 const app = express()
-const port = 3000
 const fs = require('fs')
+const util = require('util')
+
+const model = require('./model/controller')
+const port = 3000
 
 app.use(express.json());
 
@@ -21,6 +24,8 @@ app.post('/export', function (req, res){
     lineal : req.body.lineal,
     nameArchive : req.body.nameArchive
     }
+    
+    
    if(topo.custom != null) {
      topocustom(topo.custom, topo.nameArchive)
    }
@@ -38,13 +43,25 @@ app.post('/export', function (req, res){
 
 
 function topocustom(custom, nameArchive ){
-  let cus = {
-    controllers: [custom.controllers],
-    switches: [custom.switches],
-    host:[custom.host],
-    links:[custom.links]
+  
+  var cus = {
+    controllers: [custom.controller],
+    switches: [],
+    host:[],
+    links:[]
   }
   
+  custom.controllers.forEach(element => {
+    var controller = (element)
+    //controller = Object.assign(Controller.prototype, controller)
+    for(let prop in element) {
+      controller.prop = element.prop
+    }
+    cus.controllers.push(controller)
+    console.log(cus.controllers)
+    //console.log(element)
+    //console.log(cus)
+  })
   let writeStream = fs.createWriteStream(`${nameArchive}.sh`);
   writeStream.write(
     `from mininet.topo import Topo \n`+
@@ -57,14 +74,20 @@ function topocustom(custom, nameArchive ){
     ` "Create a network."\n`+
     ` net = Mininet_wifi( controller=Controller )\n`+
 `\n`+
-  //  ` info("*** Creating nodes")\n`);
+    ` info("*** Creating nodes")\n`);
   //  console.log(controllers.Object)
-  //for (let device =0; device<Object.keys(controllers).length; device++){
+  cus.controllers.forEach(element =>{
+    if(element === !undefined)
+    writeStream.write(`${element.id} = net.addController( '${element.id}', ip=${element.ip}, port=${element.port})\n`);
+    //console.log(element)
+  });
+
+  
+  //}
   //  
-  //  writeStream.write(` ${controllers[device]} = net.addController('c${device}', ip='${controllers}')`);
   //  }
-  //writeStream.write(
-    ` c1 = net.addController( 'c1', ip='127.0.0.1', port=6653 )\n`+
+  writeStream.write(
+    
     ` s2 = net.addSwitch( 's2', protocols='OpenFlow10', listenPort=6673, mac='00:00:00:00:00:02' )\n`+
     ` s3 = net.addSwitch( 's3', protocols='OpenFlow10', listenPort=6674, mac='00:00:00:00:00:03' )\n`+
     ` h4 = net.addHost( 'h4', mac='00:00:00:00:00:04', ip='10.0.0.4/8' )\n`+
