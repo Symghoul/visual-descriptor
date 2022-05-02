@@ -93,7 +93,7 @@ function topocustom(custom, nameArchive ){
     `from mininet.net import Mininet \n`+
     `from mininet.log import info, setLogLevel \n`+
     `from mininet.cli import CLI \n`+
-    `from mininet.node import Controller, RemoteController \n`+
+    `from mininet.node import controller, remoteController \n`+
 `\n`+
     `def topology(): \n`+
     ` "Create a network."\n`+
@@ -187,8 +187,8 @@ function topocustom(custom, nameArchive ){
     ` info("*** Running CLI")\n`+
     ` CLI( net )\n`+
     `\n`+
-    ` info("*** Stopping network")\n`+
-    ` net.stop()\n`+
+   // ` info("*** Stopping network")\n`+
+   // ` net.stop()\n`+
 
     `if __name__ == '__main__':\n`+
     ` setLogLevel( 'info' )\n`+
@@ -198,7 +198,7 @@ function topocustom(custom, nameArchive ){
 
 // Aqui iría el comando para crear el script createScript();
   
-  fs.writeFileSync(`${nameArchive}.sh`, writeFileSync);
+  fs.writeFileSync(`${nameArchive}`, writeFileSync);
 
 }
 
