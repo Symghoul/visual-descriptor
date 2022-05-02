@@ -97,7 +97,7 @@ function topocustom(custom, nameArchive ){
 `\n`+
     `def topology(): \n`+
     ` "Create a network."\n`+
-    ` net = Mininet_wifi( controller=Controller )\n`+
+    ` net = Mininet( controller=Controller )\n`+
 `\n`+
     ` info("*** Creating nodes")\n`);
  // console.log(cus.controllers, cus.switches, cus.hosts )
@@ -144,7 +144,7 @@ function topocustom(custom, nameArchive ){
     //host, switch, bw=10, delay='5ms', loss=2,
     //                          max_queue_size=1000, use_htb=True )
     //
-    writeFileSync += (` info("*** Creating links")\n`);
+    writeFileSync += (`\n\n info("*** Creating links")\n`);
     custom.links.forEach(element=>{
       if(element === undefined || element.id === undefined){
         console.log("Los links no estan definidos")}
@@ -160,31 +160,41 @@ function topocustom(custom, nameArchive ){
       }
       writeFileSync += `) \n`
     });
-    //` net.addLink(h4, s2)\n`+
-    //` net.addLink(h5, s2)\n`+
-    //` net.addLink(h6, s3)\n`+
-    //` net.addLink(h7, s3)\n`+
-    writeFileSync += `\n`+
-` info("*** Starting network")\n`+
-` net.configureWifiNodes()\n`+
-`\n`+
-` net.build()\n`+
-` c1.start()\n`+
-` s3.start( [c1] )\n`+
-` s2.start( [c1] )\n`+
-`\n`+
-`\n`+
-` info("*** Running CLI")\n`+
-` CLI_wifi( net )\n`+
-`\n`+
-` info("*** Stopping network")\n`+
-` net.stop()\n`+
+    writeFileSync += (`\n`+
+    ` info("*** Starting network")\n`+
+    ` net.configureWifiNodes()\n`+
+    `\n`+
+    ` net.build()\n`);
+    custom.controllers.forEach(element =>{
+      if(element === undefined){
+        console.log("Los controladores no estan definidos")}
+      else {
+      writeFileSync += (` ${element.id}.start()\n` )
+        }})
+    custom.switches.forEach(element =>{
+    
+      if(element === undefined || element.id === undefined){
+        console.log("Los switches no estan definidos")}
 
-`if __name__ == '__main__':\n`+
-` setLogLevel( 'info' )\n`+
-` topology()\n`
+      else{
+        writeFileSync += (` ${element.id}.start( [${element.controller}] )\n`);}
+      })
+    
 
-;
+    writeFileSync += (
+    `\n`+
+    `\n`+
+    ` info("*** Running CLI")\n`+
+    ` CLI( net )\n`+
+    `\n`+
+    ` info("*** Stopping network")\n`+
+    ` net.stop()\n`+
+
+    `if __name__ == '__main__':\n`+
+    ` setLogLevel( 'info' )\n`+
+    ` topology()\n`
+
+    );
 
 // Aqui iría el comando para crear el script createScript();
   

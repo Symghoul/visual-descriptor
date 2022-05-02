@@ -12,6 +12,8 @@ def topology():
  c1 = net.RemoteController( 'c1', ip='192.168.4.1', port=5000)
  s1 = net.addSwitch( 's1', procotols='OpenFlow10', listenPort=4555, mac='00::01')
  h1 = net.addHost( 'h1', mac='00::01', ip='192.168.4.50/24') 
+
+
  info("*** Creating links")
  net.addLink(h1, s1 , 15, 5, 1) 
  net.addLink(s1, c1 , 2, 1, 10) 
@@ -21,8 +23,7 @@ def topology():
 
  net.build()
  c1.start()
- s3.start( [c1] )
- s2.start( [c1] )
+ s1.start( [c1] )
 
 
  info("*** Running CLI")
