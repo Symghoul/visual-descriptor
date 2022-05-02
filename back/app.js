@@ -51,7 +51,7 @@ function topocustom(custom, nameArchive ){
   //  hosts:[custom.hosts],
   //  links:[custom.links]
   //}
-  console.log(custom)
+  //console.log(custom)
   //custom.controllers.forEach(element => {
   //  var controller = (element)
   //  for(let prop in element) {
@@ -119,19 +119,20 @@ function topocustom(custom, nameArchive ){
       writeFileSync += ` ${element.id} = net.addSwitch( '${element.id}', procotols='${element.protocol}', listenPort=${element.listenPort}, mac='${element.mac}')\n`}
     })
     
-    custom.hosts.forEach(element =>{
-      if(element.mask != undefined){
-        var sum = mask(element.mask)}
+  custom.hosts.forEach(element =>{
+    if(element.mask != undefined){
+      var sum = mask(element.mask)}
         
-      if(element === undefined || element.id === undefined){
-          console.log("Los hosts no estan definidos")}
-      else if(element.mac === undefined)
-        writeFileSync += ` ${element.id} = net.addHost( '${element.id}', ip='${element.ip}/${sum}') \n`
-        else{
-          writeFileSync += ` ${element.id} = net.addHost( '${element.id}', mac='${element.mac}', ip='${element.ip}/${sum}') \n`}
-        });
+    if(element === undefined || element.id === undefined){
+        console.log("Los hosts no estan definidos")}
+    else if(element.mac === undefined)
+      writeFileSync += ` ${element.id} = net.addHost( '${element.id}', ip='${element.ip}/${sum}') \n`
+    else{
+      writeFileSync += ` ${element.id} = net.addHost( '${element.id}', mac='${element.mac}', ip='${element.ip}/${sum}') \n`
+    }
+  });
           
-        writeFileSync +=
+        
           
     //` s2 = net.addSwitch( 's2', protocols='OpenFlow10', listenPort=6673, mac='00:00:00:00:00:02' )\n`+
     //` s3 = net.addSwitch( 's3', protocols='OpenFlow10', listenPort=6674, mac='00:00:00:00:00:03' )\n`+
@@ -143,12 +144,27 @@ function topocustom(custom, nameArchive ){
     //host, switch, bw=10, delay='5ms', loss=2,
     //                          max_queue_size=1000, use_htb=True )
     //
-    ` info("*** Creating links")\n`+
-    ` net.addLink(h4, s2)\n`+
-    ` net.addLink(h5, s2)\n`+
-    ` net.addLink(h6, s3)\n`+
-    ` net.addLink(h7, s3)\n`+
-`\n`+
+    writeFileSync += (` info("*** Creating links")\n`);
+    custom.links.forEach(element=>{
+      if(element === undefined || element.id === undefined){
+        console.log("Los links no estan definidos")}
+      else{
+        writeFileSync += ` net.addLink(${element.source}, ${element.destination} `
+        if(element.delay !== undefined){
+          writeFileSync += `, ${element.delay}`
+        }if(element.loss !== undefined){
+          writeFileSync += `, ${element.loss}`
+        }if(element.bandwith !== undefined){
+          writeFileSync += `, ${element.bandwith}`
+        }
+      }
+      writeFileSync += `) \n`
+    });
+    //` net.addLink(h4, s2)\n`+
+    //` net.addLink(h5, s2)\n`+
+    //` net.addLink(h6, s3)\n`+
+    //` net.addLink(h7, s3)\n`+
+    writeFileSync += `\n`+
 ` info("*** Starting network")\n`+
 ` net.configureWifiNodes()\n`+
 `\n`+
@@ -172,9 +188,7 @@ function topocustom(custom, nameArchive ){
 
 // Aqui iría el comando para crear el script createScript();
   
-  fs.writeFile(`${nameArchive}.sh`, writeFileSync, () =>{
-    console.log("todo listo");
-  });
+  fs.writeFileSync(`${nameArchive}.sh`, writeFileSync);
 
 }
 
@@ -203,6 +217,5 @@ function mask(mac){
   
   bits = Math.log(sum)/Math.log(2)
   bits = Math.round(bits)
-  console.log(bits)
   return bits;
 }
