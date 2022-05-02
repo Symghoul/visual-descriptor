@@ -15,7 +15,10 @@
       "switches": [
         {
           "id": "s1",
-          "object": "switch"
+          "object": "switch",
+          "mac": "00::01",
+          "protocol":"OpenFlow10",
+          "listenPort":"4555"
         }
         ]
       ,

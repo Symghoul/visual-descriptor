@@ -2,13 +2,16 @@ from mininet.topo import Topo
 from mininet.net import Mininet 
 from mininet.log import info, setLogLevel 
 from mininet.cli import CLI 
-from mininet.node import Controller, RemoteComntroller 
+from mininet.node import Controller, RemoteController 
 
 def topology(): 
  "Create a network."
  net = Mininet_wifi( controller=Controller )
 
  info("*** Creating nodes")
+ c1 = net.RemoteController( 'c1', ip='192.168.4.1', port=5000)
+ s1 = net.addSwitch( 's1', procotols='OpenFlow10', listenPort=4555, mac='00::01')
+ h1 = net.addHost( 'h1', mac='00::01', ip=192.168.4.50) 
  s2 = net.addSwitch( 's2', protocols='OpenFlow10', listenPort=6673, mac='00:00:00:00:00:02' )
  s3 = net.addSwitch( 's3', protocols='OpenFlow10', listenPort=6674, mac='00:00:00:00:00:03' )
  h4 = net.addHost( 'h4', mac='00:00:00:00:00:04', ip='10.0.0.4/8' )

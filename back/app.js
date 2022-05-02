@@ -8,7 +8,7 @@ const port = 3000
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.send('Hello World!')
 })
 
@@ -44,49 +44,93 @@ app.post('/export', function (req, res){
 
 function topocustom(custom, nameArchive ){
   
-  var cus = {
-    controllers: [custom.controller],
-    switches: [],
-    host:[],
-    links:[]
-  }
-  
+  //var cus = {
+  //  controllers: [custom.controller],
+  //  switches: [custom.switches],
+  //  hosts:[custom.hosts],
+  //  links:[custom.links]
+  //}
+  console.log(custom)
   custom.controllers.forEach(element => {
     var controller = (element)
-    //controller = Object.assign(Controller.prototype, controller)
     for(let prop in element) {
       controller.prop = element.prop
+
     }
     cus.controllers.push(controller)
-    console.log(cus.controllers)
-    //console.log(element)
-    //console.log(cus)
   })
-  let writeStream = fs.createWriteStream(`${nameArchive}.sh`);
-  writeStream.write(
+
+  custom.switches.forEach(element => {
+    var switche = (element)
+    for(let prop in element) {
+      switche.prop = element.prop
+    }
+    
+    cus.switches.push(switche)
+  })
+
+  custom.hosts.forEach(element => {
+    var host = (element)
+    for(let prop in element) {
+      host.prop = element.prop
+    }
+    
+    cus.hosts.push(host)
+  })
+
+  custom.links.forEach(element => {
+    var link = (element)
+    for(let prop in element) {
+      link.prop = element.prop
+    }
+    cus.links.push(link);
+    
+  })
+  
+  let writeFileSync =(
     `from mininet.topo import Topo \n`+
     `from mininet.net import Mininet \n`+
     `from mininet.log import info, setLogLevel \n`+
     `from mininet.cli import CLI \n`+
-    `from mininet.node import Controller, RemoteComntroller \n`+
+    `from mininet.node import Controller, RemoteController \n`+
 `\n`+
     `def topology(): \n`+
     ` "Create a network."\n`+
     ` net = Mininet_wifi( controller=Controller )\n`+
 `\n`+
     ` info("*** Creating nodes")\n`);
-  //  console.log(controllers.Object)
+ // console.log(cus.controllers, cus.switches, cus.hosts )
   cus.controllers.forEach(element =>{
-    if(element === !undefined)
-    writeStream.write(`${element.id} = net.addController( '${element.id}', ip=${element.ip}, port=${element.port})\n`);
-    //console.log(element)
+    if(element === undefined)
+      console.log("Los controladores no estan definidos")
+    else if(element.remote){
+      writeFileSync += ` ${element.id} = net.RemoteController( '${element.id}', ip='${element.ip}', port=${element.port})\n`}
+    else{
+    writeFileSync += ` ${element.id} = net.addController( '${element.id}', ip='${element.ip}', port=${element.port})\n`}
+  })
+
+  cus.switches.forEach(element =>{
+    
+    if(element === undefined || element.id === undefined)
+      console.log("Los switches no estan definidos")
+
+    else{
+    writeFileSync += ` ${element.id} = net.addSwitch( '${element.id}', procotols='${element.protocol}', listenPort=${element.listenPort}, mac='${element.mac}')\n`}
+  })
+
+  cus.hosts.forEach(element =>{
+    if(element.mask != undefined){
+      let sum = mask(element.mask)}
+    
+    if(element === undefined || element.id === undefined)
+      console.log("Los hosts no estan definidos")
+    else if(element.mac === undefined)
+    writeFileSync += ` ${element.id} = net.addHost( '${element.id}', ip=${element.ip}) \n`
+    else{
+    writeFileSync += ` ${element.id} = net.addHost( '${element.id}', mac='${element.mac}', ip=${element.ip}) \n`}
   });
 
-  
-  //}
-  //  
-  //  }
-  writeStream.write(
+  writeFileSync +=
     
     ` s2 = net.addSwitch( 's2', protocols='OpenFlow10', listenPort=6673, mac='00:00:00:00:00:02' )\n`+
     ` s3 = net.addSwitch( 's3', protocols='OpenFlow10', listenPort=6674, mac='00:00:00:00:00:03' )\n`+
@@ -95,6 +139,9 @@ function topocustom(custom, nameArchive ){
     ` h6 = net.addHost( 'h6', mac='00:00:00:00:00:06', ip='10.0.0.6/8' )\n`+
     ` h7 = net.addHost( 'h7', mac='00:00:00:00:00:07', ip='10.0.0.7/8' )\n`+
 `\n`+
+//host, switch, bw=10, delay='5ms', loss=2,
+//                          max_queue_size=1000, use_htb=True )
+//
     ` info("*** Creating links")\n`+
     ` net.addLink(h4, s2)\n`+
     ` net.addLink(h5, s2)\n`+
@@ -120,20 +167,28 @@ function topocustom(custom, nameArchive ){
     ` setLogLevel( 'info' )\n`+
     ` topology()\n`
 
-    );
-  writeStream.on('finish', ()=>{
-    console.log('I wrote all data to file');
-  });
+    ;
 
-  writeStream.end();
   // Aqui iría el comando para crear el script createScript();
- 
+  
+  fs.writeFileSync(`${nameArchive}.sh`, writeFileSync);
+
 }
 
-function topolineal(lineal){
+function topolineal(_lineal){
 //Aquí va la recepción especifica de los parametros para correr los ejemplos y con eso va el script
 }
 
-function topotree(tree){
+function topotree(_tree){
 //Aquí va la recepción especifica de los parametros para correr los ejemplos y con eso va el script
+}
+
+function mask(mac){
+
+  let bits = (mac)
+  let split = bits.split()
+  let sum = split[0]+split[1]+split[2]+split[3]
+  bits = Math.log(sum)/Math.log(2)
+  console.log(bits)
+  return bits;
 }
