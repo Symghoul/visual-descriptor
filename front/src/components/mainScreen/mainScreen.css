@@ -1,17 +1,12 @@
 body{
-    background-color: #C4C4C4;
+    background-color: #C4C4C4;    
 }
 
-.configPanel{
+.row{
+    display: flex;    
+    flex-direction: row;
+}
+
+.panel{
     display: flex;
-    flex-direction: column;
-    line-height: normal;
-    max-width: 270px;
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding: 5px;
-    border-color: rgba(0, 0, 0, 1);
-    border-width: 1px;
-    border-style: solid;
-    background-color: #2AA1E4;
 }

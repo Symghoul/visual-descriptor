@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import { TextField } from "@mui/material";
 
-import "./link.css";
+import "./linkConfig.css";
 
 const CssTextField = styled(TextField)({
   "& label.Mui-focused": {
@@ -24,66 +24,66 @@ const CssTextField = styled(TextField)({
   },
 });
 
-function ConfigPanel() {
-  const [txtName, setTxtName] = useState("");
-  const [txtSource, setTxtSource] = useState("");
-  const [txtDest, setTxtDest] = useState("");
-  const [txtDelay, setTxtDelay] = useState("");
-  const [txtLoss, setTxtLoss] = useState("");
-  const [txtBandwith, setTxtBandwith] = useState("");
+function LinkConfig() {
+  const [name, setName] = useState("");
+  const [source, setSource] = useState("");
+  const [destiny, setDestiny] = useState("");
+  const [delay, setDelay] = useState("");
+  const [loss, setLoss] = useState("");
+  const [bandwith, setBandwith] = useState("");
 
   return (
     <div className="container">
       <div className="field">
         <CssTextField
-          id="linkName_txtfield"
-          value={txtName}
-          onChange={(event) => setTxtName(event.target.value)}
+          id="linkName"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
           label={"Link Name"}
         />
       </div>
 
       <div className="field">
         <CssTextField
-          id="linkSource_txtField"
-          value={txtSource}
-          onChange={(event) => setTxtSource(event.target.value)}
+          id="linkSource"
+          value={source}
+          onChange={(event) => setSource(event.target.value)}
           label={"Source"}
         />
       </div>
 
       <div className="field">
         <CssTextField
-          id="linkDestiny_txtfield"
-          value={txtDest}
-          onChange={(event) => setTxtDest(event.target.value)}
+          id="linkDestiny"
+          value={destiny}
+          onChange={(event) => setDestiny(event.target.value)}
           label={"Destiny"}
         />
       </div>
 
       <div className="field">
         <CssTextField
-          id="linkDelay_txtfield"
-          value={txtDelay}
-          onChange={(event) => setTxtDelay(event.target.value)}
+          id="linkDelay"
+          value={delay}
+          onChange={(event) => setDelay(event.target.value)}
           label={"Delay (ms)"}
         />
       </div>
 
       <div className="field">
         <CssTextField
-          id="linkLoss_txtfield"
-          value={txtLoss}
-          onChange={(event) => setTxtLoss(event.target.value)}
+          id="linkLoss"
+          value={loss}
+          onChange={(event) => setLoss(event.target.value)}
           label={"Loss %"}
         />
       </div>
 
       <div className="field">
         <CssTextField
-          id="linkBandwith_txtfield"
-          value={txtBandwith}
-          onChange={(event) => setTxtBandwith(event.target.value)}
+          id="linkBandwith"
+          value={bandwith}
+          onChange={(event) => setBandwith(event.target.value)}
           label={"Bandwith"}
         />
       </div>
@@ -91,4 +91,4 @@ function ConfigPanel() {
   );
 }
 
-export default ConfigPanel;
+export default LinkConfig;

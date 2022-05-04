@@ -1,64 +1,56 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import "./toolsPanel.css";
 
 import Preferences from "./preferences/preferences";
 
 import ElementsPanel from "./elementsPanel/elementsPanel";
 
-import Router from "./configPanel/router";
-import Host from "./configPanel/host";
-import Switch from "./configPanel/switch";
-import Link from "./configPanel/link";
+import ControllerConfig from "./configPanel/controllerConfig";
+import HostConfig from "./configPanel/hostConfig";
+import SwitchConfig from "./configPanel/switchConfig";
+import LinkConfig from "./configPanel/linkConfig";
 
-class ToolsPanel extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      deviceType: 0,
-    };
-    this.changePanel = this.changePanel.bind(this);
-  }
+function setUp() {
+  return 0;
+}
 
-  showView() {
-    if (this.state.deviceType === 0) {
+function ToolsPanel() {
+  const [deviceType, setDeviceType] = useState(() => setUp());
+
+  const showView = () => {
+    if (deviceType === 0) {
       return <></>;
-    } else if (this.state.deviceType === 1) {
-      return <Router />;
-    } else if (this.state.deviceType === 2) {
-      return <Host />;
-    } else if (this.state.deviceType === 3) {
-      return <Switch />;
-    } else if (this.state.deviceType === 4) {
-      return <Link />;
+    } else if (deviceType === 1) {
+      return <ControllerConfig />;
+    } else if (deviceType === 2) {
+      return <HostConfig />;
+    } else if (deviceType === 3) {
+      return <SwitchConfig />;
+    } else if (deviceType === 4) {
+      return <LinkConfig />;
     }
 
-    if (this.state.deviceType === 5) {
-      this.setState({
-        deviceType: 0,
-      });
+    if (deviceType === 5) {
+      setDeviceType((deviceType) => 0);
       return <></>;
     }
+  };
+
+  function changePanel() {
+    setDeviceType((prevDeviceType) => prevDeviceType + 1);
   }
 
-  changePanel() {
-    this.setState({
-      deviceType: this.state.deviceType + 1,
-    });
-  }
-
-  render() {
-    return (
-      <div className="toolsPanel">
-        <Preferences />
-        <ElementsPanel />
-        <div className="configPanel">
-          Configuration
-          {this.showView()}
-          <button onClick={this.changePanel}>Change</button>
-        </div>
+  return (
+    <div className="toolsPanel">
+      <Preferences />
+      <ElementsPanel />
+      <div className="configPanel">
+        Configuration
+        {showView()}
+        <button onClick={changePanel}>Change</button>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default ToolsPanel;

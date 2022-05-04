@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import AppContext from "../../../context/AppContext";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Button } from "@mui/material";
 import "./preferences.css";
@@ -15,6 +16,8 @@ const theme = createTheme({
 });
 
 function Preferences() {
+  const state = useContext(AppContext);
+
   return (
     <ThemeProvider theme={theme}>
       <div className="prefContainer">
@@ -25,6 +28,7 @@ function Preferences() {
             size="small"
             variant="contained"
             color="primary"
+            onClick={state.exportData()}
           >
             File
           </Button>
