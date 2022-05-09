@@ -8,6 +8,8 @@ import * as uuid from "uuid";
 const AppContext = React.createContext();
 
 export const AppContextWrapper = (props) => {
+  const [selectedDevice, setSelectedDevice] = useState(null);
+
   const [controllers, setControllers] = useState([]);
   const [switches, setSwitches] = useState([]);
   const [hosts, setHosts] = useState([]);
@@ -18,8 +20,6 @@ export const AppContextWrapper = (props) => {
   const exportData = () => {
     console.log(controllers, switches, hosts, links);
   };
-
-  const changeConfigPanel = () => {};
 
   // ----------- Controller methods -----------
   const saveController = (name, port, type, ip) => {
@@ -106,6 +106,10 @@ export const AppContextWrapper = (props) => {
 
   const state = {
     exportData,
+
+    selectedDevice,
+    setSelectedDevice,
+
     controllers,
     setControllers,
     saveController,

@@ -1,44 +1,35 @@
 import React, { useEffect, useContext, useState } from "react";
+import AppContext from "../../context/AppContext";
 import "./toolsPanel.css";
 
 import Preferences from "./preferences/preferences";
-
-import ElementsPanel from "./elementsPanel/elementsPanel";
 
 import ControllerConfig from "./configPanel/controllerConfig";
 import HostConfig from "./configPanel/hostConfig";
 import SwitchConfig from "./configPanel/switchConfig";
 import LinkConfig from "./configPanel/linkConfig";
 
-function setUp() {
-  return 1;
-}
-
 function ToolsPanel() {
-  const [deviceType, setDeviceType] = useState(() => setUp());
+  const state = useContext(AppContext);
+  const [deviceType, setDeviceType] = useState(null);
+
+  useEffect(() => {
+    setDeviceType(state.selectedDevice);
+  }, [state.selectedDevice]);
 
   const showView = () => {
-    if (deviceType === 0) {
+    if (deviceType === null) {
       return <></>;
-    } else if (deviceType === 1) {
+    } else if (deviceType === "controller") {
       return <ControllerConfig />;
-    } else if (deviceType === 2) {
+    } else if (deviceType === "host") {
       return <HostConfig />;
-    } else if (deviceType === 3) {
+    } else if (deviceType === "switch") {
       return <SwitchConfig />;
     } else if (deviceType === 4) {
       return <LinkConfig />;
     }
-
-    if (deviceType === 5) {
-      setDeviceType((deviceType) => 0);
-      return <></>;
-    }
   };
-
-  function changePanel() {
-    setDeviceType((prevDeviceType) => prevDeviceType + 1);
-  }
 
   return (
     <div className="toolsPanel">
@@ -46,7 +37,6 @@ function ToolsPanel() {
       <div className="configPanel">
         Configuration
         {showView()}
-        <button onClick={changePanel}>Change</button>
       </div>
     </div>
   );

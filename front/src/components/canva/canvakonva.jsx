@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import AppContext from "../../context/AppContext";
 import { Stage, Layer, Rect, Text, Line } from "react-konva";
 import { INITIAL_STATE, SIZE } from "./config";
 import Border from "./border";
@@ -27,16 +28,20 @@ function detectConnection(position, id, steps) {
 }
 
 function Canva() {
+  const state = useContext(AppContext);
+
   const [selectedStep, setSelectedStep] = useState(null);
   const [connectionPreview, setConnectionPreview] = useState(null);
   const [connections, setConnections] = useState([]);
   const [steps, setSteps] = useState(INITIAL_STATE.steps);
 
-  function handleSelection(id) {
+  function handleSelection(id, deviceType) {
     if (selectedStep === id) {
       setSelectedStep(null);
+      state.setSelectedDevice(null);
     } else {
       setSelectedStep(id);
+      state.setSelectedDevice(deviceType);
     }
   }
 
@@ -105,7 +110,7 @@ function Canva() {
   }
 
   const stepObjs = Object.keys(steps).map((key) => {
-    const { x, y, colour } = steps[key];
+    const { type, x, y, colour } = steps[key];
     return (
       <Rect
         key={key}
@@ -114,7 +119,7 @@ function Canva() {
         width={SIZE}
         height={SIZE}
         fill={colour}
-        onClick={() => handleSelection(key)}
+        onClick={() => handleSelection(key, type)}
         draggable
         onDragMove={(e) => handleStepDrag(e, key)}
         perfectDrawEnabled={false}

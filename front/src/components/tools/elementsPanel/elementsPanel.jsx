@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import AppContext from "../../../context/AppContext";
 import "./elementsPanel.css";
 import { CardMedia } from "@mui/material";
