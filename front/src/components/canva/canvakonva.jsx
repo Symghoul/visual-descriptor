@@ -1,147 +1,162 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Stage, Layer, Circle, Text, Line } from "react-konva";
-import * as uuid from "uuid";
+import React, { useState } from "react";
+import { Stage, Layer, Rect, Text, Line } from "react-konva";
+import { INITIAL_STATE, SIZE } from "./config";
+import Border from "./border";
 
-const SIZE = 50;
-const points = [0, 0, SIZE, 0, SIZE, SIZE, 0, SIZE, 0, 0];
+function createConnectionPoints(source, destination) {
+  return [source.x, source.y, destination.x, destination.y];
+}
 
-function Border({ device, id }) {
-  const { x, y } = device;
-  return (
-    <Line
-      x={x - 25}
-      y={y - 25}
-      points={points}
-      stroke="black"
-      strokeWidth={2}
-      perfectDrawEnabled={false}
-    />
+function hasIntersection(position, step) {
+  return !(
+    step.x > position.x ||
+    step.x + SIZE < position.x ||
+    step.y > position.y ||
+    step.y + SIZE < position.y
   );
 }
 
-function getAnchorPoints(x, y) {
-  const halfSize = SIZE / 2;
-  return [
-    {
-      x: x - 10,
-      y: y + halfSize,
-    },
-    {
-      x: x + halfSize,
-      y: y - 10,
-    },
-    {
-      x: x + SIZE + 10,
-      y: y + halfSize,
-    },
-    {
-      x: x + halfSize,
-      y: y + SIZE + 10,
-    },
-  ];
-}
-
-function dragBounds(ref) {
-  if (ref.current !== null) {
-    return ref.current.getAbsolutePosition();
+function detectConnection(position, id, steps) {
+  const intersectingStep = Object.keys(steps).find((key) => {
+    return key !== id && hasIntersection(position, steps[key]);
+  });
+  if (intersectingStep) {
+    return intersectingStep;
   }
-  return {
-    x: 0,
-    y: 0,
-  };
-}
-
-function Anchor({ x, y, id }) {
-  const anchor = useRef(null);
-  return (
-    <Circle
-      x={x}
-      y={y}
-      radius={5}
-      fill="black"
-      draggable
-      dragBoundFunc={() => dragBounds(anchor)}
-      perfectDrawEnabled={false}
-      ref={anchor}
-    />
-  );
+  return null;
 }
 
 function Canva() {
-  const [selectedDevice, setSelectedDevice] = useState(null);
-  const [canvaControllers, setCanvaControllers] = useState([]);
+  const [selectedStep, setSelectedStep] = useState(null);
+  const [connectionPreview, setConnectionPreview] = useState(null);
+  const [connections, setConnections] = useState([]);
+  const [steps, setSteps] = useState(INITIAL_STATE.steps);
 
   function handleSelection(id) {
-    if (selectedDevice === id) {
-      setSelectedDevice(null);
+    if (selectedStep === id) {
+      setSelectedStep(null);
     } else {
-      setSelectedDevice(id);
+      setSelectedStep(id);
     }
   }
 
-  function CanvaDeviceController() {
-    return (
-      <div>
-        <Circle
-          id="device"
-          type="controller"
-          x={50}
-          y={600}
-          radius={25}
-          fill="blue"
-          draggable
-          onDragEnd={(e) => {
-            setCanvaControllers((prevCanvaControllers) => [
-              ...prevCanvaControllers,
-              {
-                id: uuid.v1(),
-                type: "controller",
-                x: e.target.x(),
-                y: e.target.y(),
-                radius: 25,
-                fill: "blue",
-              },
-            ]);
-          }}
-        />
-        <Text text="Controller" x={23} y={628} />
-      </div>
+  function handleStepDrag(e, key) {
+    const position = e.target.position();
+    setSteps({
+      ...steps,
+      [key]: {
+        ...steps[key],
+        ...position,
+      },
+    });
+  }
+
+  function handleAnchorDragStart(e) {
+    const position = e.target.position();
+    setConnectionPreview(
+      <Line
+        x={position.x}
+        y={position.y}
+        points={createConnectionPoints(position, position)}
+        stroke="black"
+        strokeWidth={2}
+      />
     );
   }
 
-  const allControllers = canvaControllers.map((eachCanvaController) => {
-    const { id, type, x, y, radius, fill } = eachCanvaController;
+  function getMousePos(e) {
+    const position = e.target.position();
+    const stage = e.target.getStage();
+    const pointerPosition = stage.getPointerPosition();
+    return {
+      x: pointerPosition.x - position.x,
+      y: pointerPosition.y - position.y,
+    };
+  }
+
+  function handleAnchorDragMove(e) {
+    const position = e.target.position();
+    const mousePos = getMousePos(e);
+    setConnectionPreview(
+      <Line
+        x={position.x}
+        y={position.y}
+        points={createConnectionPoints({ x: 0, y: 0 }, mousePos)}
+        stroke="black"
+        strokeWidth={2}
+      />
+    );
+  }
+
+  function handleAnchorDragEnd(e, id) {
+    setConnectionPreview(null);
+    const stage = e.target.getStage();
+    const mousePos = stage.getPointerPosition();
+    const connectionTo = detectConnection(mousePos, id, steps);
+    if (connectionTo !== null) {
+      setConnections([
+        ...connections,
+        {
+          to: connectionTo,
+          from: id,
+        },
+      ]);
+    }
+  }
+
+  const stepObjs = Object.keys(steps).map((key) => {
+    const { x, y, colour } = steps[key];
     return (
-      <Circle
-        id={id}
-        type={type}
+      <Rect
+        key={key}
         x={x}
         y={y}
-        radius={radius}
-        fill={fill}
+        width={SIZE}
+        height={SIZE}
+        fill={colour}
+        onClick={() => handleSelection(key)}
         draggable
-        onClick={() => handleSelection(id)}
+        onDragMove={(e) => handleStepDrag(e, key)}
         perfectDrawEnabled={false}
       />
     );
   });
-
+  const connectionObjs = connections.map((connection) => {
+    const fromStep = steps[connection.from];
+    const toStep = steps[connection.to];
+    const lineEnd = {
+      x: toStep.x - fromStep.x,
+      y: toStep.y - fromStep.y,
+    };
+    const points = createConnectionPoints({ x: 0, y: 0 }, lineEnd);
+    return (
+      <Line
+        x={fromStep.x + SIZE / 2}
+        y={fromStep.y + SIZE / 2}
+        points={points}
+        stroke="orange"
+        strokeWidth={5}
+      />
+    );
+  });
   const borders =
-    selectedDevice !== null ? (
+    selectedStep !== null ? (
       <Border
-        id={selectedDevice}
-        device={canvaControllers
-          .filter((device) => device.id === selectedDevice)
-          .pop()}
+        id={selectedStep}
+        step={steps[selectedStep]}
+        onAnchorDragEnd={(e) => handleAnchorDragEnd(e, selectedStep)}
+        onAnchorDragMove={handleAnchorDragMove}
+        onAnchorDragStart={handleAnchorDragStart}
       />
     ) : null;
-
   return (
-    <Stage width={1060} height={640}>
+    <Stage width={window.innerWidth} height={window.innerHeight}>
       <Layer>
-        <CanvaDeviceController />
-        {allControllers}
+        <Text text="Click a rectangle to select it. Drag the anchor to create a connection between the objects" />
+        {stepObjs}
         {borders}
+        {connectionObjs}
+        {connectionPreview}
       </Layer>
     </Stage>
   );
