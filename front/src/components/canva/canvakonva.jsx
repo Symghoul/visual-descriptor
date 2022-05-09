@@ -1,128 +1,150 @@
-import React, { useState, useRef } from "react";
-import { Stage, Layer, Circle, Image } from "react-konva";
-import useImage from "use-image";
+import React, { useState, useRef, useEffect } from "react";
+import { Stage, Layer, Circle, Text, Line } from "react-konva";
+import * as uuid from "uuid";
 
-export default function App() {
-  const [circles, setCircles] = useState([]);
-  const [ccircles, setCcircles] = useState([]);
-  const [controllers, setControllers] = useState([]);
-  const stageRef = useRef(null);
-  const [image] = useImage(process.env.PUBLIC_URL + "/images/controller.png");
+const SIZE = 50;
+const points = [0, 0, SIZE, 0, SIZE, SIZE, 0, SIZE, 0, 0];
 
-  const DController = () => {
-    return (
-      <Image
-        name="draggableController"
-        image={image}
-        x={50}
-        y={150}
-        fill="green"
-        draggable
-        onDragEnd={(e) => {
-          // push new circle to view
-          // note that we must push circle first before returning draggable circle
-          // because e.target.x returns draggable circle's positions
-          setControllers((prevControllers) => [
-            ...prevControllers,
-            {
-              x: e.target.x(),
-              y: e.target.y(),
-              fill: "red",
-            },
-          ]);
+function Border({ device, id }) {
+  const { x, y } = device;
+  return (
+    <Line
+      x={x - 25}
+      y={y - 25}
+      points={points}
+      stroke="black"
+      strokeWidth={2}
+      perfectDrawEnabled={false}
+    />
+  );
+}
 
-          // return draggable circle to original position
-          // notice the dot (.) before "draggableCircle"
-          //var stage = stageRef.current;
-          //var draggableController = stage.findOne(".draggableController");
-          //draggableController.position({ x: 50, y: 50 });
-        }}
-      />
-    );
+function getAnchorPoints(x, y) {
+  const halfSize = SIZE / 2;
+  return [
+    {
+      x: x - 10,
+      y: y + halfSize,
+    },
+    {
+      x: x + halfSize,
+      y: y - 10,
+    },
+    {
+      x: x + SIZE + 10,
+      y: y + halfSize,
+    },
+    {
+      x: x + halfSize,
+      y: y + SIZE + 10,
+    },
+  ];
+}
+
+function dragBounds(ref) {
+  if (ref.current !== null) {
+    return ref.current.getAbsolutePosition();
+  }
+  return {
+    x: 0,
+    y: 0,
   };
+}
 
-  function Circulo() {
+function Anchor({ x, y, id }) {
+  const anchor = useRef(null);
+  return (
+    <Circle
+      x={x}
+      y={y}
+      radius={5}
+      fill="black"
+      draggable
+      dragBoundFunc={() => dragBounds(anchor)}
+      perfectDrawEnabled={false}
+      ref={anchor}
+    />
+  );
+}
+
+function Canva() {
+  const [selectedDevice, setSelectedDevice] = useState(null);
+  const [canvaControllers, setCanvaControllers] = useState([]);
+
+  function handleSelection(id) {
+    if (selectedDevice === id) {
+      setSelectedDevice(null);
+    } else {
+      setSelectedDevice(id);
+    }
+  }
+
+  function CanvaDeviceController() {
     return (
-      <Circle
-        name="draggableCircle"
-        x={50}
-        y={50}
-        radius={25}
-        fill="blue"
-        draggable
-        onDragEnd={(e) => {
-          // push new circle to view
-          // note that we must push circle first before returning draggable circle
-          // because e.target.x returns draggable circle's positions
-          setCircles((prevCircles) => [
-            ...prevCircles,
-            { x: e.target.x(), y: e.target.y(), fill: "red" },
-          ]);
-
-          // return draggable circle to original position
-          // notice the dot (.) before "draggableCircle"
-          //var stage = stageRef.current;
-          //var draggableCircle = stage.findOne(".draggableCircle");
-          //draggableCircle.position({ x: 50, y: 50 });
-        }}
-      />
+      <div>
+        <Circle
+          id="device"
+          type="controller"
+          x={50}
+          y={600}
+          radius={25}
+          fill="blue"
+          draggable
+          onDragEnd={(e) => {
+            setCanvaControllers((prevCanvaControllers) => [
+              ...prevCanvaControllers,
+              {
+                id: uuid.v1(),
+                type: "controller",
+                x: e.target.x(),
+                y: e.target.y(),
+                radius: 25,
+                fill: "blue",
+              },
+            ]);
+          }}
+        />
+        <Text text="Controller" x={23} y={628} />
+      </div>
     );
   }
 
-  function Ccirculo() {
+  const allControllers = canvaControllers.map((eachCanvaController) => {
+    const { id, type, x, y, radius, fill } = eachCanvaController;
     return (
       <Circle
-        name="draggableCcircle"
-        x={50}
-        y={100}
-        radius={25}
-        fill="green"
+        id={id}
+        type={type}
+        x={x}
+        y={y}
+        radius={radius}
+        fill={fill}
         draggable
-        onDragEnd={(e) => {
-          // push new circle to view
-          // note that we must push circle first before returning draggable circle
-          // because e.target.x returns draggable circle's positions
-          setCcircles((prevCcircles) => [
-            ...prevCcircles,
-            { x: e.target.x(), y: e.target.y(), fill: "pink" },
-          ]);
-
-          // return draggable circle to original position
-          // notice the dot (.) before "draggableCircle"
-          //var stage = stageRef.current;
-          //var draggableCircle = stage.findOne(".draggableCircle");
-          //draggableCircle.position({ x: 50, y: 50 });
-        }}
+        onClick={() => handleSelection(id)}
+        perfectDrawEnabled={false}
       />
     );
-  }
+  });
+
+  const borders =
+    selectedDevice !== null ? (
+      <Border
+        id={selectedDevice}
+        device={canvaControllers
+          .filter((device) => device.id === selectedDevice)
+          .pop()}
+      />
+    ) : null;
 
   return (
-    <Stage width={1060} height={640} ref={stageRef}>
+    <Stage width={1060} height={640}>
       <Layer>
-        <Circulo />
-        {circles.map((eachCircle) => (
-          <Circle
-            x={eachCircle.x}
-            y={eachCircle.y}
-            radius={25}
-            fill={eachCircle.fill}
-          />
-        ))}
-        <Ccirculo />
-        {ccircles.map((eachCcircle) => (
-          <Circle
-            x={eachCcircle.x}
-            y={eachCcircle.y}
-            radius={25}
-            fill={eachCcircle.fill}
-          />
-        ))}
-        <DController />
-        {controllers.map((eachController) => (
-          <Image x={eachController.x} y={eachController.y} />
-        ))}
+        <CanvaDeviceController />
+        {allControllers}
+        {borders}
       </Layer>
     </Stage>
   );
 }
+
+export default Canva;

@@ -11,7 +11,7 @@ import SwitchConfig from "./configPanel/switchConfig";
 import LinkConfig from "./configPanel/linkConfig";
 
 function setUp() {
-  return 0;
+  return 1;
 }
 
 function ToolsPanel() {
@@ -43,7 +43,6 @@ function ToolsPanel() {
   return (
     <div className="toolsPanel">
       <Preferences />
-      <ElementsPanel />
       <div className="configPanel">
         Configuration
         {showView()}
