@@ -15,7 +15,11 @@
       "switches": [
         {
           "id": "s1",
-          "object": "switch"
+          "object": "switch",
+          "controller": "c1",
+          "mac": "00::01",
+          "protocol":"OpenFlow10",
+          "listenPort":"4555"
         }
         ]
       ,
@@ -26,7 +30,7 @@
           "name": "pc1",
           "ip": "192.168.4.50",
           "mask": "255.255.255.0",
-          "mac": "00::01",
+          "mac": "00::02",
           "active": "true"
           
         }
@@ -41,7 +45,7 @@
           "destination": "s1",
           "delay": "15",
           "loss": "5",
-          "bandwith": "1MB"
+          "bandwith": "1"
         },
         {
           "id": "l2",
@@ -49,9 +53,9 @@
           "name": "fiber1",
           "source": "s1",
           "destination": "c1",
-          "delay": "2ms",
-          "loss": "1%",
-          "bandwith": "10MB"
+          "delay": "2",
+          "loss": "1",
+          "bandwith": "10"
         }
         ]
     },
@@ -61,4 +65,4 @@
     "lineal": {
       
     },
-    "nameArchive": "nombreTopo"}
+    "nameArchive": "nombreTopo.py"}
