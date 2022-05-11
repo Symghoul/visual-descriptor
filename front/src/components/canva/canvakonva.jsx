@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AppContext from "../../context/AppContext";
 import { Stage, Layer, Rect, Text, Line } from "react-konva";
 import { INITIAL_STATE, SIZE } from "./config";
@@ -17,6 +17,13 @@ function hasIntersection(position, step) {
   );
 }
 
+/**
+ *
+ * @param {*} position
+ * @param {*} id of the selected device/step
+ * @param {*} steps
+ * @returns
+ */
 function detectConnection(position, id, steps) {
   const intersectingStep = Object.keys(steps).find((key) => {
     return key !== id && hasIntersection(position, steps[key]);
@@ -29,6 +36,10 @@ function detectConnection(position, id, steps) {
 
 function Canva() {
   const state = useContext(AppContext);
+
+  useEffect(() => {
+    console.log(connections);
+  });
 
   const [selectedStep, setSelectedStep] = useState(null);
   const [connectionPreview, setConnectionPreview] = useState(null);
@@ -157,7 +168,6 @@ function Canva() {
   return (
     <Stage width={window.innerWidth} height={window.innerHeight}>
       <Layer>
-        <Text text="Click a rectangle to select it. Drag the anchor to create a connection between the objects" />
         {stepObjs}
         {borders}
         {connectionObjs}

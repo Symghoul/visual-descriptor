@@ -1,6 +1,5 @@
 import React from "react";
 import { AppContextWrapper } from "./context/AppContext";
-//import TaskContainer from "./components/TaskContainer/TaskContainer";
 import MainScreen from "./components/mainScreen/mainScreen";
 import Clock from "./components/testComponent";
 
