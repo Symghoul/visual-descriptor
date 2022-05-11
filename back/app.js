@@ -5,17 +5,19 @@ const util = require('util')
 const lodash = require('lodash');
 
 const model = require('./model/controller')
-const port = 3000
+//const port = 3000
 
 app.use(express.json());
+
+module.exports = app;
 
 app.get('/', (_req, res) => {
   res.send('Hello World!')
 })
 
-app.listen(port, () => {
-  console.log(`app listening on port ${port}`)
-})
+//app.listen(port, () => {
+//  console.log(`app listening on port ${port}`)
+//})
 
 app.post('/export', function (req, res){
 
@@ -30,16 +32,16 @@ app.post('/export', function (req, res){
    if(topo.custom != null) {
      topocustom(topo.custom, topo.nameArchive)
    }
-   else if(topo.tree != null){
-     topotree(topo.tree, topo.nameArchive)
-   } 
-   else if(topo.lineal != null){
-     topolineal(topo.lineal, topo.nameArchive)
-   }
+  // else if(topo.tree != null){
+  //   topotree(topo.tree, topo.nameArchive)
+  // } 
+  // else if(topo.lineal != null){
+  //   topolineal(topo.lineal, topo.nameArchive)
+  // }
 
    // El comando para ejecutar mininet, recordar usar el nombre del archivo para nombrar el script
 
-  res.status(200).send(`Todo listo patrón`)
+  res.status(200).send(`Funciona perfectamente`)
 });
 
 
@@ -93,14 +95,13 @@ function topocustom(custom, nameArchive ){
     `from mininet.net import Mininet \n`+
     `from mininet.log import info, setLogLevel \n`+
     `from mininet.cli import CLI \n`+
-    `from mininet.node import controller, remoteController \n`+
+    `from mininet.node import Controller, RemoteController \n`+
 `\n`+
     `def topology(): \n`+
     ` "Create a network."\n`+
-    ` net = Mininet( controller=Controller )\n`+
+    ` net = Mininet( co ntroller=Controller )\n`+
 `\n`+
     ` info("*** Creating nodes")\n`);
- // console.log(cus.controllers, cus.switches, cus.hosts )
   custom.controllers.forEach(element =>{
     if(element === undefined){
       console.log("Los controladores no estan definidos")}
@@ -132,18 +133,6 @@ function topocustom(custom, nameArchive ){
     }
   });
           
-        
-          
-    //` s2 = net.addSwitch( 's2', protocols='OpenFlow10', listenPort=6673, mac='00:00:00:00:00:02' )\n`+
-    //` s3 = net.addSwitch( 's3', protocols='OpenFlow10', listenPort=6674, mac='00:00:00:00:00:03' )\n`+
-    //` h4 = net.addHost( 'h4', mac='00:00:00:00:00:04', ip='10.0.0.4/8' )\n`+
-    //` h5 = net.addHost( 'h5', mac='00:00:00:00:00:05', ip='10.0.0.5/8' )\n`+
-    //` h6 = net.addHost( 'h6', mac='00:00:00:00:00:06', ip='10.0.0.6/8' )\n`+
-    //` h7 = net.addHost( 'h7', mac='00:00:00:00:00:07', ip='10.0.0.7/8' )\n`+
-    //`\n`+
-    //host, switch, bw=10, delay='5ms', loss=2,
-    //                          max_queue_size=1000, use_htb=True )
-    //
     writeFileSync += (`\n\n info("*** Creating links")\n`);
     custom.links.forEach(element=>{
       if(element === undefined || element.id === undefined){
@@ -187,8 +176,6 @@ function topocustom(custom, nameArchive ){
     ` info("*** Running CLI")\n`+
     ` CLI( net )\n`+
     `\n`+
-   // ` info("*** Stopping network")\n`+
-   // ` net.stop()\n`+
 
     `if __name__ == '__main__':\n`+
     ` setLogLevel( 'info' )\n`+
@@ -196,19 +183,19 @@ function topocustom(custom, nameArchive ){
 
     );
 
-// Aqui iría el comando para crear el script createScript();
+// Aqui va el comando para crear el script createScript();
   
   fs.writeFileSync(`${nameArchive}`, writeFileSync);
 
 }
 
-function topolineal(_lineal){
-//Aquí va la recepción especifica de los parametros para correr los ejemplos y con eso va el script
-}
-
-function topotree(_tree){
-//Aquí va la recepción especifica de los parametros para correr los ejemplos y con eso va el script
-}
+//function topolineal(_lineal){
+////Aquí va la recepción especifica de los parametros para correr los ejemplos y con eso va el script
+//}
+//
+//function topotree(_tree){
+////Aquí va la recepción especifica de los parametros para correr los ejemplos y con eso va el script
+//}
 
 function mask(mac){
 
