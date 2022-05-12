@@ -1,11 +1,13 @@
+require('dotenv').config();
+
 const app = require("./app");
-const port = 3000
+require('./database');
 
 
 async function main(){
   
-  await app.listen(port);
-  console.log(`app listening on port ${port}`);
+  await app.listen(app.get('port'));
+  console.log(`app listening on port ${app.get('port')}`);
 
 }
 

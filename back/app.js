@@ -4,7 +4,7 @@ const fs = require('fs')
 const util = require('util')
 const lodash = require('lodash');
 
-const model = require('./model/controller')
+//const model = require('./model/controller')
 //const port = 3000
 
 app.use(express.json());
