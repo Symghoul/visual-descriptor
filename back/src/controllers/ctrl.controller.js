@@ -1,22 +1,45 @@
 const controllerCtrl = {};
 
-controllerCtrl.getControllers = (req,res)=>{
-    res.json({message: 'Funciona en controllers'})
+const controller = require('../model/controller');
+
+controllerCtrl.getControllers = async (req,res)=>{
+    const controllers = await controller.find();
+    res.json(controllers)
 }
 
-controllerCtrl.createControllers = (req,res)=>{
+controllerCtrl.createControllers = async (req,res)=>{
+    const {name, port, type, ip, remote} = req.body;
+    const newcontroller = new controller({
+        name, 
+         port,
+         type,
+        ip,
+         remote
+    })
+    await newcontroller.save();
     res.send({message: 'Controlador guardado'})
 }
 
-controllerCtrl.getControllerById = (req,res)=>{
-    res.send({message: 'este es el controlador '})
+controllerCtrl.getControllerById = async (req,res)=>{
+    const c = await controller.findById(req.params.id);
+
+    res.send(c)
 }
 
-controllerCtrl.updateController = (req,res)=>{
+controllerCtrl.updateController = async(req,res)=>{
+    const {name, port, type, ip, remote} = req.body;
+    await controller.findByIdAndUpdate(req.params.id, {
+        name, 
+         port,
+         type,
+        ip,
+         remote
+    });
     res.send({message: 'Controlador modificado'})
 }
 
-controllerCtrl.deleteController = (req,res)=>{
+controllerCtrl.deleteController = async (req,res)=>{
+    await controller.findByIdAndDelete(req.params.id);
     res.send({message: 'Controlador eliminado'})
 }
 

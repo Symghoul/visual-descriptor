@@ -1,24 +1,46 @@
-const switchesCtrl = {}
+const switchesCtrl = {};
 
-switchesCtrl.getSwitches = (req,res)=>{
-    res.json({message: 'Funciona en switches'})
+const switche = require('../model/switch');
+
+switchesCtrl.getSwitches = async (req,res)=>{
+    const switches = await switche.find();
+    res.json(switche)
 }
 
-switchesCtrl.createSwitch = (req,res)=>{
-    res.send({message: 'Controlador switches'})
+switchesCtrl.createSwitch = async (req,res)=>{
+    const {name, controller, mac, protocol, listenPort} = req.body;
+    const newSwitch = new switche({
+        name, 
+        controller,
+        mac,
+        protocol,
+        listenPort
+    })
+    await newSwitch.save();
+    res.send({message: 'switch creado'})
 }
 
-switchesCtrl.getSwitchById = (req,res)=>{
-    res.send({message: 'este es el switches '})
+switchesCtrl.getSwitchById = async (req,res)=>{
+    const s = await switche.findById(req.params.id);
+
+    res.send(s)
 }
 
-switchesCtrl.updateSwitch = (req,res)=>{
-    res.send({message: 'switches modificado'})
+switchesCtrl.updateSwitch = async (req,res)=>{
+    const {name, controller, mac, protocol, listenPort} = req.body;
+    await switche.findByIdAndUpdate(req.body.id, {
+        name, 
+        controller,
+        mac,
+        protocol,
+        listenPort
+    });
+    res.send({message: 'switch modificado'})
 }
 
-switchesCtrl.deleteSwitch = (req,res)=>{
-    res.send({message: 'switches eliminado'})
+switchesCtrl.deleteSwitch = async (req,res)=>{
+    await switche.findByIdAndDelete(req.params.id);
+    res.send({message: 'switch eliminado'})
 }
-
 
 module.exports = switchesCtrl;
