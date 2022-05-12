@@ -13,10 +13,11 @@ app.use(express.json());
 //routes
 app.get('/', (_req, res) => {
     res.send('Hello World!')
-  })
-app.get('/api/controllers', (_req, res) => {
-    
 })
+app.use('/api/controllers', require('./routes/controllers'))
+app.use('/api/switches', require('./routes/switches'))
+app.use('/api/hosts', require('./routes/hosts'))
+app.use('/api/links', require('./routes/links'))
 
 
 module.exports = app;

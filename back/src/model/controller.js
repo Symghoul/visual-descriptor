@@ -1,11 +1,21 @@
+const {Schema, model} = require('mongoose');
 
-class Controller{
-    constructor(id,object,name,port,type,ip,remote){
-        this.id =  id;
-        this.object =  object;
-        this.name =  name;
-        this.port =  port;
-        this.type =  type;
-        this.ip =  ip;
-        this.remote =  remote;}
-}
+
+const controllerSchema = new Schema({
+    name: String,
+    port: {
+        type: Number,
+        required: true
+    },
+    type: String,
+    ip:{
+        type: String,
+        required: true,
+        unique : true
+    },
+    remote: Boolean
+
+})
+
+
+module.exports = model('controller', controllerSchema);
