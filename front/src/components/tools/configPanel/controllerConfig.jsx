@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import AppContext from "../../../context/AppContext";
 import { styled } from "@mui/material/styles";
 import { Autocomplete, TextField } from "@mui/material";
 
-import "./pc.css";
+import "./controllerConfig.css";
 
 const CssTextField = styled(TextField)({
   "& label.Mui-focused": {
@@ -24,29 +25,45 @@ const CssTextField = styled(TextField)({
   },
 });
 
-function ConfigPanel() {
-  const [txtName, setTxtName] = useState("");
-  const [txtPort, setTxtPort] = useState("");
-  const [txtIP, setTxtIP] = useState("");
+function ControllerConfig() {
+  const state = useContext(AppContext);
 
-  const controllerTypes = [{ label: "Ovs-Controller" }];
+  const [id, setId] = useState("");
+  const [name, setName] = useState("");
+  const [port, setPort] = useState("");
+  const [ip, setIP] = useState("");
+
+  const controllerTypes = ["Ovs-Controller", "NOX", "Remote Controller", "Ryu"];
+
+  const handleName = (e) => {
+    setName(e.event.target.value);
+    const controllerNameUpdt = state.controllers.map((controller) => {
+      if (controller.id === id) {
+        return {
+          ...controller,
+          name: name,
+        };
+      }
+      state.setControllers(controllerNameUpdt);
+    });
+  };
 
   return (
     <div className="container">
       <div className="field">
         <CssTextField
-          id="cntrlName_txtfield"
-          value={txtName}
-          onChange={(event) => setTxtName(event.target.value)}
+          id="cntrlName"
+          value={name}
+          onChange={handleName}
           label={"Controller Name"}
         />
       </div>
 
       <div className="field">
         <CssTextField
-          id="cntrlPort_txtfield"
-          value={txtPort}
-          onChange={(event) => setTxtPort(event.target.value)}
+          id="cntrlPort"
+          value={port}
+          onChange={(event) => setPort(event.target.value)}
           label={"Port Number"}
         />
       </div>
@@ -66,9 +83,9 @@ function ConfigPanel() {
 
       <div className="field">
         <CssTextField
-          id="cntrlIp_txtField"
-          value={txtIP}
-          onChange={(event) => setTxtIP(event.target.value)}
+          id="cntrlIp"
+          value={ip}
+          onChange={(event) => setIP(event.target.value)}
           label={"IP Adress"}
         />
       </div>
@@ -76,4 +93,4 @@ function ConfigPanel() {
   );
 }
 
-export default ConfigPanel;
+export default ControllerConfig;
