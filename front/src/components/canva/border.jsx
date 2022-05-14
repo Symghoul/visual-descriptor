@@ -28,13 +28,13 @@ function getAnchorPoints(x, y) {
 }
 
 function Border({
-  step,
+  device,
   id,
   onAnchorDragStart,
   onAnchorDragMove,
   onAnchorDragEnd,
 }) {
-  const { x, y } = step;
+  const { x, y } = device;
   const anchorPoints = getAnchorPoints(x, y);
   const anchors = anchorPoints.map((position, index) => (
     <Anchor

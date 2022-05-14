@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from "react";
 import "./mainScreen.css";
 
 import ToolsPanel from "../tools/toolsPanel";
-import Canva from "../canva/canvakonva";
+import Canva from "../canva/canvaMix";
 
 function MainScreen() {
   return (
