@@ -26,7 +26,7 @@ function ToolsPanel() {
       return <HostConfig />;
     } else if (deviceType.type === "switch") {
       return <SwitchConfig />;
-    } else if (deviceType === 4) {
+    } else if (deviceType.type === "link") {
       return <LinkConfig />;
     }
   };

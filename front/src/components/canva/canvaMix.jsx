@@ -49,43 +49,25 @@ function Canva() {
     }
   }
 
-  function handleDeviceDrag(e, device) {
+  function handleDeviceDrag(e, device, index) {
     const position = e.target.position();
     const deviceFound = state.getDevice(device);
 
     if (deviceFound.type === "controller") {
-      //console.log(deviceFound);
-
-      // update device
-      const updatedDevice = { ...deviceFound, ...position };
-      //console.log(updatedDevice);
-
-      //delete old controller
-      const controllersArr = state.controllers.filter(
-        (controller) => controller.id !== deviceFound.id
-      );
-
-      state.setControllers([...controllersArr, updatedDevice]);
-
-      //update controllers
-      //setCanvaControllers((prevCanvaControllers) => [
-      //  ...prevCanvaControllers,
-      //  { ...deviceFound, ...position },
-      //]);
-    }
-
-    if (deviceFound.type === "host") {
-      const updatedDevice = { ...deviceFound, ...position };
-      const hostsArr = state.hosts.filter((host) => host.id !== deviceFound.id);
-      state.setHosts([...hostsArr, updatedDevice]);
-    }
-
-    if (deviceFound.type === "switch") {
-      const updatedDevice = { ...deviceFound, ...position };
-      const switchesArr = state.switches.filter(
-        (switche) => switche.id !== deviceFound.id
-      );
-      state.setSwitches([...switchesArr, updatedDevice]);
+      const newArrayController = [...state.controllers];
+      newArrayController[index].x = position.x;
+      newArrayController[index].y = position.y;
+      state.setControllers(newArrayController);
+    } else if (deviceFound.type === "host") {
+      const newArrayController = [...state.hosts];
+      newArrayController[index].x = position.x;
+      newArrayController[index].y = position.y;
+      state.setHosts(newArrayController);
+    } else if (deviceFound.type === "switch") {
+      const newArrayController = [...state.switches];
+      newArrayController[index].x = position.x;
+      newArrayController[index].y = position.y;
+      state.setSwitches(newArrayController);
     }
   }
 
@@ -102,59 +84,13 @@ function Canva() {
   function detectConnection(position, device) {
     let intersectingDevice = null;
 
-    if (device.type === "controller") {
-      intersectingDevice = state.controllers.find((controller) => {
-        //first conditional controller different than the start device
-        return (
-          controller.id !== device.id && hasIntersection(position, controller)
-        );
-      });
+    const devices = [...state.controllers, ...state.hosts, ...state.switches];
 
-      intersectingDevice = state.hosts.find((host) => {
-        return host.id !== device.id && hasIntersection(position, host);
-      });
+    intersectingDevice = devices.find(
+      (dev) => dev.id !== device.id && hasIntersection(position, dev)
+    );
 
-      //intersectingDevice = state.switches.find((switche) => {
-      //  return switche.id !== device.id && hasIntersection(position, switche);
-      //});
-    }
-
-    if (device.type === "host") {
-      intersectingDevice = state.controllers.find((controller) => {
-        return (
-          controller.id !== device.id && hasIntersection(position, controller)
-        );
-      });
-
-      intersectingDevice = state.hosts.find((host) => {
-        return host.id !== device.id && hasIntersection(position, host);
-      });
-
-      //intersectingDevice = state.switches.find((switche) => {
-      //  return switche.id !== device.id && hasIntersection(position, switche);
-      //});
-    }
-
-    //if (device.type === "switch") {
-    //  intersectingDevice = state.switches.find((switche) => {
-    //    return switche.id !== device.id && hasIntersection(position, switche);
-    //  });
-    //
-    //  intersectingDevice = state.hosts.find((host) => {
-    //    return host.id !== device.id && hasIntersection(position, host);
-    //  });
-    //
-    //  intersectingDevice = state.controllers.find((controller) => {
-    //    return (
-    //      controller.id !== device.id && hasIntersection(position, controller)
-    //    );
-    //  });
-    //}
-
-    if (intersectingDevice) {
-      return intersectingDevice;
-    }
-    return null;
+    return intersectingDevice ?? null;
   }
 
   function handleAnchorDragStart(e) {
@@ -220,7 +156,7 @@ function Canva() {
                 type: "controller",
                 x: e.target.x(),
                 y: e.target.y(),
-                colour: "red",
+                color: "red",
               },
             ]);
           }}
@@ -230,7 +166,7 @@ function Canva() {
     );
   }
 
-  const allControllers = state.controllers.map((eachController) => {
+  const allControllers = state.controllers.map((eachController, index) => {
     return (
       <div>
         <Rect
@@ -240,11 +176,11 @@ function Canva() {
           y={eachController.y}
           width={SIZE}
           height={SIZE}
-          fill={eachController.colour}
+          fill={eachController.color}
           draggable
           perfectDrawEnabled={false}
           onClick={() => handleSelection(eachController)}
-          onDragMove={(e) => handleDeviceDrag(e, eachController)}
+          onDragMove={(e) => handleDeviceDrag(e, eachController, index)}
         />
         <Text
           text={eachController.name}
@@ -348,8 +284,8 @@ function Canva() {
       <Layer>
         <CanvaController />
         <CanvaHost />
-        {connectionObjs}
         {borders}
+        {connectionObjs}
         {allHosts}
         {allControllers}
         {connectionPreview}

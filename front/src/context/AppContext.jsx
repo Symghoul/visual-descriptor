@@ -1,7 +1,3 @@
-/**
- * Here lies the context of the aplication
- */
-
 import React, { useState } from "react";
 import * as uuid from "uuid";
 
@@ -33,6 +29,9 @@ export const AppContextWrapper = (props) => {
       return foundDevice;
     } else if (device.type === "switch") {
       foundDevice = switches.find((switche) => switche.id === device.id);
+      return foundDevice;
+    } else if (device.type === "link") {
+      foundDevice = links.find((link) => link.id === device.id);
       return foundDevice;
     } else {
       return foundDevice;
