@@ -18,6 +18,7 @@ app.use('/api/controllers', require('./routes/controllers'))
 app.use('/api/switches', require('./routes/switches'))
 app.use('/api/hosts', require('./routes/hosts'))
 app.use('/api/links', require('./routes/links'))
+app.use('/api/export', require('./routes/general'))
 
 
 module.exports = app;

@@ -2,6 +2,7 @@ const {Schema, model} = require('mongoose');
 
 
 const controllerSchema = new Schema({
+    symbol: String,
     name: String,
     port: {
         type: Number,
