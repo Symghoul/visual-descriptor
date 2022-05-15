@@ -20,11 +20,11 @@ function ToolsPanel() {
   const showView = () => {
     if (deviceType === null) {
       return <></>;
-    } else if (deviceType === "controller") {
+    } else if (deviceType.type === "controller") {
       return <ControllerConfig />;
-    } else if (deviceType === "host") {
+    } else if (deviceType.type === "host") {
       return <HostConfig />;
-    } else if (deviceType === "switch") {
+    } else if (deviceType.type === "switch") {
       return <SwitchConfig />;
     } else if (deviceType === 4) {
       return <LinkConfig />;

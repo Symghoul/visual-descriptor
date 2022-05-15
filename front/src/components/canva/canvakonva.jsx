@@ -8,28 +8,29 @@ function createConnectionPoints(source, destination) {
   return [source.x, source.y, destination.x, destination.y];
 }
 
-function hasIntersection(position, step) {
+function hasIntersection(position, device) {
+  console.log("has intersection device");
+  console.log(device);
   return !(
-    step.x > position.x ||
-    step.x + SIZE < position.x ||
-    step.y > position.y ||
-    step.y + SIZE < position.y
+    device.x > position.x ||
+    device.x + SIZE < position.x ||
+    device.y > position.y ||
+    device.y + SIZE < position.y
   );
 }
 
-/**
- *
- * @param {*} position
- * @param {*} id of the selected device/step
- * @param {*} steps
- * @returns
- */
-function detectConnection(position, id, steps) {
-  const intersectingStep = Object.keys(steps).find((key) => {
-    return key !== id && hasIntersection(position, steps[key]);
+function detectConnection(position, id, devices) {
+  const intersectingDevice = Object.keys(devices).find((key) => {
+    console.log("detect conection devices");
+    console.log(devices);
+    console.log("detect conection id");
+    console.log(id);
+    console.log("detect conection key");
+    console.log(key);
+    return key !== id && hasIntersection(position, devices[key]);
   });
-  if (intersectingStep) {
-    return intersectingStep;
+  if (intersectingDevice) {
+    return intersectingDevice;
   }
   return null;
 }
@@ -38,30 +39,31 @@ function Canva() {
   const state = useContext(AppContext);
 
   useEffect(() => {
+    console.log("connectionObjs");
     console.log(connections);
   });
 
-  const [selectedStep, setSelectedStep] = useState(null);
+  const [selectedDevice, setSelectedDevice] = useState(null);
   const [connectionPreview, setConnectionPreview] = useState(null);
   const [connections, setConnections] = useState([]);
-  const [steps, setSteps] = useState(INITIAL_STATE.steps);
+  const [devices, setDevices] = useState(INITIAL_STATE.devices);
 
   function handleSelection(id, deviceType) {
-    if (selectedStep === id) {
-      setSelectedStep(null);
+    if (selectedDevice === id) {
+      setSelectedDevice(null);
       state.setSelectedDevice(null);
     } else {
-      setSelectedStep(id);
+      setSelectedDevice(id);
       state.setSelectedDevice(deviceType);
     }
   }
 
-  function handleStepDrag(e, key) {
+  function handleDeviceDrag(e, key) {
     const position = e.target.position();
-    setSteps({
-      ...steps,
+    setDevices({
+      ...devices,
       [key]: {
-        ...steps[key],
+        ...devices[key],
         ...position,
       },
     });
@@ -108,7 +110,9 @@ function Canva() {
     setConnectionPreview(null);
     const stage = e.target.getStage();
     const mousePos = stage.getPointerPosition();
-    const connectionTo = detectConnection(mousePos, id, steps);
+    console.log("anchor end");
+    console.log(id);
+    const connectionTo = detectConnection(mousePos, id, devices);
     if (connectionTo !== null) {
       setConnections([
         ...connections,
@@ -117,11 +121,13 @@ function Canva() {
           from: id,
         },
       ]);
+      console.log("conection created");
+      console.log(connectionObjs);
     }
   }
 
-  const stepObjs = Object.keys(steps).map((key) => {
-    const { type, x, y, colour } = steps[key];
+  const defaultDevices = Object.keys(devices).map((key) => {
+    const { type, x, y, colour } = devices[key];
     return (
       <Rect
         key={key}
@@ -132,35 +138,38 @@ function Canva() {
         fill={colour}
         onClick={() => handleSelection(key, type)}
         draggable
-        onDragMove={(e) => handleStepDrag(e, key)}
+        onDragMove={(e) => handleDeviceDrag(e, key)}
         perfectDrawEnabled={false}
       />
     );
   });
+
   const connectionObjs = connections.map((connection) => {
-    const fromStep = steps[connection.from];
-    const toStep = steps[connection.to];
+    const fromDevice = devices[connection.from];
+    const toDevice = devices[connection.to];
     const lineEnd = {
-      x: toStep.x - fromStep.x,
-      y: toStep.y - fromStep.y,
+      x: toDevice.x - fromDevice.x,
+      y: toDevice.y - fromDevice.y,
     };
+
     const points = createConnectionPoints({ x: 0, y: 0 }, lineEnd);
     return (
       <Line
-        x={fromStep.x + SIZE / 2}
-        y={fromStep.y + SIZE / 2}
+        x={fromDevice.x + SIZE / 2}
+        y={fromDevice.y + SIZE / 2}
         points={points}
         stroke="orange"
         strokeWidth={5}
       />
     );
   });
+
   const borders =
-    selectedStep !== null ? (
+    selectedDevice !== null ? (
       <Border
-        id={selectedStep}
-        step={steps[selectedStep]}
-        onAnchorDragEnd={(e) => handleAnchorDragEnd(e, selectedStep)}
+        id={selectedDevice}
+        device={devices[selectedDevice]}
+        onAnchorDragEnd={(e) => handleAnchorDragEnd(e, selectedDevice)}
         onAnchorDragMove={handleAnchorDragMove}
         onAnchorDragStart={handleAnchorDragStart}
       />
@@ -168,7 +177,7 @@ function Canva() {
   return (
     <Stage width={window.innerWidth} height={window.innerHeight}>
       <Layer>
-        {stepObjs}
+        {defaultDevices}
         {borders}
         {connectionObjs}
         {connectionPreview}
