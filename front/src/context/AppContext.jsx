@@ -22,13 +22,20 @@ export const AppContextWrapper = (props) => {
   };
 
   function getDevice(device) {
+    let foundDevice = null;
     if (device.type === "controller") {
-      const foundDevice = controllers.find(
+      foundDevice = controllers.find(
         (controller) => controller.id === device.id
       );
       return foundDevice;
+    } else if (device.type === "host") {
+      foundDevice = hosts.find((host) => host.id === device.id);
+      return foundDevice;
+    } else if (device.type === "switch") {
+      foundDevice = switches.find((switche) => switche.id === device.id);
+      return foundDevice;
     } else {
-      return null;
+      return foundDevice;
     }
   }
 

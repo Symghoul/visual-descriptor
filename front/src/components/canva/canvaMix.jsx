@@ -73,6 +73,20 @@ function Canva() {
       //  { ...deviceFound, ...position },
       //]);
     }
+
+    if (deviceFound.type === "host") {
+      const updatedDevice = { ...deviceFound, ...position };
+      const hostsArr = state.hosts.filter((host) => host.id !== deviceFound.id);
+      state.setHosts([...hostsArr, updatedDevice]);
+    }
+
+    if (deviceFound.type === "switch") {
+      const updatedDevice = { ...deviceFound, ...position };
+      const switchesArr = state.switches.filter(
+        (switche) => switche.id !== deviceFound.id
+      );
+      state.setSwitches([...switchesArr, updatedDevice]);
+    }
   }
 
   function hasIntersection(position, device) {
@@ -86,12 +100,57 @@ function Canva() {
   }
 
   function detectConnection(position, device) {
-    const intersectingDevice = state.controllers.find((controller) => {
-      //first conditional controller different than the start device
-      return (
-        controller.id !== device.id && hasIntersection(position, controller)
-      );
-    });
+    let intersectingDevice = null;
+
+    if (device.type === "controller") {
+      intersectingDevice = state.controllers.find((controller) => {
+        //first conditional controller different than the start device
+        return (
+          controller.id !== device.id && hasIntersection(position, controller)
+        );
+      });
+
+      intersectingDevice = state.hosts.find((host) => {
+        return host.id !== device.id && hasIntersection(position, host);
+      });
+
+      //intersectingDevice = state.switches.find((switche) => {
+      //  return switche.id !== device.id && hasIntersection(position, switche);
+      //});
+    }
+
+    if (device.type === "host") {
+      intersectingDevice = state.controllers.find((controller) => {
+        return (
+          controller.id !== device.id && hasIntersection(position, controller)
+        );
+      });
+
+      intersectingDevice = state.hosts.find((host) => {
+        return host.id !== device.id && hasIntersection(position, host);
+      });
+
+      //intersectingDevice = state.switches.find((switche) => {
+      //  return switche.id !== device.id && hasIntersection(position, switche);
+      //});
+    }
+
+    //if (device.type === "switch") {
+    //  intersectingDevice = state.switches.find((switche) => {
+    //    return switche.id !== device.id && hasIntersection(position, switche);
+    //  });
+    //
+    //  intersectingDevice = state.hosts.find((host) => {
+    //    return host.id !== device.id && hasIntersection(position, host);
+    //  });
+    //
+    //  intersectingDevice = state.controllers.find((controller) => {
+    //    return (
+    //      controller.id !== device.id && hasIntersection(position, controller)
+    //    );
+    //  });
+    //}
+
     if (intersectingDevice) {
       return intersectingDevice;
     }
@@ -142,7 +201,7 @@ function Canva() {
     }
   }
 
-  function CanvaDeviceController() {
+  function CanvaController() {
     return (
       <div>
         <Rect
@@ -150,7 +209,7 @@ function Canva() {
           y={580}
           width={SIZE}
           height={SIZE}
-          fill="blue"
+          fill="red"
           draggable
           onDragEnd={(e) => {
             state.setControllers((prevControllers) => [
@@ -161,7 +220,7 @@ function Canva() {
                 type: "controller",
                 x: e.target.x(),
                 y: e.target.y(),
-                colour: "blue",
+                colour: "red",
               },
             ]);
           }}
@@ -196,16 +255,62 @@ function Canva() {
     );
   });
 
+  function CanvaHost() {
+    return (
+      <div>
+        <Rect
+          x={105}
+          y={580}
+          width={SIZE}
+          height={SIZE}
+          fill="blue"
+          draggable
+          onDragEnd={(e) => {
+            state.setHosts((prevHosts) => [
+              ...prevHosts,
+              {
+                id: uuid.v1(),
+                name: "Host",
+                type: "host",
+                x: e.target.x(),
+                y: e.target.y(),
+                colour: "blue",
+              },
+            ]);
+          }}
+        />
+        <Text text="Host" x={105} y={632} />
+      </div>
+    );
+  }
+
+  const allHosts = state.hosts.map((eachHost) => {
+    return (
+      <div>
+        <Rect
+          id={eachHost.id}
+          type={eachHost.type}
+          x={eachHost.x}
+          y={eachHost.y}
+          width={SIZE}
+          height={SIZE}
+          fill={eachHost.colour}
+          draggable
+          perfectDrawEnabled={false}
+          onClick={() => handleSelection(eachHost)}
+          onDragMove={(e) => handleDeviceDrag(e, eachHost)}
+        />
+        <Text text={eachHost.name} x={eachHost.x} y={eachHost.y + SIZE} />
+      </div>
+    );
+  });
+
   //renders all lines/connections between devices
   const connectionObjs = connections.map((connection) => {
     //validar los dispositivos
 
-    const fromDevice = state.controllers.find(
-      (controller) => controller.id === connection.from.id
-    );
-    const toDevice = state.controllers.find(
-      (controller) => controller.id === connection.to.id
-    );
+    const fromDevice = state.getDevice(connection.from);
+    const toDevice = state.getDevice(connection.to);
     const lineEnd = {
       x: toDevice.x - fromDevice.x,
       y: toDevice.y - fromDevice.y,
@@ -241,9 +346,11 @@ function Canva() {
   return (
     <Stage width={window.innerWidth} height={window.innerHeight}>
       <Layer>
-        <CanvaDeviceController />
+        <CanvaController />
+        <CanvaHost />
         {connectionObjs}
         {borders}
+        {allHosts}
         {allControllers}
         {connectionPreview}
       </Layer>
