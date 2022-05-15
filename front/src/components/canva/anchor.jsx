@@ -18,7 +18,7 @@ function Anchor({ x, y, id, onDragMove, onDragEnd, onDragStart }) {
       x={x}
       y={y}
       radius={5}
-      fill="black"
+      fill="grey"
       draggable
       onDragStart={(e) => onDragStart(e, id)}
       onDragMove={(e) => onDragMove(e, id)}

@@ -18,8 +18,19 @@ export const AppContextWrapper = (props) => {
   // ----------- Main methods -----------
 
   const exportData = () => {
-    console.log(controllers, switches, hosts, links);
+    //console.log(controllers, switches, hosts, links);
   };
+
+  function getDevice(device) {
+    if (device.type === "controller") {
+      const foundDevice = controllers.find(
+        (controller) => controller.id === device.id
+      );
+      return foundDevice;
+    } else {
+      return null;
+    }
+  }
 
   // ----------- Controller methods -----------
   const saveController = (name, port, type, ip) => {
@@ -109,6 +120,7 @@ export const AppContextWrapper = (props) => {
 
     selectedDevice,
     setSelectedDevice,
+    getDevice,
 
     controllers,
     setControllers,
