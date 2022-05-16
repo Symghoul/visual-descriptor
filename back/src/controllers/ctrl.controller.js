@@ -8,10 +8,12 @@ controllerCtrl.getControllers = async (req,res)=>{
 }
 
 controllerCtrl.createControllers = async (req,res)=>{
-    const {name, port, type, ip, remote} = req.body;
+    const {name, port,symbol, indicator, type, ip, remote} = req.body;
     const newcontroller = new controller({
         name, 
          port,
+         symbol,
+         indicator,
          type,
         ip,
          remote
@@ -21,26 +23,36 @@ controllerCtrl.createControllers = async (req,res)=>{
 }
 
 controllerCtrl.getControllerById = async (req,res)=>{
-    const c = await controller.findById(req.params.id);
+    const c = await controller.find({indicator:req.params.indicator});
 
     res.send(c)
 }
 
 controllerCtrl.updateController = async(req,res)=>{
-    const {name, port, type, ip, remote} = req.body;
-    await controller.findByIdAndUpdate(req.params.id, {
-        name, 
+    const {name, port, indicator, symbol, type, ip, remote} = req.body;
+    const action = await controller.updateOne({indicator:req.params.indicator}, {
+        name,
+        indicator,
+        symbol, 
          port,
          type,
         ip,
          remote
     });
-    res.send({message: 'Controlador modificado'})
+    
+    if(action.matchedCount === 1)
+        res.send({message: 'Controlador modificado'})
+    else{
+        res.send({message:"No se modificó el controlador"})}
 }
 
 controllerCtrl.deleteController = async (req,res)=>{
-    await controller.findByIdAndDelete(req.params.id);
-    res.send({message: 'Controlador eliminado'})
+    const action = await controller.deleteOne({indicator:req.params.indicator});
+    if(action.deletedCount===1)
+        res.send({message: 'Controlador eliminado'})
+    else{
+        res.send({message: 'Controlador no eliminado'})
+    }
 }
 
 module.exports = controllerCtrl;

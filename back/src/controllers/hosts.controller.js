@@ -8,9 +8,11 @@ hostsCtrl.gethosts = async (req,res)=>{
 }
 
 hostsCtrl.createhosts = async (req,res)=>{
-    const {name, ip, mask, mac, active} = req.body;
+    const {name, symbol, indicator, ip, mask, mac, active} = req.body;
     const newHost = new host({
         name,
+        symbol,
+        indicator,
         ip,
         mask, 
         mac,
@@ -21,26 +23,37 @@ hostsCtrl.createhosts = async (req,res)=>{
 }
 
 hostsCtrl.gethostById = async (req,res)=>{
-    const h = await host.findById(req.params.id);
+    const h = await host.find({indicator:req.params.indicator});
     
     res.send(h)
 }
 
 hostsCtrl.updatehost = async (req,res)=>{
-    const {name, ip, mask, mac, active} = req.body;
-    await host.findByIdAndUpdate(req.params.id, {
+    const {name, ip, indicator, symbol, mask, mac, active} = req.body;
+    const action = await host.updateOne({indicator:req.params.indicator}, {
         name,
         ip,
+        indicator,
+        symbol,
         mask, 
         mac,
         active
     })
-    res.send({message: 'host modificado'})
+    if(action.matchedCount === 1)
+        res.send({message: 'host modificado'})
+    else{
+        res.send({message:"No se modificó el host"})}
+    
 }
 
 hostsCtrl.deletehost = async (req,res)=>{
-    await host.findByIdAndDelete(req.params.id);
-    res.send({message: 'host eliminado'})
+    const action = await host.deleteOne({indicator:req.params.indicator});
+    if(action.deletedCount===1)
+        res.send({message: 'host eliminado'})
+    else{
+        res.send({message: 'host no eliminado'})
+    }
+    
 }
 
 module.exports =  hostsCtrl;

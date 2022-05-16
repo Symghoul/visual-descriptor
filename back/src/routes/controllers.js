@@ -8,7 +8,7 @@ router.route('/')
     .get(getControllers)
     .post(createControllers)
 
-router.route('/:id')
+router.route('/:indicator')
     .get(getControllerById)
     .put(updateController)
     .delete(deleteController)

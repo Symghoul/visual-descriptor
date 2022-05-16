@@ -8,10 +8,12 @@ linksCtrl.getLinks = async (req,res)=>{
 }
 
 linksCtrl.createLink = async (req,res)=>{
-    const {name, source, destination, delay, loss, bandwith} = req.body;
+    const {name, source,indicator, symbol, destination, delay, loss, bandwith} = req.body;
     const newlink = new link({
         name,
         source,
+        indicator,
+        symbol,
         destination,
         delay,
         loss,
@@ -22,27 +24,36 @@ linksCtrl.createLink = async (req,res)=>{
 }
 
 linksCtrl.getLinkById = async (req,res)=>{
-    const l = await link.findById(req.params.id);
+    const l = await link.find({indicator:req.params.indicator});
 
     res.send(l)
 }
 
 linksCtrl.updateLink = async (req,res)=>{
-    const {name, source, destination, delay, loss, bandwith} = req.body;
-    await link.findByIdAndUpdate(req.params.id, {
+    const {name, source,symbol, indicator, destination, delay, loss, bandwith} = req.body;
+    const action = await link.updateOne({indicator:req.params.indicator}, {
         name,
         source,
+        symbol,
+        indicator,
         destination,
         delay,
         loss,
         bandwith
     })
-    res.send({message: 'links modificado'})
+    if(action.matchedCount === 1)
+        res.send({message: 'link modificado'})
+    else{
+        res.send({message: 'link no modificado'})}
 }
 
 linksCtrl.deleteLink = async (req,res)=>{
-    await link.findByIdAndDelete(req.params.id);
-    res.send({message: 'links eliminado'})
+    const action = await link.deleteOne({indicator:req.params.indicator});
+    if(action.deletedCount===1)
+        res.send({message: 'link eliminado'})
+    else{
+        res.send({message: 'link no eliminado'})
+    }
 }
 
 module.exports = linksCtrl;

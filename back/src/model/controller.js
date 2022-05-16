@@ -2,12 +2,15 @@ const {Schema, model} = require('mongoose');
 
 
 const controllerSchema = new Schema({
-    symbol: String,
+
+    
     name: String,
     port: {
         type: Number,
         required: true
     },
+    symbol: String,
+    indicator: String,
     type: String,
     ip:{
         type: String,
