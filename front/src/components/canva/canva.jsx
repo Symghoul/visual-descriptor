@@ -1,303 +1,344 @@
-import Konva from "konva";
-import React, { useState, useRef, useEffect } from "react";
-import { Stage, Layer, Circle, Text, Line } from "react-konva";
+import React, { useContext, useEffect, useState } from "react";
+import AppContext from "../../context/AppContext";
+import { Stage, Layer, Rect, Text, Line } from "react-konva";
+import { SIZE } from "./config";
+import * as uuid from "uuid";
+import Border from "./border";
 
-import CanvaController from "./canvaController";
+function createConnectionPoints(source, destination) {
+  return [source.x, source.y, destination.x, destination.y];
+}
 
 function Canva() {
   useEffect(() => {
-    console.log(positions);
-    console.log(clicks);
+    //console.log(connections);
+    //console.log("conections:");
+    //console.log(canvaControllers);
+    //console.log("controllers:");
+    //console.log(connectionObjs);
+    //console.log("connectionObjs");
   });
 
-  const [clicks, setClicks] = useState(() => setUpClickCount());
-  const [positions, setPositions] = useState(() => setUpPositions());
+  const state = useContext(AppContext);
 
-  const [canvaControllers, setCanvaControllers] = useState([]);
-  const [canvaSwitches, setCanvaSwitches] = useState([]);
-  const [canvaHosts, setCanvaHosts] = useState([]);
-  const [canvaEthernets, setCanvaEthernets] = useState([]);
-  const [canvaFibers, setCanvaFibers] = useState([]);
-  const [canvaLinks, setCanvaLinks] = useState([]);
-  const stageRef = useRef(null);
+  const [connectionPreview, setConnectionPreview] = useState(null);
 
-  function CanvaDeviceController() {
-    return (
-      <div>
-        <Circle
-          id="device"
-          name="controller"
-          x={50}
-          y={600}
-          radius={25}
-          fill="blue"
-          draggable
-          onDragEnd={(e) => {
-            //console.log(e.target.attrs);
-
-            // push new circle to view
-            // note that we must push circle first before returning draggable circle
-            // because e.target.x returns draggable circle's positions
-            setCanvaControllers((prevCanvaControllers) => [
-              ...prevCanvaControllers,
-              { x: e.target.x(), y: e.target.y(), fill: "blue" },
-            ]);
-
-            // return draggable circle to original position
-            // notice the dot (.) before "draggableCircle"
-            //var stage = stageRef.current;
-            //var draggableCircle = stage.findOne(".draggableCircle");
-            //draggableCircle.position({ x: 50, y: 50 });
-          }}
-        />
-        <Text text="Controller" x={23} y={628} />
-      </div>
-    );
-  }
-
-  function CanvaDeviceSwitch() {
-    return (
-      <div>
-        <Circle
-          name="switch"
-          x={100}
-          y={600}
-          radius={25}
-          fill="red"
-          draggable
-          onDragEnd={(e) => {
-            setCanvaSwitches((prevCanvaSwitches) => [
-              ...prevCanvaSwitches,
-              { x: e.target.x(), y: e.target.y(), fill: "red" },
-            ]);
-          }}
-        />
-        <Text text="Switch" x={85} y={628} />
-      </div>
-    );
-  }
-
-  function CanvaDeviceHost() {
-    return (
-      <div>
-        <Circle
-          name="host"
-          x={150}
-          y={600}
-          radius={25}
-          fill="yellow"
-          draggable
-          onDragEnd={(e) => {
-            setCanvaHosts((prevCanvaHosts) => [
-              ...prevCanvaHosts,
-              { x: e.target.x(), y: e.target.y(), fill: "yellow" },
-            ]);
-          }}
-        />
-        <Text text="Host" x={138} y={628} />
-      </div>
-    );
-  }
-
-  function setUpClickCount() {
-    return 0;
-  }
-
-  function setUpPositions() {
+  function getMousePos(e) {
+    const position = e.target.position();
+    const stage = e.target.getStage();
+    const pointerPosition = stage.getPointerPosition();
     return {
-      posAx: 0,
-      posAy: 0,
-      posBx: 0,
-      posBy: 0,
+      x: pointerPosition.x - position.x,
+      y: pointerPosition.y - position.y,
     };
   }
 
-  //function updateLine(posAx, posAy, posBx, posBy) {
-  //  Line.points([posAx, posAy, posBx, posBy]);
-  //  Layer.batchDraw();
-  //}
-
-  function CreateLink() {
-    const newLink = new Konva.Line({
-      points: [
-        positions.posAx,
-        positions.posAy,
-        positions.posBx,
-        positions.posBy,
-      ],
-      pointerLength: 10,
-      pointerWidth: 10,
-      fill: "black",
-      stroke: "black",
-      strokeWidth: 4,
-    });
-    const newLinks = [...canvaLinks, newLink];
-    setCanvaLinks(newLinks);
-
-    console.log("------------");
-    console.log(canvaLinks);
+  function handleSelection(device) {
+    if (state.selectedDevice === null) {
+      state.setSelectedDevice(device);
+    } else if (state.selectedDevice.id !== device.id) {
+      state.setSelectedDevice(device);
+    } else {
+      state.setSelectedDevice(null);
+    }
   }
 
-  //useEffect(() => {
-  //  if (cliks === 2) {
-  //    setCliks(0);
-  //  }
-  //}, [cliks]);
+  function handleDeviceDrag(e, device, index) {
+    const position = e.target.position();
+    const deviceFound = state.getDevice(device);
 
-  function CanvaDeviceEthernet() {
-    return (
-      <Circle
-        name="ethernet"
-        x={200}
-        y={600}
-        radius={25}
-        fill="black"
-        draggable
-        onDragEnd={(e) => {
-          setCanvaEthernets((prevCanvaEthernets) => [
-            ...prevCanvaEthernets,
-            { x: e.target.x(), y: e.target.y(), fill: "black" },
-          ]);
-        }}
-      />
+    if (deviceFound.type === "controller") {
+      const devices = [...state.controllers];
+      devices[index].x = position.x;
+      devices[index].y = position.y;
+      state.setControllers(devices);
+    } else if (deviceFound.type === "host") {
+      const devices = [...state.hosts];
+      devices[index].x = position.x;
+      devices[index].y = position.y;
+      state.setHosts(devices);
+    } else if (deviceFound.type === "switch") {
+      const devices = [...state.switches];
+      devices[index].x = position.x;
+      devices[index].y = position.y;
+      state.setSwitches(devices);
+    }
+  }
+
+  function hasIntersection(position, device) {
+    const deviceFound = state.getDevice(device);
+    return !(
+      deviceFound.x > position.x ||
+      deviceFound.x + SIZE < position.x ||
+      deviceFound.y > position.y ||
+      deviceFound.y + SIZE < position.y
     );
   }
 
-  const allControllers = canvaControllers.map((eachCanvaController) => {
-    return (
-      <Circle
-        x={eachCanvaController.x}
-        y={eachCanvaController.y}
-        radius={25}
-        fill={eachCanvaController.fill}
-        draggable
-        onClick={(event) => {
-          console.log("--->> click");
-          console.log(positions);
-          console.log(clicks);
+  function detectConnection(position, device) {
+    let intersectingDevice = null;
 
-          if (clicks === 0) {
-            setPositions((pos) => {
-              setClicks((prevClicks) => prevClicks + 1);
-              return {
-                posAx: event.target.attrs.x,
-                posAy: event.target.attrs.y,
-                posBx: positions.posBx,
-                posBy: positions.posBy,
-              };
-            });
-          } else {
-            setClicks(0);
-            setPositions((pos) => {
-              return {
-                posAx: positions.posAx,
-                posAy: positions.posAy,
-                posBx: event.target.attrs.x,
-                posBy: event.target.attrs.y,
-              };
-            });
-            CreateLink();
-          }
-        }}
+    const devices = [...state.controllers, ...state.hosts, ...state.switches];
+
+    intersectingDevice = devices.find(
+      (dev) => dev.id !== device.id && hasIntersection(position, dev)
+    );
+
+    return intersectingDevice ?? null;
+  }
+
+  function handleAnchorDragStart(e) {
+    const position = e.target.position();
+    setConnectionPreview(
+      <Line
+        x={position.x}
+        y={position.y}
+        points={createConnectionPoints(position, position)}
+        stroke="black"
+        strokeWidth={2}
+      />
+    );
+  }
+
+  function handleAnchorDragMove(e) {
+    const position = e.target.position();
+    const mousePos = getMousePos(e);
+    setConnectionPreview(
+      <Line
+        x={position.x}
+        y={position.y}
+        points={createConnectionPoints({ x: 0, y: 0 }, mousePos)}
+        stroke="black"
+        strokeWidth={2}
+      />
+    );
+  }
+
+  function handleAnchorDragEnd(e, device) {
+    setConnectionPreview(null);
+    const stage = e.target.getStage();
+    const mousePos = stage.getPointerPosition();
+
+    const connectionTo = detectConnection(mousePos, device);
+    if (connectionTo !== null) {
+      state.setLinks([
+        ...state.links,
+        {
+          id: uuid.v1(),
+          type: "link",
+          to: connectionTo,
+          from: device,
+        },
+      ]);
+    }
+  }
+
+  function CanvaController() {
+    return (
+      <div>
+        <Rect
+          x={50}
+          y={580}
+          width={SIZE}
+          height={SIZE}
+          fill="red"
+          draggable
+          onDragEnd={(e) => {
+            state.setControllers((prevControllers) => [
+              ...prevControllers,
+              {
+                id: uuid.v1(),
+                name: "Controller",
+                type: "controller",
+                x: e.target.x(),
+                y: e.target.y(),
+                colour: "red",
+              },
+            ]);
+          }}
+        />
+        <Text text="Controller" x={50} y={632} />
+      </div>
+    );
+  }
+
+  const allControllers = state.controllers.map((eachController, index) => {
+    return (
+      <div>
+        <Rect
+          id={eachController.id}
+          type={eachController.type}
+          x={eachController.x}
+          y={eachController.y}
+          width={SIZE}
+          height={SIZE}
+          fill={eachController.colour}
+          draggable
+          perfectDrawEnabled={false}
+          onClick={() => handleSelection(eachController)}
+          onDragMove={(e) => handleDeviceDrag(e, eachController, index)}
+        />
+        <Text
+          text={eachController.name}
+          x={eachController.x}
+          y={eachController.y + SIZE}
+        />
+      </div>
+    );
+  });
+
+  function CanvaHost() {
+    return (
+      <div>
+        <Rect
+          x={105}
+          y={580}
+          width={SIZE}
+          height={SIZE}
+          fill="blue"
+          draggable
+          onDragEnd={(e) => {
+            state.setHosts((prevHosts) => [
+              ...prevHosts,
+              {
+                id: uuid.v1(),
+                name: "Host",
+                type: "host",
+                x: e.target.x(),
+                y: e.target.y(),
+                color: "blue",
+              },
+            ]);
+          }}
+        />
+        <Text text="Host" x={105} y={632} />
+      </div>
+    );
+  }
+
+  const allHosts = state.hosts.map((eachHost, index) => {
+    return (
+      <div>
+        <Rect
+          id={eachHost.id}
+          type={eachHost.type}
+          x={eachHost.x}
+          y={eachHost.y}
+          width={SIZE}
+          height={SIZE}
+          fill={eachHost.color}
+          draggable
+          perfectDrawEnabled={false}
+          onClick={() => handleSelection(eachHost)}
+          onDragMove={(e) => handleDeviceDrag(e, eachHost, index)}
+        />
+        <Text text={eachHost.name} x={eachHost.x} y={eachHost.y + SIZE} />
+      </div>
+    );
+  });
+
+  function CanvaSwitch() {
+    return (
+      <div>
+        <Rect
+          x={160}
+          y={580}
+          width={SIZE}
+          height={SIZE}
+          fill="yellow"
+          draggable
+          onDragEnd={(e) => {
+            state.setSwitches((prevSwitches) => [
+              ...prevSwitches,
+              {
+                id: uuid.v1(),
+                name: "Switch",
+                type: "switch",
+                x: e.target.x(),
+                y: e.target.y(),
+                color: "yellow",
+              },
+            ]);
+          }}
+        />
+        <Text text="Switch" x={160} y={632} />
+      </div>
+    );
+  }
+
+  const allSwitches = state.switches.map((eachSwitch, index) => {
+    return (
+      <div>
+        <Rect
+          id={eachSwitch.id}
+          type={eachSwitch.type}
+          x={eachSwitch.x}
+          y={eachSwitch.y}
+          width={SIZE}
+          height={SIZE}
+          fill={eachSwitch.color}
+          draggable
+          perfectDrawEnabled={false}
+          onClick={() => handleSelection(eachSwitch)}
+          onDragMove={(e) => handleDeviceDrag(e, eachSwitch, index)}
+        />
+        <Text text={eachSwitch.name} x={eachSwitch.x} y={eachSwitch.y + SIZE} />
+      </div>
+    );
+  });
+
+  //renders all links between devices
+  const allLinks = state.links.map((connection) => {
+    const fromDevice = state.getDevice(connection.from);
+    const toDevice = state.getDevice(connection.to);
+    const lineEnd = {
+      x: toDevice.x - fromDevice.x,
+      y: toDevice.y - fromDevice.y,
+    };
+
+    //renders the points used to connect devices
+    const points = createConnectionPoints({ x: 0, y: 0 }, lineEnd);
+    console.log(connection);
+    return (
+      <Line
+        id={connection.id}
+        type={connection.type}
+        x={fromDevice.x + SIZE / 2}
+        y={fromDevice.y + SIZE / 2}
+        points={points}
+        stroke="orange"
+        strokeWidth={5}
+        onClick={() => handleSelection(connection)}
       />
     );
   });
 
-  const allSwitches = canvaSwitches.map((eachCanvaSwitch) => {
-    return (
-      <Circle
-        x={eachCanvaSwitch.x}
-        y={eachCanvaSwitch.y}
-        radius={25}
-        fill={eachCanvaSwitch.fill}
-        onClick={(event) => {
-          console.log("--->> click");
-          console.log(positions);
-          console.log(clicks);
-
-          if (clicks === 0) {
-            setPositions((pos) => {
-              setClicks((prevClicks) => prevClicks + 1);
-              return {
-                posAx: event.target.attrs.x,
-                posAy: event.target.attrs.y,
-                posBx: positions.posBx,
-                posBy: positions.posBy,
-              };
-            });
-          } else {
-            setClicks(0);
-            let posBx = event.target.attrs.x;
-            let posBy = event.target.attrs.y;
-            CreateLink(positions.posAx, positions.posAy, posBx, posBy);
-            Layer.batchDraw();
-          }
-        }}
+  //render borders of the selected device
+  const borders =
+    state.selectedDevice !== null && state.selectedDevice.type !== "link" ? (
+      <Border
+        id={state.selectedDevice.id}
+        //device={selectedDevice}
+        device={state.getDevice(state.selectedDevice)}
+        onAnchorDragEnd={(e) => handleAnchorDragEnd(e, state.selectedDevice)}
+        onAnchorDragMove={handleAnchorDragMove}
+        onAnchorDragStart={handleAnchorDragStart}
       />
-    );
-  });
+    ) : null;
 
-  const allHosts = canvaHosts.map((eachCanvaHost) => {
-    return (
-      <Circle
-        x={eachCanvaHost.x}
-        y={eachCanvaHost.y}
-        radius={25}
-        fill={eachCanvaHost.fill}
-        onClick={(event) => {
-          console.log("--->> click");
-          console.log(positions);
-          console.log(clicks);
-
-          if (clicks === 0) {
-            setPositions((pos) => {
-              setClicks((prevClicks) => prevClicks + 1);
-              return {
-                posAx: event.target.attrs.x,
-                posAy: event.target.attrs.y,
-                posBx: positions.posBx,
-                posBy: positions.posBy,
-              };
-            });
-          } else {
-            setClicks(0);
-            setPositions((pos) => {
-              return {
-                posAx: positions.posAx,
-                posAy: positions.posAy,
-                posBx: event.target.attrs.x,
-                posBy: event.target.attrs.y,
-              };
-            });
-          }
-        }}
-      />
-    );
-  });
-
-  function CanvaDeviceFiber() {}
-
+  //return that renders everything on the canva
   return (
-    <Stage width={1060} height={640} ref={stageRef}>
+    <Stage width={window.innerWidth} height={window.innerHeight}>
       <Layer>
-        <CanvaDeviceController />
+        <CanvaController />
+        <CanvaHost />
+        <CanvaSwitch />
+        {allLinks}
         {allControllers}
-        <CanvaDeviceSwitch />
         {allSwitches}
-        <CanvaDeviceHost />
         {allHosts}
-        {canvaLinks.map((eachCanvaLink) => (
-          <Line
-            points={eachCanvaLink.points}
-            pointerLength={eachCanvaLink.pointerLength}
-            pointerWidth={eachCanvaLink.pointerWidth}
-            fill={eachCanvaLink.fill}
-            stroke={eachCanvaLink.stroke}
-            strokeWidth={eachCanvaLink.strokeWidth}
-            {...console.log("eachCanvaLink")}
-            {...console.log(eachCanvaLink)}
-          />
-        ))}
+        {borders}
+        {connectionPreview}
       </Layer>
     </Stage>
   );

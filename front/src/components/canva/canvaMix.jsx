@@ -49,29 +49,25 @@ function Canva() {
     }
   }
 
-  function handleDeviceDrag(e, device) {
+  function handleDeviceDrag(e, device, index) {
     const position = e.target.position();
     const deviceFound = state.getDevice(device);
 
     if (deviceFound.type === "controller") {
-      //console.log(deviceFound);
-
-      // update device
-      const updatedDevice = { ...deviceFound, ...position };
-      //console.log(updatedDevice);
-
-      //delete old controller
-      const controllersArr = state.controllers.filter(
-        (controller) => controller.id !== deviceFound.id
-      );
-
-      state.setControllers([...controllersArr, updatedDevice]);
-
-      //update controllers
-      //setCanvaControllers((prevCanvaControllers) => [
-      //  ...prevCanvaControllers,
-      //  { ...deviceFound, ...position },
-      //]);
+      const newArrayController = [...state.controllers];
+      newArrayController[index].x = position.x;
+      newArrayController[index].y = position.y;
+      state.setControllers(newArrayController);
+    } else if (deviceFound.type === "host") {
+      const newArrayController = [...state.hosts];
+      newArrayController[index].x = position.x;
+      newArrayController[index].y = position.y;
+      state.setHosts(newArrayController);
+    } else if (deviceFound.type === "switch") {
+      const newArrayController = [...state.switches];
+      newArrayController[index].x = position.x;
+      newArrayController[index].y = position.y;
+      state.setSwitches(newArrayController);
     }
   }
 
@@ -86,16 +82,15 @@ function Canva() {
   }
 
   function detectConnection(position, device) {
-    const intersectingDevice = state.controllers.find((controller) => {
-      //first conditional controller different than the start device
-      return (
-        controller.id !== device.id && hasIntersection(position, controller)
-      );
-    });
-    if (intersectingDevice) {
-      return intersectingDevice;
-    }
-    return null;
+    let intersectingDevice = null;
+
+    const devices = [...state.controllers, ...state.hosts, ...state.switches];
+
+    intersectingDevice = devices.find(
+      (dev) => dev.id !== device.id && hasIntersection(position, dev)
+    );
+
+    return intersectingDevice ?? null;
   }
 
   function handleAnchorDragStart(e) {
@@ -142,7 +137,7 @@ function Canva() {
     }
   }
 
-  function CanvaDeviceController() {
+  function CanvaController() {
     return (
       <div>
         <Rect
@@ -150,7 +145,7 @@ function Canva() {
           y={580}
           width={SIZE}
           height={SIZE}
-          fill="blue"
+          fill="red"
           draggable
           onDragEnd={(e) => {
             state.setControllers((prevControllers) => [
@@ -161,7 +156,7 @@ function Canva() {
                 type: "controller",
                 x: e.target.x(),
                 y: e.target.y(),
-                colour: "blue",
+                color: "red",
               },
             ]);
           }}
@@ -171,7 +166,7 @@ function Canva() {
     );
   }
 
-  const allControllers = state.controllers.map((eachController) => {
+  const allControllers = state.controllers.map((eachController, index) => {
     return (
       <div>
         <Rect
@@ -181,11 +176,11 @@ function Canva() {
           y={eachController.y}
           width={SIZE}
           height={SIZE}
-          fill={eachController.colour}
+          fill={eachController.color}
           draggable
           perfectDrawEnabled={false}
           onClick={() => handleSelection(eachController)}
-          onDragMove={(e) => handleDeviceDrag(e, eachController)}
+          onDragMove={(e) => handleDeviceDrag(e, eachController, index)}
         />
         <Text
           text={eachController.name}
@@ -196,16 +191,62 @@ function Canva() {
     );
   });
 
+  function CanvaHost() {
+    return (
+      <div>
+        <Rect
+          x={105}
+          y={580}
+          width={SIZE}
+          height={SIZE}
+          fill="blue"
+          draggable
+          onDragEnd={(e) => {
+            state.setHosts((prevHosts) => [
+              ...prevHosts,
+              {
+                id: uuid.v1(),
+                name: "Host",
+                type: "host",
+                x: e.target.x(),
+                y: e.target.y(),
+                colour: "blue",
+              },
+            ]);
+          }}
+        />
+        <Text text="Host" x={105} y={632} />
+      </div>
+    );
+  }
+
+  const allHosts = state.hosts.map((eachHost) => {
+    return (
+      <div>
+        <Rect
+          id={eachHost.id}
+          type={eachHost.type}
+          x={eachHost.x}
+          y={eachHost.y}
+          width={SIZE}
+          height={SIZE}
+          fill={eachHost.colour}
+          draggable
+          perfectDrawEnabled={false}
+          onClick={() => handleSelection(eachHost)}
+          onDragMove={(e) => handleDeviceDrag(e, eachHost)}
+        />
+        <Text text={eachHost.name} x={eachHost.x} y={eachHost.y + SIZE} />
+      </div>
+    );
+  });
+
   //renders all lines/connections between devices
   const connectionObjs = connections.map((connection) => {
     //validar los dispositivos
 
-    const fromDevice = state.controllers.find(
-      (controller) => controller.id === connection.from.id
-    );
-    const toDevice = state.controllers.find(
-      (controller) => controller.id === connection.to.id
-    );
+    const fromDevice = state.getDevice(connection.from);
+    const toDevice = state.getDevice(connection.to);
     const lineEnd = {
       x: toDevice.x - fromDevice.x,
       y: toDevice.y - fromDevice.y,
@@ -241,9 +282,11 @@ function Canva() {
   return (
     <Stage width={window.innerWidth} height={window.innerHeight}>
       <Layer>
-        <CanvaDeviceController />
-        {connectionObjs}
+        <CanvaController />
+        <CanvaHost />
         {borders}
+        {connectionObjs}
+        {allHosts}
         {allControllers}
         {connectionPreview}
       </Layer>
