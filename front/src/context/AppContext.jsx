@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as uuid from "uuid";
 
+import axios from "../config/axios";
+
 const AppContext = React.createContext();
 
 //const usePreviousSelectedDevice = (prevSelDevice) => {
@@ -24,6 +26,10 @@ export const AppContextWrapper = (props) => {
 
   const exportData = () => {
     //console.log(controllers, switches, hosts, links);
+  };
+
+  const testConnection = () => {
+    axios.get("/").then((res) => console.log(res));
   };
 
   function getDevice(device) {
@@ -176,6 +182,7 @@ export const AppContextWrapper = (props) => {
 
   const state = {
     exportData,
+    testConnection,
 
     selectedDevice,
     setSelectedDevice,

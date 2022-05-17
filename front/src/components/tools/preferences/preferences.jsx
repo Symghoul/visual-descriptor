@@ -15,7 +15,7 @@ const theme = createTheme({
   },
 });
 
-function Preferences() {
+const Preferences = () => {
   const state = useContext(AppContext);
 
   return (
@@ -39,6 +39,7 @@ function Preferences() {
             size="small"
             variant="contained"
             color="primary"
+            onClick={() => state.testConnection()}
           >
             Options
           </Button>
@@ -61,6 +62,6 @@ function Preferences() {
       </div>
     </ThemeProvider>
   );
-}
+};
 
 export default Preferences;
