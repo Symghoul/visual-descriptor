@@ -7,7 +7,7 @@ router.route('/')
     .get(gethosts)
     .post(createhosts)
 
-router.route('/:id')
+router.route('/:indicator')
     .get(gethostById)
     .put(updatehost)
     .delete(deletehost)

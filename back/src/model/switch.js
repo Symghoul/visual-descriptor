@@ -2,7 +2,9 @@ const {Schema, model} = require('mongoose');
 
 const switchSchema = new Schema({
 
+    indicator: String,
     name: String,
+    symbol:String,
     controller: {
         type:String,
         required:true

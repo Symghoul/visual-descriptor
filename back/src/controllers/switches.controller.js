@@ -8,9 +8,11 @@ switchesCtrl.getSwitches = async (req,res)=>{
 }
 
 switchesCtrl.createSwitch = async (req,res)=>{
-    const {name, controller, mac, protocol, listenPort} = req.body;
+    const {name,symbol, indicator, controller, mac, protocol, listenPort} = req.body;
     const newSwitch = new switche({
         name, 
+        symbol,
+        indicator,
         controller,
         mac,
         protocol,
@@ -21,26 +23,35 @@ switchesCtrl.createSwitch = async (req,res)=>{
 }
 
 switchesCtrl.getSwitchById = async (req,res)=>{
-    const s = await switche.findById(req.params.id);
+    const s = await switche.find({indicator:req.params.indicator});
 
     res.send(s)
 }
 
 switchesCtrl.updateSwitch = async (req,res)=>{
-    const {name, controller, mac, protocol, listenPort} = req.body;
-    await switche.findByIdAndUpdate(req.body.id, {
+    const {name, symbol, indicator, controller, mac, protocol, listenPort} = req.body;
+    const action = await switche.updateOne({indicator:req.params.indicator}, {
         name, 
+        symbol,
+        indicator,
         controller,
         mac,
         protocol,
         listenPort
     });
-    res.send({message: 'switch modificado'})
+    if(action.matchedCount === 1)
+        res.send({message: 'switch modificado'})
+    else{
+        res.send({message:"No se modificó el switch"})}
 }
 
 switchesCtrl.deleteSwitch = async (req,res)=>{
-    await switche.findByIdAndDelete(req.params.id);
-    res.send({message: 'switch eliminado'})
+    const action = await switche.deleteOne({indicator:req.params.indicator});
+    if(action.deletedCount===1)
+        res.send({message: 'switch eliminado'})
+    else{
+        res.send({message: 'switch no eliminado'})
+    }
 }
 
 module.exports = switchesCtrl;

@@ -7,7 +7,7 @@ router.route('/')
     .get(getLinks)
     .post(createLink)
 
-router.route('/:id')
+router.route('/:indicator')
     .get(getLinkById)
     .put(updateLink)
     .delete(deleteLink)

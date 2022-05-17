@@ -7,7 +7,7 @@ router.route('/')
     .get(getSwitches)
     .post(createSwitch)
 
-router.route('/:id')
+router.route('/:indicator')
     .get(getSwitchById)
     .put(updateSwitch)
     .delete(deleteSwitch)
