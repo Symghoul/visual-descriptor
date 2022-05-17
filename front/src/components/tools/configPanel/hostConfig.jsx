@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 import "./hostConfig.css";
+import AppContext from "../../../context/AppContext";
 
 const CssTextField = styled(TextField)({
   "& label.Mui-focused": {
@@ -24,7 +25,9 @@ const CssTextField = styled(TextField)({
   },
 });
 
-function HostConfig() {
+const HostConfig = () => {
+  const state = useContext(AppContext);
+
   const [name, setName] = useState("");
   const [ip, setIP] = useState("");
   const [subNetMask, setSubNetMask] = useState("");
@@ -67,8 +70,17 @@ function HostConfig() {
           label={"Mac Address"}
         />
       </div>
+      <div className="btn">
+        <Button
+          onClick={() => {
+            state.deleteDevice();
+          }}
+        >
+          Delete Host
+        </Button>
+      </div>
     </div>
   );
-}
+};
 
 export default HostConfig;

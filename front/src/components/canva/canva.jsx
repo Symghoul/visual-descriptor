@@ -10,18 +10,12 @@ function createConnectionPoints(source, destination) {
 }
 
 function Canva() {
-  useEffect(() => {
-    //console.log(connections);
-    //console.log("conections:");
-    //console.log(canvaControllers);
-    //console.log("controllers:");
-    //console.log(connectionObjs);
-    //console.log("connectionObjs");
-  });
+  useEffect(() => {});
 
   const state = useContext(AppContext);
 
   const [connectionPreview, setConnectionPreview] = useState(null);
+  const [selectedLink, setSelectedLink] = useState(null);
 
   function getMousePos(e) {
     const position = e.target.position();
@@ -37,9 +31,44 @@ function Canva() {
     if (state.selectedDevice === null) {
       state.setSelectedDevice(device);
     } else if (state.selectedDevice.id !== device.id) {
+      if (selectedLink !== null) {
+        changeLinkColor(state.getDevice(selectedLink), "orange");
+        setSelectedLink(null);
+      }
       state.setSelectedDevice(device);
     } else {
       state.setSelectedDevice(null);
+    }
+  }
+
+  const changeLinkColor = (link, color) => {
+    let prevLinks = [
+      ...state.links.filter((foundlink) => foundlink.id !== link.id),
+    ];
+    const prevLink = state.getDevice(link);
+    prevLink.color = color;
+    prevLinks = [...prevLinks, prevLink];
+    state.setLinks(prevLinks);
+  };
+
+  function handleLinkSelection(link) {
+    if (state.selectedDevice === null) {
+      changeLinkColor(link, "black");
+      setSelectedLink(state.getDevice(link));
+      state.setSelectedDevice(state.getDevice(link));
+    } else {
+      if (state.selectedDevice.id !== link.id) {
+        if (selectedLink !== null) {
+          changeLinkColor(selectedLink, "orange");
+        }
+        changeLinkColor(link, "black");
+        setSelectedLink(state.getDevice(link));
+        state.setSelectedDevice(state.getDevice(link));
+      } else if (state.selectedDevice.id === link.id) {
+        changeLinkColor(state.getDevice(link), "orange");
+        state.setSelectedDevice(null);
+        setSelectedLink(null);
+      }
     }
   }
 
@@ -126,6 +155,10 @@ function Canva() {
         {
           id: uuid.v1(),
           type: "link",
+          delay: "",
+          loss: "",
+          bandwith: "",
+          color: "orange",
           to: connectionTo,
           from: device,
         },
@@ -150,6 +183,9 @@ function Canva() {
                 id: uuid.v1(),
                 name: "Controller",
                 type: "controller",
+                port: "",
+                ctrlType: "",
+                ip: "",
                 x: e.target.x(),
                 y: e.target.y(),
                 colour: "red",
@@ -191,7 +227,7 @@ function Canva() {
     return (
       <div>
         <Rect
-          x={105}
+          x={160}
           y={580}
           width={SIZE}
           height={SIZE}
@@ -204,6 +240,9 @@ function Canva() {
                 id: uuid.v1(),
                 name: "Host",
                 type: "host",
+                ip: "",
+                mask: "",
+                mac: "",
                 x: e.target.x(),
                 y: e.target.y(),
                 color: "blue",
@@ -211,7 +250,7 @@ function Canva() {
             ]);
           }}
         />
-        <Text text="Host" x={105} y={632} />
+        <Text text="Host" x={160} y={632} />
       </div>
     );
   }
@@ -241,7 +280,7 @@ function Canva() {
     return (
       <div>
         <Rect
-          x={160}
+          x={105}
           y={580}
           width={SIZE}
           height={SIZE}
@@ -254,6 +293,9 @@ function Canva() {
                 id: uuid.v1(),
                 name: "Switch",
                 type: "switch",
+                protocol: "",
+                port: "",
+                mac: "",
                 x: e.target.x(),
                 y: e.target.y(),
                 color: "yellow",
@@ -261,7 +303,7 @@ function Canva() {
             ]);
           }}
         />
-        <Text text="Switch" x={160} y={632} />
+        <Text text="Switch" x={105} y={632} />
       </div>
     );
   }
@@ -298,7 +340,6 @@ function Canva() {
 
     //renders the points used to connect devices
     const points = createConnectionPoints({ x: 0, y: 0 }, lineEnd);
-    console.log(connection);
     return (
       <Line
         id={connection.id}
@@ -306,9 +347,9 @@ function Canva() {
         x={fromDevice.x + SIZE / 2}
         y={fromDevice.y + SIZE / 2}
         points={points}
-        stroke="orange"
+        stroke={connection.color}
         strokeWidth={5}
-        onClick={() => handleSelection(connection)}
+        onClick={() => handleLinkSelection(connection)}
       />
     );
   });
@@ -331,8 +372,8 @@ function Canva() {
     <Stage width={window.innerWidth} height={window.innerHeight}>
       <Layer>
         <CanvaController />
-        <CanvaHost />
         <CanvaSwitch />
+        <CanvaHost />
         {allLinks}
         {allControllers}
         {allSwitches}

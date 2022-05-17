@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 import "./switchConfig.css";
+import AppContext from "../../../context/AppContext";
 
 const CssTextField = styled(TextField)({
   "& label.Mui-focused": {
@@ -24,11 +25,13 @@ const CssTextField = styled(TextField)({
   },
 });
 
-function SwitchConfig() {
+const SwitchConfig = () => {
   const [name, setName] = useState("");
   const [protocol, setProtocol] = useState("");
   const [port, setPort] = useState("");
   const [mac, setMac] = useState("");
+
+  const state = useContext(AppContext);
 
   return (
     <div className="container">
@@ -64,8 +67,17 @@ function SwitchConfig() {
           label={"MAC Address"}
         />
       </div>
+      <div className="btn">
+        <Button
+          onClick={() => {
+            state.deleteDevice();
+          }}
+        >
+          Delete Switch
+        </Button>
+      </div>
     </div>
   );
-}
+};
 
 export default SwitchConfig;

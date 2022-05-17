@@ -11,22 +11,22 @@ import LinkConfig from "./configPanel/linkConfig";
 
 function ToolsPanel() {
   const state = useContext(AppContext);
-  const [deviceType, setDeviceType] = useState(null);
+  const [configDevice, setConfigDevice] = useState(null);
 
   useEffect(() => {
-    setDeviceType(state.selectedDevice);
+    setConfigDevice(state.selectedDevice);
   }, [state.selectedDevice]);
 
   const showView = () => {
-    if (deviceType === null) {
+    if (configDevice === null) {
       return <></>;
-    } else if (deviceType.type === "controller") {
-      return <ControllerConfig />;
-    } else if (deviceType.type === "host") {
+    } else if (configDevice.type === "controller") {
+      return <ControllerConfig name={configDevice.name} />;
+    } else if (configDevice.type === "host") {
       return <HostConfig />;
-    } else if (deviceType.type === "switch") {
+    } else if (configDevice.type === "switch") {
       return <SwitchConfig />;
-    } else if (deviceType.type === "link") {
+    } else if (configDevice.type === "link") {
       return <LinkConfig />;
     }
   };

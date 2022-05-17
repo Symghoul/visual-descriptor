@@ -1,7 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AppContext from "../../../context/AppContext";
 import { styled } from "@mui/material/styles";
-import { Autocomplete, TextField } from "@mui/material";
+import { Autocomplete, Button, TextField } from "@mui/material";
 
 import "./controllerConfig.css";
 
@@ -28,25 +28,48 @@ const CssTextField = styled(TextField)({
 function ControllerConfig() {
   const state = useContext(AppContext);
 
-  const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [port, setPort] = useState("");
   const [ip, setIP] = useState("");
+  const [cntrlType, setCntrlType] = useState("");
 
-  const controllerTypes = ["Ovs-Controller", "NOX", "Remote Controller", "Ryu"];
+  useEffect(() => {
+    const device = state.selectedDevice;
+    if (device !== null) {
+      setName(device.name);
+      setPort(device.port);
+      setIP(device.ip);
+    }
+  }, [state.selectedDevice]);
 
-  const handleName = (e) => {
-    setName(e.event.target.value);
+  const handleUpdate = (nName) => {
+    setName(nName);
+    //state.updateControllerName(state.selectedDevice, name);
     const controllerNameUpdt = state.controllers.map((controller) => {
-      if (controller.id === id) {
+      if (controller.id === state.selectedDevice.id) {
         return {
           ...controller,
-          name: name,
+          name: nName,
         };
       }
       state.setControllers(controllerNameUpdt);
     });
   };
+
+  const controllerTypes = ["Ovs-Controller", "NOX", "Remote Controller", "Ryu"];
+
+  //const handleName = (e) => {
+  //  setName(e.event.target.value);
+  //  const controllerNameUpdt = state.controllers.map((controller) => {
+  //    if (controller.id === id) {
+  //      return {
+  //        ...controller,
+  //        name: name,
+  //      };
+  //    }
+  //    state.setControllers(controllerNameUpdt);
+  //  });
+  //};
 
   return (
     <div className="container">
@@ -54,7 +77,7 @@ function ControllerConfig() {
         <CssTextField
           id="cntrlName"
           value={name}
-          onChange={handleName}
+          onChange={(event) => handleUpdate(event.target.value)}
           label={"Controller Name"}
         />
       </div>
@@ -88,6 +111,15 @@ function ControllerConfig() {
           onChange={(event) => setIP(event.target.value)}
           label={"IP Adress"}
         />
+      </div>
+      <div className="btn">
+        <Button
+          onClick={() => {
+            state.deleteDevice();
+          }}
+        >
+          Delete Controller
+        </Button>
       </div>
     </div>
   );

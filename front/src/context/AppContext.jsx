@@ -1,7 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as uuid from "uuid";
 
 const AppContext = React.createContext();
+
+//const usePreviousSelectedDevice = (prevSelDevice) => {
+//  const ref = useRef();
+//  useEffect(() => {
+//    ref.current = prevSelDevice;
+//  }, [prevSelDevice]);
+//  return ref.current;
+//};
+//const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
 
 export const AppContextWrapper = (props) => {
   const [selectedDevice, setSelectedDevice] = useState(null);
@@ -38,7 +47,51 @@ export const AppContextWrapper = (props) => {
     }
   }
 
+  const deleteDevice = () => {
+    const device = getDevice(selectedDevice);
+
+    if (device.type === "controller") {
+      deleteLinks(device);
+      const arr = controllers.filter(
+        (controller) => controller.id !== device.id
+      );
+      setControllers(arr);
+    } else if (device.type === "switch") {
+      deleteLinks(device);
+      const arr = switches.filter((switche) => switche.id !== device.id);
+      setSwitches(arr);
+    } else if (device.type === "host") {
+      deleteLinks(device);
+      const arr = hosts.filter((host) => host.id !== device.id);
+      setHosts(arr);
+    } else if (device.type === "link") {
+      const arr = links.filter((link) => link.id !== device.id);
+      setLinks(arr);
+    }
+    setSelectedDevice(null);
+  };
+
+  const deleteLinks = (device) => {
+    const arr = links.filter(
+      (link) => link.to.id !== device.id || link.from.id !== device.id
+    );
+    setLinks(arr);
+    console.log(links);
+  };
+
   // ----------- Controller methods -----------
+
+  const updateControllerName = (device, name) => {
+    const controller = getDevice(device);
+    controller.name = name;
+    const controllersArr = [
+      ...controllers.filter(
+        (oldController) => oldController.id !== controller.id
+      ),
+    ];
+    setControllers(controllersArr, controller);
+  };
+
   const saveController = (name, port, type, ip) => {
     const newController = {
       id: uuid.v1(),
@@ -127,11 +180,14 @@ export const AppContextWrapper = (props) => {
     selectedDevice,
     setSelectedDevice,
     getDevice,
+    deleteDevice,
 
     controllers,
     setControllers,
+    updateControllerName,
     saveController,
     deleteController,
+
     switches,
     setSwitches,
     saveSwitch,

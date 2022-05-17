@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 import "./linkConfig.css";
+import AppContext from "../../../context/AppContext";
 
 const CssTextField = styled(TextField)({
   "& label.Mui-focused": {
@@ -24,7 +25,9 @@ const CssTextField = styled(TextField)({
   },
 });
 
-function LinkConfig() {
+const LinkConfig = () => {
+  const state = useContext(AppContext);
+
   const [name, setName] = useState("");
   const [source, setSource] = useState("");
   const [destiny, setDestiny] = useState("");
@@ -87,8 +90,18 @@ function LinkConfig() {
           label={"Bandwith"}
         />
       </div>
+
+      <div className="btn">
+        <Button
+          onClick={() => {
+            state.deleteDevice();
+          }}
+        >
+          Delete Link
+        </Button>
+      </div>
     </div>
   );
-}
+};
 
 export default LinkConfig;
