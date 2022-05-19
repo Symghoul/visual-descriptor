@@ -155,9 +155,9 @@ function Canva() {
         {
           id: uuid.v1(),
           type: "link",
-          delay: "",
-          loss: "",
-          bandwith: "",
+          delay: 0,
+          loss: 0,
+          bandwith: 500,
           color: "orange",
           to: connectionTo,
           from: device,

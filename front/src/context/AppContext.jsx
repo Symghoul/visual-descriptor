@@ -28,8 +28,46 @@ export const AppContextWrapper = (props) => {
     //console.log(controllers, switches, hosts, links);
   };
 
-  const testConnection = () => {
+  const testConnection = async () => {
     axios.get("/").then((res) => console.log(res));
+    /*
+    //Metodo GET para traer TODOS los dispositivos
+    const controllers = await axios.get("/api/controllers");
+    const switches = await axios.get("/api/switches");
+    const hosts = await axios.get("/api/hosts");
+    const links = await axios.get("/api/links");*/
+
+    /*
+    //Metodo GET CON ID para traer un dispositivo
+    const controller = await axios.get("/api/controllers" + AQUI PONGA EL ID DEL CONTROLADOR);
+    const switch = await axios.get("/api/switches" + AQUI PONGA EL ID DEL switch);
+    const host = await axios.get("/api/hosts" + AQUI PONGA EL ID DEL host);
+    const link = await axios.get("/api/links" + AQUI PONGA EL ID DEL link);
+    */
+
+    /*
+    //Metodo POST para crear un dispositivo
+    await axios.post("/api/controllers", AQUI PONGA EL OBJETO MI SO);
+    await axios.post("/api/switches", AQUI PONGA EL OBJETO MI SO);
+    await axios.post("/api/hosts", AQUI PONGA EL OBJETO MI SO);
+    await axios.post("/api/links", AQUI PONGA EL OBJETO MI SO);
+    */
+
+    /*
+    //Metodo PUT para modificar un dispositivo
+    await axios.put("/api/controllers" + AQUI PONGA EL ID DEL CONTROLADOR, AQUI PONGA EL OBJETO MI SO);
+    await axios.put("/api/switches" + AQUI PONGA EL ID DEL switch, AQUI PONGA EL OBJETO MI SO);
+    await axios.put("/api/hosts" + AQUI PONGA EL ID DEL host, AQUI PONGA EL OBJETO MI SO);
+    await axios.put("/api/links" + AQUI PONGA EL ID DEL link, AQUI PONGA EL OBJETO MI SO);
+    */
+
+    /*
+    //Metodo DELETE para eliminar un dispositivo
+    await axios.delete("/api/controllers/" + AQUI PONGA EL ID DEL CONTROLADOR);
+    await axios.delete("/api/switches/" + AQUI PONGA EL ID DEL switch);
+    await axios.delete("/api/hosts/" + AQUI PONGA EL ID DEL host);
+    await axios.delete("/api/links/" + AQUI PONGA EL ID DEL link);
+    */
   };
 
   function getDevice(device) {

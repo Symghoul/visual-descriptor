@@ -45,7 +45,7 @@ function topocustom(topology, nameArchive) {
     `\n`+
         `def topology(): \n`+
         ` "Create a network."\n`+
-        ` net = Mininet( co ntroller=Controller )\n`+
+        ` net = Mininet( controller=Controller )\n`+
     `\n`+
         ` info("*** Creating nodes")\n`);
       topology.controllers.forEach(element =>{
