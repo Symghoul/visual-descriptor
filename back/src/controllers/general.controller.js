@@ -1,4 +1,5 @@
 const generalController = {};
+const {exec} = require("child_process");
 
 const fs = require('fs')
 
@@ -6,6 +7,7 @@ const controller = require('../model/controller');
 const host = require('../model/hosts');
 const switche = require('../model/switch');
 const link = require('../model/link');
+const { stderr } = require("process");
 
 
 
@@ -25,12 +27,12 @@ generalController.getScript = async(req,res)=>{
 
     
     //comando para escribir el script
-
     topocustom(topology, req.params.nameArchive )
 
+    /** 
     //Comando para ejecutar el script junto a mininet
-    
-
+    exectMininet(req.params.nameArchive)
+    */
     res.status(200).json({message: 'El script está corriendo'})
 }
 
@@ -45,7 +47,7 @@ function topocustom(topology, nameArchive) {
     `\n`+
         `def topology(): \n`+
         ` "Create a network."\n`+
-        ` net = Mininet( co ntroller=Controller )\n`+
+        ` net = Mininet( controller=Controller )\n`+
     `\n`+
         ` info("*** Creating nodes")\n`);
       topology.controllers.forEach(element =>{
@@ -154,5 +156,19 @@ function mask(mac){
     bits = Math.round(bits)
     return bits;
     }
+
+function exectMininet(nameArchive){
+
+  exec(`mn --custom=${nameArchive}` , (error, stdout, stderr) => {
+    if(error){
+      console.log(`error: ${error.message}`);
+      return;
+    }if(stderr){
+      console.log(`stderr: ${stderr}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+  });
+}
 
 module.exports = generalController;
