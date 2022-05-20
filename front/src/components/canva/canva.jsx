@@ -176,21 +176,20 @@ function Canva() {
           height={SIZE}
           fill="red"
           draggable
-          onDragEnd={(e) => {
-            state.setControllers((prevControllers) => [
-              ...prevControllers,
-              {
-                id: uuid.v1(),
-                name: "Controller",
-                type: "controller",
-                port: "",
-                ctrlType: "",
-                ip: "",
-                x: e.target.x(),
-                y: e.target.y(),
-                colour: "red",
-              },
-            ]);
+          onDragEnd={async (e) => {
+            const device = {
+              id: uuid.v1(),
+              name: "Controller",
+              symbol: `c${state.getControllerSymbol()}`,
+              ip: "",
+              port: "",
+              remote: false,
+              type: "controller",
+              x: e.target.x(),
+              y: e.target.y(),
+              color: "red",
+            };
+            await state.saveDevice(device);
           }}
         />
         <Text text="Controller" x={50} y={632} />
@@ -208,11 +207,12 @@ function Canva() {
           y={eachController.y}
           width={SIZE}
           height={SIZE}
-          fill={eachController.colour}
+          fill={eachController.color}
           draggable
           perfectDrawEnabled={false}
           onClick={() => handleSelection(eachController)}
           onDragMove={(e) => handleDeviceDrag(e, eachController, index)}
+          //onDragEnd actualizar coordenadas
         />
         <Text
           text={eachController.name}

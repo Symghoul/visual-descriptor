@@ -22,10 +22,17 @@ export const AppContextWrapper = (props) => {
   const [hosts, setHosts] = useState([]);
   const [links, setLinks] = useState([]);
 
+  var controllerSymbol = 0;
+
   // ----------- Main methods -----------
 
   const exportData = () => {
     //console.log(controllers, switches, hosts, links);
+  };
+
+  const getControllerSymbol = () => {
+    controllerSymbol = controllerSymbol + 1;
+    return controllerSymbol;
   };
 
   const testConnection = async () => {
@@ -136,16 +143,25 @@ export const AppContextWrapper = (props) => {
     setControllers(controllersArr, controller);
   };
 
-  const saveController = (name, port, type, ip) => {
-    const newController = {
-      id: uuid.v1(),
-      name,
-      port,
-      type,
-      ip,
-    };
-    const newControllers = [...controllers, newController];
-    setControllers(newControllers);
+  const saveDevice = async (device) => {
+    if (device.type === "controller") {
+      await axios.post("/api/controllers", device);
+      const datos = await axios.get("/api/controllers").then((res) => {
+        return res.data;
+      });
+      setControllers(datos);
+    } else if (device.type === "switch") {
+      deleteLinks(device);
+      const arr = switches.filter((switche) => switche.id !== device.id);
+      setSwitches(arr);
+    } else if (device.type === "host") {
+      deleteLinks(device);
+      const arr = hosts.filter((host) => host.id !== device.id);
+      setHosts(arr);
+    } else if (device.type === "link") {
+      const arr = links.filter((link) => link.id !== device.id);
+      setLinks(arr);
+    }
   };
 
   const deleteController = (controllerId) => {
@@ -225,12 +241,14 @@ export const AppContextWrapper = (props) => {
     selectedDevice,
     setSelectedDevice,
     getDevice,
+    saveDevice,
     deleteDevice,
+
+    getControllerSymbol,
 
     controllers,
     setControllers,
     updateControllerName,
-    saveController,
     deleteController,
 
     switches,
