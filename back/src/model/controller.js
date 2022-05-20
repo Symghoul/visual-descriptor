@@ -1,25 +1,23 @@
-const {Schema, model} = require('mongoose');
-
+const { Schema, model } = require("mongoose");
 
 const controllerSchema = new Schema({
-
-    
-    name: String,
-    port: {
-        type: Number,
-        required: true
-    },
-    symbol: String,
-    indicator: String,
+  indicator: String,
+  name: String,
+  symbol: String,
+  ip: {
     type: String,
-    ip:{
-        type: String,
-        required: true,
-        unique : true
-    },
-    remote: Boolean
+    required: true,
+    unique: true,
+  },
+  port: {
+    type: Number,
+    required: true,
+  },
+  remote: Boolean,
+  type: String,
+  x: Number,
+  y: Number,
+  color: String,
+});
 
-})
-
-
-module.exports = model('controller', controllerSchema);
+module.exports = model("controller", controllerSchema);

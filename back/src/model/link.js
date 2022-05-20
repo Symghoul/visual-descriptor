@@ -1,21 +1,22 @@
-const {Schema, model} = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const linkSchema = new Schema({
+  indicator: String,
+  delay: Number,
+  loss: Number,
+  bandwith: Number,
+  from: Object,
+  to: Object,
+  source: {
+    type: String,
+    required: true,
+  },
+  destination: {
+    type: String,
+    required: true,
+  },
+  type: String,
+  color: String,
+});
 
-    indicator: String,
-    name:String,
-    source: {
-        type:String,
-        required:true
-    },
-    symbol: String,
-    destination: {
-        type: String,
-        required:true
-    },
-    delay:Number,
-    loss:Number,
-    bandwith:Number
-})
-
-module.exports = model('link', linkSchema);
+module.exports = model("link", linkSchema);

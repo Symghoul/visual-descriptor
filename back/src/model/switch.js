@@ -21,7 +21,8 @@ const switchSchema = new Schema({
     listenPort:{
         type: Number,
         required: true
-    }
+    },
+    type:String,
     
 })
 
