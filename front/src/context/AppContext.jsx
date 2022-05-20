@@ -22,7 +22,12 @@ export const AppContextWrapper = (props) => {
   const [hosts, setHosts] = useState([]);
   const [links, setLinks] = useState([]);
 
-  var controllerSymbol = 0;
+  const controllerSymbol = useRef(0);
+  const switchSymbol = useRef(0);
+  const hostSymbol = useRef(0);
+  const ipAddress = useRef(0);
+  const macAddress = useRef(0);
+  const portNumber = useRef(0);
 
   // ----------- Main methods -----------
 
@@ -30,13 +35,58 @@ export const AppContextWrapper = (props) => {
     //console.log(controllers, switches, hosts, links);
   };
 
+  const testStuff = () => {
+    let testIP = "";
+    let testMAC = "";
+
+    const ipTestMethod = () => {
+      //codigo
+      testIP = "ip";
+    };
+
+    const macTestMethod = () => {
+      //codigo
+      testMAC = "mac";
+    };
+
+    ipTestMethod();
+    macTestMethod();
+    console.log(testIP);
+    console.log(testMAC);
+  };
+
   const getControllerSymbol = () => {
-    controllerSymbol = controllerSymbol + 1;
-    return controllerSymbol;
+    controllerSymbol.current = controllerSymbol.current + 1;
+    return controllerSymbol.current;
+  };
+
+  const getSwitchSymbol = () => {
+    switchSymbol.current = switchSymbol.current + 1;
+    return switchSymbol.current;
+  };
+
+  const getHostSymbol = () => {
+    hostSymbol.current = hostSymbol.current + 1;
+    return hostSymbol.current;
+  };
+
+  const getIpAddress = () => {
+    ipAddress.current = ipAddress.current + 1;
+    return ipAddress.current;
+  };
+
+  const getMacAddress = () => {
+    macAddress.current = macAddress.current + 1;
+    return macAddress.current;
+  };
+
+  const getPortNumber = () => {
+    portNumber.current = portNumber.current + 1;
+    return portNumber.current;
   };
 
   const testConnection = async () => {
-    axios.get("/").then((res) => console.log(res));
+    await axios.get("/").then((res) => console.log(res));
     /*
     //Metodo GET para traer TODOS los dispositivos
     const controllers = await axios.get("/api/controllers");
@@ -146,21 +196,16 @@ export const AppContextWrapper = (props) => {
   const saveDevice = async (device) => {
     if (device.type === "controller") {
       await axios.post("/api/controllers", device);
-      const datos = await axios.get("/api/controllers").then((res) => {
-        return res.data;
-      });
-      setControllers(datos);
+      //const datos = await axios.get("/api/controllers").then((res) => {
+      //  return res.data;
+      //});
+      //setControllers(datos);
     } else if (device.type === "switch") {
-      deleteLinks(device);
-      const arr = switches.filter((switche) => switche.id !== device.id);
-      setSwitches(arr);
+      await axios.post("/api/switches", device);
     } else if (device.type === "host") {
-      deleteLinks(device);
-      const arr = hosts.filter((host) => host.id !== device.id);
-      setHosts(arr);
+      await axios.post("/api/hosts", device);
     } else if (device.type === "link") {
-      const arr = links.filter((link) => link.id !== device.id);
-      setLinks(arr);
+      await axios.post("/api/links", device);
     }
   };
 
@@ -236,15 +281,21 @@ export const AppContextWrapper = (props) => {
 
   const state = {
     exportData,
-    testConnection,
+    testStuff,
 
     selectedDevice,
     setSelectedDevice,
     getDevice,
+
     saveDevice,
     deleteDevice,
 
     getControllerSymbol,
+    getSwitchSymbol,
+    getHostSymbol,
+    getIpAddress,
+    getMacAddress,
+    getPortNumber,
 
     controllers,
     setControllers,

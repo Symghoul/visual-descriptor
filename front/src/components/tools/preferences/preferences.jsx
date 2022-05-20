@@ -30,7 +30,7 @@ const Preferences = () => {
             color="primary"
             onClick={state.exportData()}
           >
-            File
+            Save
           </Button>
         </div>
         <div className="prefItems">
@@ -39,24 +39,9 @@ const Preferences = () => {
             size="small"
             variant="contained"
             color="primary"
-            onClick={() => state.testConnection()}
+            onClick={state.testStuff()}
           >
-            Options
-          </Button>
-        </div>
-        <div className="prefItems">
-          <Button id="btnBack" size="small" variant="contained" color="primary">
-            Undo
-          </Button>
-        </div>
-        <div className="prefItems">
-          <Button
-            id="btnAhead"
-            size="small"
-            variant="contained"
-            color="primary"
-          >
-            Redo
+            Load
           </Button>
         </div>
       </div>

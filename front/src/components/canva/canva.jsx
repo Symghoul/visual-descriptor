@@ -150,19 +150,20 @@ function Canva() {
 
     const connectionTo = detectConnection(mousePos, device);
     if (connectionTo !== null) {
-      state.setLinks([
-        ...state.links,
-        {
-          id: uuid.v1(),
-          type: "link",
-          delay: 0,
-          loss: 0,
-          bandwith: 500,
-          color: "orange",
-          to: connectionTo,
-          from: device,
-        },
-      ]);
+      const link = {
+        id: uuid.v1(),
+        delay: 0,
+        loss: 0,
+        bandwith: 0,
+        from: device,
+        to: connectionTo,
+        source: device.symbol,
+        destination: connectionTo.symbol,
+        type: "link",
+        color: "orange",
+      };
+      state.setLinks([...state.links, link]);
+      state.saveDevice(link);
     }
   }
 
@@ -177,19 +178,25 @@ function Canva() {
           fill="red"
           draggable
           onDragEnd={async (e) => {
-            const device = {
+            let controller = {
               id: uuid.v1(),
               name: "Controller",
               symbol: `c${state.getControllerSymbol()}`,
-              ip: "",
-              port: "",
+              ip: `192.161.0.${state.getIpAddress()}`,
+              port: `300${state.getPortNumber()}`,
               remote: false,
               type: "controller",
               x: e.target.x(),
               y: e.target.y(),
               color: "red",
             };
-            await state.saveDevice(device);
+            //save on state
+            state.setControllers((prevControllers) => [
+              ...prevControllers,
+              controller,
+            ]);
+            //save on db
+            await state.saveDevice(controller);
           }}
         />
         <Text text="Controller" x={50} y={632} />
@@ -234,20 +241,21 @@ function Canva() {
           fill="blue"
           draggable
           onDragEnd={(e) => {
-            state.setHosts((prevHosts) => [
-              ...prevHosts,
-              {
-                id: uuid.v1(),
-                name: "Host",
-                type: "host",
-                ip: "",
-                mask: "",
-                mac: "",
-                x: e.target.x(),
-                y: e.target.y(),
-                color: "blue",
-              },
-            ]);
+            const host = {
+              id: uuid.v1(),
+              name: "Host",
+              symbol: `h${state.getHostSymbol()}`,
+              ip: `192.168.0.${state.getIpAddress()}`,
+              mask: "225.225.225.0",
+              mac: `00:00:00:00:00:0${state.getMacAddress()}`,
+              active: true,
+              type: "host",
+              x: e.target.x(),
+              y: e.target.y(),
+              color: "blue",
+            };
+            state.setHosts((prevHosts) => [...prevHosts, host]);
+            state.saveDevice(host);
           }}
         />
         <Text text="Host" x={160} y={632} />
@@ -287,20 +295,19 @@ function Canva() {
           fill="yellow"
           draggable
           onDragEnd={(e) => {
-            state.setSwitches((prevSwitches) => [
-              ...prevSwitches,
-              {
-                id: uuid.v1(),
-                name: "Switch",
-                type: "switch",
-                protocol: "",
-                port: "",
-                mac: "",
-                x: e.target.x(),
-                y: e.target.y(),
-                color: "yellow",
-              },
-            ]);
+            const switche = {
+              id: uuid.v1(),
+              name: "Switch",
+              symbol: `s${state.getSwitchSymbol()}`,
+              protocol: "",
+              port: "",
+              mac: "",
+              type: "switch",
+              x: e.target.x(),
+              y: e.target.y(),
+              color: "yellow",
+            };
+            state.setSwitches((prevSwitches) => [...prevSwitches, switche]);
           }}
         />
         <Text text="Switch" x={105} y={632} />
