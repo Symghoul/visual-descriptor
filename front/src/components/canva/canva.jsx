@@ -162,7 +162,7 @@ function Canva() {
         color: "orange",
       };
       state.setLinks([...state.links, link]);
-      //state.saveDevice(link);
+      state.saveDevice(link);
     }
   }
 
@@ -176,7 +176,7 @@ function Canva() {
           height={SIZE}
           fill="red"
           draggable
-          onDragEnd={async (e) => {
+          onDragEnd={(e) => {
             let controller = {
               id: uuid.v1(),
               name: "Controller",
@@ -195,7 +195,7 @@ function Canva() {
               controller,
             ]);
             //save on db
-            await state.saveDevice(controller);
+            state.saveDevice(controller);
           }}
         />
         <Text text="Controller" x={50} y={632} />
@@ -254,7 +254,7 @@ function Canva() {
               color: "blue",
             };
             state.setHosts((prevHosts) => [...prevHosts, host]);
-            //state.saveDevice(host);
+            state.saveDevice(host);
           }}
         />
         <Text text="Host" x={160} y={632} />
@@ -308,7 +308,7 @@ function Canva() {
               color: "yellow",
             };
             state.setSwitches((prevSwitches) => [...prevSwitches, switche]);
-            //state.saveDevice(switche);
+            state.saveDevice(switche);
           }}
         />
         <Text text="Switch" x={105} y={632} />

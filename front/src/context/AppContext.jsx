@@ -30,18 +30,53 @@ export const AppContextWrapper = (props) => {
   const macAddress = useRef(0);
   const portNumber = useRef(0);
 
+  /**
+   * This effect update the changes made in a device
+   */
   useEffect(() => {
     if (prevSelDevice) {
-      axios.put(
-        `/api/controllers/${prevSelDevice.id}`,
-        getDevice(prevSelDevice)
-      );
-      //BUG!!!
-      console.log("cumple");
+      if (prevSelDevice.type === "controller") {
+        axios.get(`/api/controllers/${prevSelDevice.id}`).then((res) => {
+          if (res.status === 200) {
+            axios.put(
+              `/api/controllers/${prevSelDevice.id}`,
+              getDevice(prevSelDevice)
+            );
+          }
+        });
+      }
+      if (prevSelDevice.type === "switch") {
+        axios.get(`/api/switches/${prevSelDevice.id}`).then((res) => {
+          if (res.status === 200) {
+            axios.put(
+              `/api/switches/${prevSelDevice.id}`,
+              getDevice(prevSelDevice)
+            );
+          }
+        });
+      }
+      if (prevSelDevice.type === "host") {
+        axios.get(`/api/hosts/${prevSelDevice.id}`).then((res) => {
+          if (res.status === 200) {
+            axios.put(
+              `/api/hosts/${prevSelDevice.id}`,
+              getDevice(prevSelDevice)
+            );
+          }
+        });
+      }
+      if (prevSelDevice.type === "link") {
+        axios.get(`/api/links/${prevSelDevice.id}`).then((res) => {
+          if (res.status === 200) {
+            axios.put(
+              `/api/links/${prevSelDevice.id}`,
+              getDevice(prevSelDevice)
+            );
+          }
+        });
+      }
     }
-
-    //console.log(links);
-  }, [prevSelDevice]);
+  }, [selectedDevice]);
   // ----------- Main methods -----------
 
   const exportData = () => {
@@ -155,11 +190,27 @@ export const AppContextWrapper = (props) => {
       return foundDevice;
     } else if (device.type === "link") {
       foundDevice = links.find((link) => link.id === device.id);
-      return foundDevice;
+      if (foundDevice) {
+        return foundDevice;
+      } else {
+        foundDevice = null;
+      }
     } else {
       return foundDevice;
     }
   }
+
+  const saveDevice = async (device) => {
+    if (device.type === "controller") {
+      await axios.post("/api/controllers", device);
+    } else if (device.type === "switch") {
+      await axios.post("/api/switches", device);
+    } else if (device.type === "host") {
+      await axios.post("/api/hosts", device);
+    } else if (device.type === "link") {
+      await axios.post("/api/links", device);
+    }
+  };
 
   const deleteDevice = () => {
     const device = getDevice(selectedDevice);
@@ -170,123 +221,38 @@ export const AppContextWrapper = (props) => {
         (controller) => controller.id !== device.id
       );
       setControllers(arr);
+      axios.delete(`/api/controllers/${device.id}`);
     } else if (device.type === "switch") {
       deleteLinks(device);
       const arr = switches.filter((switche) => switche.id !== device.id);
       setSwitches(arr);
+      axios.delete(`/api/switches/${device.id}`);
     } else if (device.type === "host") {
       deleteLinks(device);
       const arr = hosts.filter((host) => host.id !== device.id);
       setHosts(arr);
+      axios.delete(`/api/hosts/${device.id}`);
     } else if (device.type === "link") {
       const arr = links.filter((link) => link.id !== device.id);
       setLinks(arr);
       setSelectedLink(null);
+      axios.delete(`/api/links/${device.id}`);
     }
     setSelectedDevice(null);
   };
 
-  const deleteLinks = (device) => {
+  const deleteLinks = async (device) => {
     const arr = links.filter((link) => link.to.id !== device.id);
     const arr2 = arr.filter((link) => link.from.id !== device.id);
     setLinks(arr2);
-  };
 
-  // ----------- Controller methods -----------
-
-  const updateControllerName = (device, name) => {
-    const controller = getDevice(device);
-    controller.name = name;
-    const controllersArr = [
-      ...controllers.filter(
-        (oldController) => oldController.id !== controller.id
-      ),
-    ];
-    setControllers(controllersArr, controller);
-  };
-
-  const saveDevice = async (device) => {
-    if (device.type === "controller") {
-      await axios.post("/api/controllers", device);
-      //const datos = await axios.get("/api/controllers").then((res) => {
-      //  return res.data;
-      //});
-      //setControllers(datos);
-    } else if (device.type === "switch") {
-      await axios.post("/api/switches", device);
-    } else if (device.type === "host") {
-      await axios.post("/api/hosts", device);
-    } else if (device.type === "link") {
-      await axios.post("/api/links", device);
-    }
-  };
-
-  const deleteController = (controllerId) => {
-    const controllersArr = controllers.filter(
-      (controller) => controller.id !== controllerId
-    );
-    setControllers(controllersArr);
-  };
-
-  // ----------- Switch methods -----------
-
-  const saveSwitch = (name, protocol, port, mac) => {
-    const newSwitch = {
-      id: uuid.v1(),
-      name,
-      protocol,
-      port,
-      mac,
-    };
-    const newSwitchs = [...switches, newSwitch];
-    setSwitches(newSwitchs);
-  };
-
-  const deleteSwitch = (switchId) => {
-    const switchesArr = switches.filter(
-      (oldSwitch) => oldSwitch.id !== switchId
-    );
-    setControllers(switchesArr);
-  };
-
-  // ----------- Host methods -----------
-
-  const saveHost = (name, ip, mask, mac) => {
-    const newHost = {
-      id: uuid.v1(),
-      name,
-      ip,
-      mask,
-      mac,
-    };
-    const newHosts = [...hosts, newHost];
-    setHosts(newHosts);
-  };
-
-  const deleteHost = (hostId) => {
-    const hostsArr = hosts.filter((host) => host.id !== hostId);
-    setHosts(hostsArr);
-  };
-
-  // ----------- Link methods -----------
-
-  const saveLink = (name, source, destiny, delay, loss, bandwith) => {
-    const newLink = {
-      id: uuid.v1(),
-      name,
-      source,
-      destiny,
-      delay,
-      loss,
-      bandwith,
-    };
-    const newLinks = [...links, newLink];
-    setLinks(newLinks);
-  };
-
-  const deleteLink = (linkId) => {
-    const linksArr = links.filter((link) => link.id !== linkId);
-    setLinks(linksArr);
+    //database cleaning
+    const oldLinks = (await axios.get("/api/links")).data;
+    oldLinks.map((link) => {
+      //map indicator to id
+      let idLink = { ...link, id: link.indicator };
+      axios.delete(`/api/links/${idLink.id}`);
+    });
   };
 
   // ----------- exported states and methods -----------
@@ -313,21 +279,12 @@ export const AppContextWrapper = (props) => {
 
     controllers,
     setControllers,
-    updateControllerName,
-    deleteController,
-
     switches,
     setSwitches,
-    saveSwitch,
-    deleteSwitch,
     hosts,
     setHosts,
-    saveHost,
-    deleteHost,
     links,
     setLinks,
-    saveLink,
-    deleteLink,
   };
 
   return (

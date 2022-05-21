@@ -24,14 +24,13 @@ const ControllerConfig = () => {
 
   useEffect(() => {
     let oldController = state.getDevice(state.selectedDevice);
-    oldController = { ...oldController, name };
+    let update = { ...oldController, name };
 
-    console.log(oldController);
-    const arr = state.controllers.map((cntrl) => {
-      if (cntrl.id === oldController.id) {
-        return oldController;
+    const arr = state.controllers.map((controller) => {
+      if (controller.id === oldController.id) {
+        return update;
       }
-      return cntrl;
+      return controller;
     });
 
     state.setControllers(arr);
@@ -39,6 +38,8 @@ const ControllerConfig = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <div>Configuration</div>
+
       <div className="container">
         <div className="field">
           <CssTextField
