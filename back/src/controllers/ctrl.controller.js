@@ -21,8 +21,13 @@ controllerCtrl.createControllers = async (req, res) => {
     y,
     color,
   });
+  try{
   await newcontroller.save();
   res.send({ message: "Controlador guardado" });
+  }
+  catch(error){
+    res.status(401).send(error);
+  }
 };
 
 controllerCtrl.getControllerById = async (req, res) => {
