@@ -23,8 +23,15 @@ hostsCtrl.createhosts = async (req, res) => {
     y,
     color,
   });
+  try{
   await newHost.save();
   res.send({ message: "host guardado" });
+  }catch(error){
+    if(error.keyValue.ip)
+      res.status(401).send( error);
+    else if(error.keyValue.mac)
+      res.status(402).send(error);
+  }
 };
 
 hostsCtrl.gethostById = async (req, res) => {
