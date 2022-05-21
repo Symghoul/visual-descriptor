@@ -8,7 +8,7 @@ const switchSchema = new Schema({
     type: String,
     required: true,
   },
-  listenPort: {
+  port: {
     type: Number,
     required: true,
   },
