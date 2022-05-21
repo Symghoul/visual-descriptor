@@ -30,53 +30,6 @@ export const AppContextWrapper = (props) => {
   const macAddress = useRef(0);
   const portNumber = useRef(0);
 
-  /**
-   * This effect update the changes made in a device
-   */
-  useEffect(() => {
-    if (prevSelDevice) {
-      if (prevSelDevice.type === "controller") {
-        axios.get(`/api/controllers/${prevSelDevice.id}`).then((res) => {
-          if (res.status === 200) {
-            axios.put(
-              `/api/controllers/${prevSelDevice.id}`,
-              getDevice(prevSelDevice)
-            );
-          }
-        });
-      }
-      if (prevSelDevice.type === "switch") {
-        axios.get(`/api/switches/${prevSelDevice.id}`).then((res) => {
-          if (res.status === 200) {
-            axios.put(
-              `/api/switches/${prevSelDevice.id}`,
-              getDevice(prevSelDevice)
-            );
-          }
-        });
-      }
-      if (prevSelDevice.type === "host") {
-        axios.get(`/api/hosts/${prevSelDevice.id}`).then((res) => {
-          if (res.status === 200) {
-            axios.put(
-              `/api/hosts/${prevSelDevice.id}`,
-              getDevice(prevSelDevice)
-            );
-          }
-        });
-      }
-      if (prevSelDevice.type === "link") {
-        axios.get(`/api/links/${prevSelDevice.id}`).then((res) => {
-          if (res.status === 200) {
-            axios.put(
-              `/api/links/${prevSelDevice.id}`,
-              getDevice(prevSelDevice)
-            );
-          }
-        });
-      }
-    }
-  }, [selectedDevice]);
   // ----------- Main methods -----------
 
   const exportData = () => {
@@ -174,6 +127,54 @@ export const AppContextWrapper = (props) => {
     await axios.delete("/api/links/" + AQUI PONGA EL ID DEL link);
     */
   };
+
+  /**
+   * This effect update the changes made in a device
+   */
+  useEffect(() => {
+    if (prevSelDevice) {
+      if (prevSelDevice.type === "controller") {
+        axios.get(`/api/controllers/${prevSelDevice.id}`).then((res) => {
+          if (res.status === 200) {
+            axios.put(
+              `/api/controllers/${prevSelDevice.id}`,
+              getDevice(prevSelDevice)
+            );
+          }
+        });
+      }
+      if (prevSelDevice.type === "switch") {
+        axios.get(`/api/switches/${prevSelDevice.id}`).then((res) => {
+          if (res.status === 200) {
+            axios.put(
+              `/api/switches/${prevSelDevice.id}`,
+              getDevice(prevSelDevice)
+            );
+          }
+        });
+      }
+      if (prevSelDevice.type === "host") {
+        axios.get(`/api/hosts/${prevSelDevice.id}`).then((res) => {
+          if (res.status === 200) {
+            axios.put(
+              `/api/hosts/${prevSelDevice.id}`,
+              getDevice(prevSelDevice)
+            );
+          }
+        });
+      }
+      if (prevSelDevice.type === "link") {
+        axios.get(`/api/links/${prevSelDevice.id}`).then((res) => {
+          if (res.status === 200) {
+            axios.put(
+              `/api/links/${prevSelDevice.id}`,
+              getDevice(prevSelDevice)
+            );
+          }
+        });
+      }
+    }
+  }, [selectedDevice]);
 
   function getDevice(device) {
     let foundDevice = null;

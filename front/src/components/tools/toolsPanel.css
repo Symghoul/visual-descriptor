@@ -6,7 +6,7 @@ body{
     display: flex;
     flex-direction: column;
     line-height: normal;
-    max-width: 270px;
+    min-width: 200px;
     justify-content: flex-start;
     align-items: flex-start;
     padding: 5px;
