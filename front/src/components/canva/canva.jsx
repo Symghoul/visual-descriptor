@@ -15,7 +15,6 @@ function Canva() {
   const state = useContext(AppContext);
 
   const [connectionPreview, setConnectionPreview] = useState(null);
-  const [selectedLink, setSelectedLink] = useState(null);
 
   function getMousePos(e) {
     const position = e.target.position();
@@ -31,9 +30,9 @@ function Canva() {
     if (state.selectedDevice === null) {
       state.setSelectedDevice(device);
     } else if (state.selectedDevice.id !== device.id) {
-      if (selectedLink !== null) {
-        changeLinkColor(state.getDevice(selectedLink), "orange");
-        setSelectedLink(null);
+      if (state.selectedLink !== null) {
+        changeLinkColor(state.getDevice(state.selectedLink), "orange");
+        state.setSelectedLink(null);
       }
       state.setSelectedDevice(device);
     } else {
@@ -54,20 +53,20 @@ function Canva() {
   function handleLinkSelection(link) {
     if (state.selectedDevice === null) {
       changeLinkColor(link, "black");
-      setSelectedLink(state.getDevice(link));
+      state.setSelectedLink(state.getDevice(link));
       state.setSelectedDevice(state.getDevice(link));
     } else {
       if (state.selectedDevice.id !== link.id) {
-        if (selectedLink !== null) {
-          changeLinkColor(selectedLink, "orange");
+        if (state.selectedLink !== null) {
+          changeLinkColor(state.selectedLink, "orange");
         }
         changeLinkColor(link, "black");
-        setSelectedLink(state.getDevice(link));
+        state.setSelectedLink(state.getDevice(link));
         state.setSelectedDevice(state.getDevice(link));
       } else if (state.selectedDevice.id === link.id) {
         changeLinkColor(state.getDevice(link), "orange");
         state.setSelectedDevice(null);
-        setSelectedLink(null);
+        state.setSelectedLink(null);
       }
     }
   }
@@ -163,7 +162,7 @@ function Canva() {
         color: "orange",
       };
       state.setLinks([...state.links, link]);
-      state.saveDevice(link);
+      //state.saveDevice(link);
     }
   }
 
@@ -255,7 +254,7 @@ function Canva() {
               color: "blue",
             };
             state.setHosts((prevHosts) => [...prevHosts, host]);
-            state.saveDevice(host);
+            //state.saveDevice(host);
           }}
         />
         <Text text="Host" x={160} y={632} />
@@ -299,15 +298,17 @@ function Canva() {
               id: uuid.v1(),
               name: "Switch",
               symbol: `s${state.getSwitchSymbol()}`,
-              protocol: "",
-              port: "",
-              mac: "",
+              protocol: "OVS",
+              port: `300${state.getPortNumber()}`,
+              mac: `00:00:00:00:00:0${state.getMacAddress()}`,
+              controller: "notLinkedYet",
               type: "switch",
               x: e.target.x(),
               y: e.target.y(),
               color: "yellow",
             };
             state.setSwitches((prevSwitches) => [...prevSwitches, switche]);
+            //state.saveDevice(switche);
           }}
         />
         <Text text="Switch" x={105} y={632} />

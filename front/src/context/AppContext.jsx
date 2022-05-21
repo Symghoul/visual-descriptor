@@ -5,17 +5,18 @@ import axios from "../config/axios";
 
 const AppContext = React.createContext();
 
-//const usePreviousSelectedDevice = (prevSelDevice) => {
-//  const ref = useRef();
-//  useEffect(() => {
-//    ref.current = prevSelDevice;
-//  }, [prevSelDevice]);
-//  return ref.current;
-//};
-//const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
+const usePreviousSelectedDevice = (prevSelDevice) => {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = prevSelDevice;
+  }, [prevSelDevice]);
+  return ref.current;
+};
 
 export const AppContextWrapper = (props) => {
   const [selectedDevice, setSelectedDevice] = useState(null);
+  const [selectedLink, setSelectedLink] = useState(null);
+  const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
 
   const [controllers, setControllers] = useState([]);
   const [switches, setSwitches] = useState([]);
@@ -29,6 +30,18 @@ export const AppContextWrapper = (props) => {
   const macAddress = useRef(0);
   const portNumber = useRef(0);
 
+  useEffect(() => {
+    if (prevSelDevice) {
+      axios.put(
+        `/api/controllers/${prevSelDevice.id}`,
+        getDevice(prevSelDevice)
+      );
+      //BUG!!!
+      console.log("cumple");
+    }
+
+    //console.log(links);
+  }, [prevSelDevice]);
   // ----------- Main methods -----------
 
   const exportData = () => {
@@ -49,10 +62,10 @@ export const AppContextWrapper = (props) => {
       testMAC = "mac";
     };
 
-    ipTestMethod();
-    macTestMethod();
-    console.log(testIP);
-    console.log(testMAC);
+    //ipTestMethod();
+    //macTestMethod();
+    //console.log(testIP);
+    //console.log(testMAC);
   };
 
   const getControllerSymbol = () => {
@@ -168,16 +181,15 @@ export const AppContextWrapper = (props) => {
     } else if (device.type === "link") {
       const arr = links.filter((link) => link.id !== device.id);
       setLinks(arr);
+      setSelectedLink(null);
     }
     setSelectedDevice(null);
   };
 
   const deleteLinks = (device) => {
-    const arr = links.filter(
-      (link) => link.to.id !== device.id || link.from.id !== device.id
-    );
-    setLinks(arr);
-    console.log(links);
+    const arr = links.filter((link) => link.to.id !== device.id);
+    const arr2 = arr.filter((link) => link.from.id !== device.id);
+    setLinks(arr2);
   };
 
   // ----------- Controller methods -----------
@@ -285,6 +297,8 @@ export const AppContextWrapper = (props) => {
 
     selectedDevice,
     setSelectedDevice,
+    selectedLink,
+    setSelectedLink,
     getDevice,
 
     saveDevice,

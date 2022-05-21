@@ -1,29 +1,30 @@
-const {Schema, model} = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const switchSchema = new Schema({
+  indicator: String,
+  name: String,
+  symbol: String,
+  protocol: {
+    type: String,
+    required: true,
+  },
+  listenPort: {
+    type: Number,
+    required: true,
+  },
+  mac: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  controller: {
+    type: String,
+    required: true,
+  },
+  type: String,
+  x: String,
+  y: String,
+  color: String,
+});
 
-    indicator: String,
-    name: String,
-    symbol:String,
-    controller: {
-        type:String,
-        required:true
-    },
-    mac: {
-        type:String,
-        required:true,
-        unique : true
-    },
-    protocol: {
-        type: String,
-        required : true
-    },
-    listenPort:{
-        type: Number,
-        required: true
-    },
-    type:String,
-    
-})
-
-module.exports = model('switch', switchSchema);
+module.exports = model("switch", switchSchema);

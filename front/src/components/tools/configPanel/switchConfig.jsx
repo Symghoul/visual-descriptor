@@ -1,37 +1,16 @@
 import React, { useContext, useState } from "react";
-import { styled } from "@mui/material/styles";
-import { Button, TextField } from "@mui/material";
-
+import { Button, TextField, Autocomplete } from "@mui/material";
+import { CssTextField } from "../../../config/theme";
 import "./switchConfig.css";
 import AppContext from "../../../context/AppContext";
 
-const CssTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "#001e86",
-  },
-  "& .MuiInput-underline:after": {
-    borderBottomColor: "#6a6fea",
-  },
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: "#2E44B7",
-    },
-    "&:hover fieldset": {
-      borderColor: "#6a6fea",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#001e86",
-    },
-  },
-});
-
 const SwitchConfig = () => {
+  const state = useContext(AppContext);
+
   const [name, setName] = useState("");
   const [protocol, setProtocol] = useState("");
   const [port, setPort] = useState("");
   const [mac, setMac] = useState("");
-
-  const state = useContext(AppContext);
 
   return (
     <div className="container">
@@ -67,6 +46,7 @@ const SwitchConfig = () => {
           label={"MAC Address"}
         />
       </div>
+
       <div className="btn">
         <Button
           onClick={() => {
