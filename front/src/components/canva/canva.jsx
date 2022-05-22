@@ -245,7 +245,7 @@ function Canva() {
               name: "Host",
               symbol: `h${state.getHostSymbol()}`,
               ip: `192.168.0.${state.getIpAddress()}`,
-              mask: "225.225.225.0",
+              mask: "255.255.255.0",
               mac: `00:00:00:00:00:0${state.getMacAddress()}`,
               active: true,
               type: "host",
