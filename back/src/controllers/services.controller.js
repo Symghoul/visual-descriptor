@@ -1,38 +1,58 @@
 const services = {};
 
-services.mask = (req,res) => {
+services.newIp = (req, res) => {
 
-    function mask(mac){
+    let ip = req.body.ip
+    let mask = req.body.mask
+    let split = ip.split(".")
+    let newIp1 = Number(split[0]);
+    let newIp2 = Number(split[1]);
+    let newIp3 = Number(split[2]);
+    let newIp4 = Number(split[3]);
 
-    let bits = (mac)
-    let split = bits.split(".")
-    let sum = 1;
-    let exit = false;
-    for (let i = 0; i < split.length && !exit; i++) {
-    
-        if(Number(split[i])===0){
-            exit = true
-        }else{
-        sum = sum*Number(split[i]);
+    if(mask<=7){
+        if(newIp1===254 && newIp2===254 && newIp3===254 && newIp4===254){
+            newIp1=1;
+        }else if(newIp2===254 && newIp3===254 && newIp4===254){
+            newIp2 = 1;
+        }else if(newIp3===254 && newIp4===254){
+            newIp2+=1; 
+        }else if(newIp4===254){
+            newIp3+=1;
+        }
+    }
+    else if(mask<=15){
+        if(newIp2===254 && newIp3===254 && newIp4===254){
+            newIp2 = 1;
+        }else if(newIp3===254 && newIp4===254){
+            newIp2+=1; 
+        }else if(newIp4===254){
+            newIp3+=1;
+        }
+    }
+    else if(mask<=23){
+        if(newIp3===254 && newIp4===254){
+            newIp3=1; 
+        }else if(newIp4===254){
+            newIp3+=1;
         }
     }
     
-    bits = Math.log(sum)/Math.log(2)
-    bits = Math.round(bits)
-    return bits;
+    if(newIp4===254){
+        newIp4 = 1;
     }
-}
+    else {newIp4 = newIp4+1;}
 
-services.newIp = (req, res) => {
-    let ip = req.data.ip
-    let split = ip.split(".")
-    let sum = 1;
-    let exit = false;
+    ip= newIp1+"."+newIp2+"."+newIp3+"."+newIp4;
+    res.send({"ip":`${ip}`});
 
-    
 }
 
 services.newMac = (req,res) => {
+
+}
+
+function temp(split, mask){
 
 }
 
