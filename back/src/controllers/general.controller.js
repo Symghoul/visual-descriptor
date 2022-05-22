@@ -22,6 +22,8 @@ generalController.getScript = async (req, res) => {
     links,
   };
 
+  //switch2Controller();
+
   //comando para escribir el script
   topocustom(topology, req.params.nameArchive);
 
@@ -31,6 +33,13 @@ generalController.getScript = async (req, res) => {
     */
   res.status(200).json({ message: "El script está corriendo" });
 };
+
+function switch2Controller(){
+  const links = link.find({"source":"c1"}||{"destination":"c1"})
+  links.forEach(element => {
+    
+  });
+}
 
 function topocustom(topology, nameArchive) {
   let writeFileSync =
@@ -126,6 +135,7 @@ function topocustom(topology, nameArchive) {
 
   fs.writeFileSync(`${nameArchive}.sh`, writeFileSync);
 }
+
 
 function exectMininet(nameArchive) {
   exec(`mn --custom=${nameArchive}`, (error, stdout, stderr) => {
