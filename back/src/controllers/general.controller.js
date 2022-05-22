@@ -64,22 +64,18 @@ function topocustom(topology, nameArchive) {
   });
 
   topology.hosts.forEach((element) => {
-    if (element.mask != undefined) {
-      var sum = mask(element.mask);
-    }
-
     if (element === undefined || element.symbol === undefined) {
       console.log("Los hosts no estan definidos");
     } else if (element.mac === undefined)
       writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', ip='${element.ip}/${sum}') \n`;
     else {
-      writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', mac='${element.mac}', ip='${element.ip}/${sum}') \n`;
+      writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', mac='${element.mac}', ip='${element.ip}/${element.mac}') \n`;
     }
   });
 
   writeFileSync += `\n\n info("*** Creating links")\n`;
   topology.links.forEach((element) => {
-    if (element === undefined) {
+    if (element === undefined || element.symbol === undefined) {
       console.log("Los links no estan definidos");
     } else {
       writeFileSync += ` net.addLink(${element.source}, ${element.destination} `;

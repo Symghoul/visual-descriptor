@@ -19,6 +19,15 @@ app.use('/api/switches', require('./routes/switches'))
 app.use('/api/hosts', require('./routes/hosts'))
 app.use('/api/links', require('./routes/links'))
 app.use('/api/export', require('./routes/general'))
+//app.use('/test/', require('./routes/services'))     //Necesito que me mandes una dirección ip y una mascara {"ip":###, "mask":"####"}
+/*
+app.use(`/test/:valor`, (req, res)=>{
+    //Dirección IP
+    let valor = req.params.valor
+    let split = valor.split(".")
 
+    //Dirección mac
+})
+*/
 
 module.exports = app;

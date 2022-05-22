@@ -34,13 +34,13 @@ switchesCtrl.createSwitch = async (req, res) => {
     y,
     color,
   });
-  //try{
+  try{
     await newSwitch.save();
     res.send({ message: "switch creado" });
-  /*}catch(error){
+  }catch(error){
     if(error)
       res.status(402).send(error);
-    }*/
+    }
 };
 
 switchesCtrl.getSwitchById = async (req, res) => {
