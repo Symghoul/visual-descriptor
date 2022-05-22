@@ -67,15 +67,15 @@ function topocustom(topology, nameArchive) {
     if (element === undefined || element.symbol === undefined) {
       console.log("Los hosts no estan definidos");
     } else if (element.mac === undefined)
-      writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', ip='${element.ip}/${sum}') \n`;
+      writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', ip='${element.ip}/${element.mask}') \n`;
     else {
-      writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', mac='${element.mac}', ip='${element.ip}/${element.mac}') \n`;
+      writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', mac='${element.mac}', ip='${element.ip}/${element.mask}') \n`;
     }
   });
 
   writeFileSync += `\n\n info("*** Creating links")\n`;
   topology.links.forEach((element) => {
-    if (element === undefined || element.symbol === undefined) {
+    if (element === undefined) {
       console.log("Los links no estan definidos");
     } else {
       writeFileSync += ` net.addLink(${element.source}, ${element.destination} `;
@@ -125,24 +125,6 @@ function topocustom(topology, nameArchive) {
   // Aqui va el comando para crear el script createScript();
 
   fs.writeFileSync(`${nameArchive}.sh`, writeFileSync);
-}
-
-function mask(mac) {
-  let bits = mac;
-  let split = bits.split(".");
-  let sum = 1;
-  let exit = false;
-  for (let i = 0; i < split.length && !exit; i++) {
-    if (Number(split[i]) === 0) {
-      exit = true;
-    } else {
-      sum = sum * Number(split[i]);
-    }
-  }
-
-  bits = Math.log(sum) / Math.log(2);
-  bits = Math.round(bits);
-  return bits;
 }
 
 function exectMininet(nameArchive) {
