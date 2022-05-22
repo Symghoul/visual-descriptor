@@ -74,7 +74,7 @@ function topocustom(topology, nameArchive) {
         if(element === undefined || element.symbol === undefined){
             console.log("Los hosts no estan definidos")}
         else if(element.mac === undefined)
-          writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', ip='${element.ip}/${sum}') \n`
+          writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', ip='${element.ip}/${element.mac}') \n`
         else{
           writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', mac='${element.mac}', ip='${element.ip}/${element.mac}') \n`
         }
@@ -82,7 +82,7 @@ function topocustom(topology, nameArchive) {
               
         writeFileSync += (`\n\n info("*** Creating links")\n`);
         topology.links.forEach(element=>{
-          if(element === undefined || element.symbol === undefined){
+          if(element === undefined){
             console.log("Los links no estan definidos")}
           else{
             writeFileSync += ` net.addLink(${element.source}, ${element.destination} `
