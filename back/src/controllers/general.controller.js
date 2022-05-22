@@ -69,15 +69,14 @@ function topocustom(topology, nameArchive) {
         })
         
       topology.hosts.forEach(element =>{
-        if(element.mask != undefined){
-          var sum = mask(element.mask)}
+        
             
         if(element === undefined || element.symbol === undefined){
             console.log("Los hosts no estan definidos")}
         else if(element.mac === undefined)
           writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', ip='${element.ip}/${sum}') \n`
         else{
-          writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', mac='${element.mac}', ip='${element.ip}/${sum}') \n`
+          writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', mac='${element.mac}', ip='${element.ip}/${element.mac}') \n`
         }
       });
               
@@ -137,25 +136,6 @@ function topocustom(topology, nameArchive) {
         
     };
 
-function mask(mac){
-
-    let bits = (mac)
-    let split = bits.split(".")
-    let sum = 1;
-    let exit = false;
-    for (let i = 0; i < split.length && !exit; i++) {
-    
-        if(Number(split[i])===0){
-            exit = true
-        }else{
-        sum = sum*Number(split[i]);
-        }
-    }
-    
-    bits = Math.log(sum)/Math.log(2)
-    bits = Math.round(bits)
-    return bits;
-    }
 
 function exectMininet(nameArchive){
 

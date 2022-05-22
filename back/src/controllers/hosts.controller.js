@@ -10,12 +10,13 @@ hostsCtrl.gethosts = async (req, res) => {
 hostsCtrl.createhosts = async (req, res) => {
   const { id, name, symbol, ip, mask, mac, active, type, x, y, color } =
     req.body;
+  const simpleMask = sMask(mask);
   const newHost = new host({
     indicator: id,
     name,
     symbol,
     ip,
-    mask,
+    mask: simpleMask,
     mac,
     active,
     type,
@@ -42,13 +43,14 @@ hostsCtrl.gethostById = async (req, res) => {
 
 hostsCtrl.updatehost = async (req, res) => {
   const { name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
+  const simpleMask = sMask(mask);
   const action = await host.updateOne(
     { indicator: req.params.indicator },
     {
       name,
       symbol,
       ip,
-      mask,
+      mask: simpleMask,
       mac,
       active,
       type,
@@ -70,5 +72,25 @@ hostsCtrl.deletehost = async (req, res) => {
     res.send({ message: "host no eliminado" });
   }
 };
+
+function sMask(mask){
+
+  let bits = (mask)
+  let split = bits.split(".")
+  let sum = 1;
+  let exit = false;
+  for (let i = 0; i < split.length && !exit; i++) {
+  
+      if(Number(split[i])===0){
+          exit = true
+      }else{
+      sum = sum*Number(split[i]);
+      }
+  }
+  
+  bits = Math.log(sum)/Math.log(2)
+  bits = Math.round(bits)
+  return bits;
+  }
 
 module.exports = hostsCtrl;
