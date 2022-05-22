@@ -13,10 +13,10 @@ const Preferences = () => {
 
   // ----------- Main methods -----------
 
-  const exportData = async () => {
-    console.log("exported");
-    await axios.get(`/api/export/${archiveName}`);
-  };
+  //const exportData = async () => {
+  //  console.log("exported");
+  //  await axios.get(`/api/export/${archiveName}`);
+  //};
 
   return (
     <ThemeProvider theme={theme}>
@@ -27,7 +27,7 @@ const Preferences = () => {
             size="small"
             variant="contained"
             color="primary"
-            onClick={exportData()}
+            //nClick={exportData()}
           >
             Export
           </Button>
