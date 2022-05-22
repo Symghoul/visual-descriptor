@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import axios from "../../../config/axios";
 import AppContext from "../../../context/AppContext";
 import { ThemeProvider } from "@mui/material/styles";
 import { Button } from "@mui/material";
@@ -7,6 +8,15 @@ import "./preferences.css";
 
 const Preferences = () => {
   const state = useContext(AppContext);
+
+  let archiveName = "testExport";
+
+  // ----------- Main methods -----------
+
+  const exportData = async () => {
+    console.log("exported");
+    await axios.get(`/api/export/${archiveName}`);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -17,9 +27,9 @@ const Preferences = () => {
             size="small"
             variant="contained"
             color="primary"
-            onClick={state.exportData()}
+            onClick={exportData()}
           >
-            Save
+            Export
           </Button>
         </div>
         <div className="prefItems">
