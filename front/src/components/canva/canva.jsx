@@ -4,6 +4,7 @@ import { Stage, Layer, Rect, Text, Line } from "react-konva";
 import { SIZE } from "./config";
 import * as uuid from "uuid";
 import Border from "./border";
+import axios from "../../config/axios";
 
 function createConnectionPoints(source, destination) {
   return [source.x, source.y, destination.x, destination.y];
@@ -218,7 +219,10 @@ function Canva() {
           perfectDrawEnabled={false}
           onClick={() => handleSelection(eachController)}
           onDragMove={(e) => handleDeviceDrag(e, eachController, index)}
-          //onDragEnd actualizar coordenadas
+          onDragEnd={() => {
+            const controller = state.getDevice(eachController);
+            axios.put(`/api/controllers/${controller.id}`, controller);
+          }}
         />
         <Text
           text={eachController.name}
@@ -277,6 +281,10 @@ function Canva() {
           perfectDrawEnabled={false}
           onClick={() => handleSelection(eachHost)}
           onDragMove={(e) => handleDeviceDrag(e, eachHost, index)}
+          onDragEnd={() => {
+            const host = state.getDevice(eachHost);
+            axios.put(`/api/hosts/${host.id}`, host);
+          }}
         />
         <Text text={eachHost.name} x={eachHost.x} y={eachHost.y + SIZE} />
       </div>
@@ -331,6 +339,10 @@ function Canva() {
           perfectDrawEnabled={false}
           onClick={() => handleSelection(eachSwitch)}
           onDragMove={(e) => handleDeviceDrag(e, eachSwitch, index)}
+          onDragEnd={() => {
+            const switche = state.getDevice(eachSwitch);
+            axios.put(`/api/switches/${switche.id}`, switche);
+          }}
         />
         <Text text={eachSwitch.name} x={eachSwitch.x} y={eachSwitch.y + SIZE} />
       </div>
