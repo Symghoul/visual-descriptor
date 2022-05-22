@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import axios from "../../../config/axios";
 import AppContext from "../../../context/AppContext";
 import { ThemeProvider } from "@mui/material/styles";
@@ -9,14 +9,13 @@ import "./preferences.css";
 const Preferences = () => {
   const state = useContext(AppContext);
 
-  let archiveName = "testExport";
+  const [fileName, setFileName] = useState(null);
 
-  // ----------- Main methods -----------
-
-  //const exportData = async () => {
-  //  console.log("exported");
-  //  await axios.get(`/api/export/${archiveName}`);
-  //};
+  useEffect(() => {
+    if (fileName !== null) {
+      axios.get(`/api/export/${fileName}`);
+    }
+  }, [fileName]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -27,7 +26,10 @@ const Preferences = () => {
             size="small"
             variant="contained"
             color="primary"
-            //nClick={exportData()}
+            onClick={() => {
+              setFileName("DiagramDesign");
+              state.setSelectedDevice(null);
+            }}
           >
             Export
           </Button>
