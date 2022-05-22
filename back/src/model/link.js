@@ -4,7 +4,7 @@ const linkSchema = new Schema({
   indicator: String,
   delay: Number,
   loss: Number,
-  bandwith: Number,
+  bandwidth: Number,
   from: Object,
   to: Object,
   source: {

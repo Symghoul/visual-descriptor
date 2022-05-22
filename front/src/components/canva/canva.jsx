@@ -153,7 +153,7 @@ function Canva() {
         id: uuid.v1(),
         delay: 0,
         loss: 0,
-        bandwith: 0,
+        bandwidth: 0,
         from: device,
         to: connectionTo,
         source: device.symbol,

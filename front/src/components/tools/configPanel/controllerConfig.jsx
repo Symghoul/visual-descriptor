@@ -3,7 +3,6 @@ import AppContext from "../../../context/AppContext";
 import { ThemeProvider } from "@mui/material/styles";
 import { Button, FormControlLabel, Switch } from "@mui/material";
 import { theme, CssTextField } from "../../../config/theme";
-
 import "./controllerConfig.css";
 
 const ControllerConfig = () => {
