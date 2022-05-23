@@ -1,0 +1,14 @@
+body{
+    background-color: #90caf9;
+}
+
+.configPanel{
+    display: flex;
+    flex-direction: column;
+    line-height: normal;
+    min-width: 200px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 5px;
+    background-color: #90caf9;
+}
