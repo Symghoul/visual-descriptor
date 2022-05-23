@@ -16,9 +16,9 @@ function Anchor({ x, y, id, onDragMove, onDragEnd, onDragStart }) {
   return (
     <Circle
       x={x}
-      y={y + 5}
+      y={y}
       radius={5}
-      fill="grey"
+      fill="#001e86"
       draggable
       onDragStart={(e) => onDragStart(e, id)}
       onDragMove={(e) => onDragMove(e, id)}

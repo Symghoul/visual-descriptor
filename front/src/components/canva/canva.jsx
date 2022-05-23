@@ -1,18 +1,24 @@
 import React, { useContext, useEffect, useState } from "react";
 import AppContext from "../../context/AppContext";
-import { Stage, Layer, Rect, Text, Line } from "react-konva";
+import { Stage, Layer, Text, Line, Image } from "react-konva";
+import useImage from "use-image";
 import { SIZE } from "./config";
 import * as uuid from "uuid";
 import Border from "./border";
+import axios from "../../config/axios";
 
 function createConnectionPoints(source, destination) {
   return [source.x, source.y, destination.x, destination.y];
 }
 
 function Canva() {
-  useEffect(() => {});
-
   const state = useContext(AppContext);
+  const bgColor = "#90caf9";
+  const linkColor = "#6a6fea";
+
+  const [controllerImage] = useImage("/images/controller.png");
+  const [switchImage] = useImage("/images/switch.png");
+  const [hostImage] = useImage("/images/host.png");
 
   const [connectionPreview, setConnectionPreview] = useState(null);
 
@@ -31,7 +37,7 @@ function Canva() {
       state.setSelectedDevice(device);
     } else if (state.selectedDevice.id !== device.id) {
       if (state.selectedLink !== null) {
-        changeLinkColor(state.getDevice(state.selectedLink), "orange");
+        changeLinkColor(state.getDevice(state.selectedLink), linkColor);
         state.setSelectedLink(null);
       }
       state.setSelectedDevice(device);
@@ -58,13 +64,13 @@ function Canva() {
     } else {
       if (state.selectedDevice.id !== link.id) {
         if (state.selectedLink !== null) {
-          changeLinkColor(state.selectedLink, "orange");
+          changeLinkColor(state.selectedLink, linkColor);
         }
         changeLinkColor(link, "black");
         state.setSelectedLink(state.getDevice(link));
         state.setSelectedDevice(state.getDevice(link));
       } else if (state.selectedDevice.id === link.id) {
-        changeLinkColor(state.getDevice(link), "orange");
+        changeLinkColor(state.getDevice(link), linkColor);
         state.setSelectedDevice(null);
         state.setSelectedLink(null);
       }
@@ -159,22 +165,22 @@ function Canva() {
         source: device.symbol,
         destination: connectionTo.symbol,
         type: "link",
-        color: "orange",
+        color: linkColor,
       };
       state.setLinks([...state.links, link]);
       state.saveDevice(link);
     }
   }
 
-  function CanvaController() {
+  const CanvaController = () => {
     return (
       <div>
-        <Rect
+        <Image
+          image={controllerImage}
           x={50}
           y={580}
           width={SIZE}
           height={SIZE}
-          fill="red"
           draggable
           onDragEnd={(e) => {
             let controller = {
@@ -187,7 +193,6 @@ function Canva() {
               type: "controller",
               x: e.target.x(),
               y: e.target.y(),
-              color: "red",
             };
             //save on state
             state.setControllers((prevControllers) => [
@@ -201,24 +206,28 @@ function Canva() {
         <Text text="Controller" x={50} y={632} />
       </div>
     );
-  }
+  };
 
   const allControllers = state.controllers.map((eachController, index) => {
     return (
       <div>
-        <Rect
+        <Image
+          image={controllerImage}
           id={eachController.id}
           type={eachController.type}
           x={eachController.x}
           y={eachController.y}
           width={SIZE}
           height={SIZE}
-          fill={eachController.color}
+          fill={bgColor}
           draggable
           perfectDrawEnabled={false}
           onClick={() => handleSelection(eachController)}
           onDragMove={(e) => handleDeviceDrag(e, eachController, index)}
-          //onDragEnd actualizar coordenadas
+          onDragEnd={() => {
+            const controller = state.getDevice(eachController);
+            axios.put(`/api/controllers/${controller.id}`, controller);
+          }}
         />
         <Text
           text={eachController.name}
@@ -232,12 +241,12 @@ function Canva() {
   function CanvaHost() {
     return (
       <div>
-        <Rect
+        <Image
+          image={hostImage}
           x={160}
           y={580}
           width={SIZE}
           height={SIZE}
-          fill="blue"
           draggable
           onDragEnd={(e) => {
             const host = {
@@ -251,7 +260,6 @@ function Canva() {
               type: "host",
               x: e.target.x(),
               y: e.target.y(),
-              color: "blue",
             };
             state.setHosts((prevHosts) => [...prevHosts, host]);
             state.saveDevice(host);
@@ -265,18 +273,23 @@ function Canva() {
   const allHosts = state.hosts.map((eachHost, index) => {
     return (
       <div>
-        <Rect
+        <Image
+          image={hostImage}
           id={eachHost.id}
           type={eachHost.type}
           x={eachHost.x}
           y={eachHost.y}
           width={SIZE}
           height={SIZE}
-          fill={eachHost.color}
+          fill={bgColor}
           draggable
           perfectDrawEnabled={false}
           onClick={() => handleSelection(eachHost)}
           onDragMove={(e) => handleDeviceDrag(e, eachHost, index)}
+          onDragEnd={() => {
+            const host = state.getDevice(eachHost);
+            axios.put(`/api/hosts/${host.id}`, host);
+          }}
         />
         <Text text={eachHost.name} x={eachHost.x} y={eachHost.y + SIZE} />
       </div>
@@ -286,12 +299,12 @@ function Canva() {
   function CanvaSwitch() {
     return (
       <div>
-        <Rect
+        <Image
+          image={switchImage}
           x={105}
           y={580}
           width={SIZE}
           height={SIZE}
-          fill="yellow"
           draggable
           onDragEnd={(e) => {
             const switche = {
@@ -305,7 +318,6 @@ function Canva() {
               type: "switch",
               x: e.target.x(),
               y: e.target.y(),
-              color: "yellow",
             };
             state.setSwitches((prevSwitches) => [...prevSwitches, switche]);
             state.saveDevice(switche);
@@ -319,18 +331,23 @@ function Canva() {
   const allSwitches = state.switches.map((eachSwitch, index) => {
     return (
       <div>
-        <Rect
+        <Image
+          image={switchImage}
           id={eachSwitch.id}
           type={eachSwitch.type}
           x={eachSwitch.x}
           y={eachSwitch.y}
           width={SIZE}
           height={SIZE}
-          fill={eachSwitch.color}
+          fill={bgColor}
           draggable
           perfectDrawEnabled={false}
           onClick={() => handleSelection(eachSwitch)}
           onDragMove={(e) => handleDeviceDrag(e, eachSwitch, index)}
+          onDragEnd={() => {
+            const switche = state.getDevice(eachSwitch);
+            axios.put(`/api/switches/${switche.id}`, switche);
+          }}
         />
         <Text text={eachSwitch.name} x={eachSwitch.x} y={eachSwitch.y + SIZE} />
       </div>
