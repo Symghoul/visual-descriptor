@@ -34,6 +34,17 @@ const Preferences = () => {
             Export
           </Button>
         </div>
+        <div className="prefItems">
+          <Button
+            id="btnOptions"
+            size="small"
+            variant="contained"
+            color="primary"
+            onClick={state.testStuff()}
+          >
+            Load
+          </Button>
+        </div>
       </div>
     </ThemeProvider>
   );
