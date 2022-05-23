@@ -9,20 +9,20 @@ function getAnchorPoints(x, y) {
   const halfSize = SIZE / 2;
   return [
     {
-      x: x - 10,
+      x: x - 15,
       y: y + halfSize,
     },
     {
       x: x + halfSize,
-      y: y - 10,
+      y: y - 15,
     },
     {
-      x: x + SIZE + 10,
+      x: x + SIZE + 15,
       y: y + halfSize,
     },
     {
       x: x + halfSize,
-      y: y + SIZE + 10,
+      y: y + SIZE + 15,
     },
   ];
 }
@@ -49,14 +49,7 @@ function Border({
   ));
   return (
     <>
-      <Line
-        x={x}
-        y={y}
-        points={points}
-        stroke="black"
-        strokeWidth={2}
-        perfectDrawEnabled={false}
-      />
+      <Line x={x} y={y} points={points} perfectDrawEnabled={false} />
       {anchors}
     </>
   );
