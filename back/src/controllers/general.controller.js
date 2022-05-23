@@ -10,28 +10,33 @@ const link = require("../model/link");
 const { stderr } = require("process");
 
 generalController.getScript = async (req, res) => {
-  const controllers = await controller.find();
-  const hosts = await host.find();
-  const switches = await switche.find();
-  const links = await link.find();
-
-  var topology = {
-    controllers,
-    hosts,
-    switches,
-    links,
-  };
-
-  //switch2Controller();
-
-  //comando para escribir el script
-  topocustom(topology, req.params.nameArchive);
-
-  /** 
-    //Comando para ejecutar el script junto a mininet
-    exectMininet(req.params.nameArchive)
-    */
-  res.status(200).json({ message: "El script está corriendo" });
+  try {
+    const controllers = await controller.find();
+    const hosts = await host.find();
+    const switches = await switche.find();
+    const links = await link.find();
+  
+    var topology = {
+      controllers,
+      hosts,
+      switches,
+      links,
+    };
+  
+    //switch2Controller();
+  
+    //comando para escribir el script
+    topocustom(topology, req.params.nameArchive);
+  
+    /** 
+      //Comando para ejecutar el script junto a mininet
+      exectMininet(req.params.nameArchive)
+      */
+    res.status(200).json({ message: "El script está corriendo" });
+    
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 };
 
 function switch2Controller(){

@@ -36,40 +36,51 @@ hostsCtrl.createhosts = async (req, res) => {
 };
 
 hostsCtrl.gethostById = async (req, res) => {
-  const h = await host.find({ indicator: req.params.indicator });
-
-  res.send(h);
+  try {
+    const h = await host.find({ indicator: req.params.indicator });
+    res.send(h);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 };
 
 hostsCtrl.updatehost = async (req, res) => {
-  const { name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
-  const simpleMask = sMask(mask);
-  const action = await host.updateOne(
-    { indicator: req.params.indicator },
-    {
-      name,
-      symbol,
-      ip,
-      mask: simpleMask,
-      mac,
-      active,
-      type,
-      x,
-      y,
-      color,
+  try {
+    const { name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
+    const simpleMask = sMask(mask);
+    const action = await host.updateOne(
+      { indicator: req.params.indicator },
+      {
+        name,
+        symbol,
+        ip,
+        mask: simpleMask,
+        mac,
+        active,
+        type,
+        x,
+        y,
+        color,
+      }
+    );
+    if (action.matchedCount === 1) res.send({ message: "host modificado" });
+    else {
+      res.send({ message: "No se modificó el host" });
     }
-  );
-  if (action.matchedCount === 1) res.send({ message: "host modificado" });
-  else {
-    res.send({ message: "No se modificó el host" });
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 };
 
 hostsCtrl.deletehost = async (req, res) => {
-  const action = await host.deleteOne({ indicator: req.params.indicator });
-  if (action.deletedCount === 1) res.send({ message: "host eliminado" });
-  else {
-    res.send({ message: "host no eliminado" });
+  try {
+    const action = await host.deleteOne({ indicator: req.params.indicator });
+    if (action.deletedCount === 1) res.send({ message: "host eliminado" });
+    else {
+      res.send({ message: "host no eliminado" });
+    }
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 };
 
