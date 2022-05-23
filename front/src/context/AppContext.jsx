@@ -86,44 +86,54 @@ export const AppContextWrapper = (props) => {
   useEffect(() => {
     if (prevSelDevice) {
       if (prevSelDevice.type === "controller") {
-        axios.get(`/api/controllers/${prevSelDevice.id}`).then((res) => {
-          if (res.status === 200) {
-            axios.put(
-              `/api/controllers/${prevSelDevice.id}`,
-              getDevice(prevSelDevice)
-            );
-          }
-        });
+        const deleteController = async () => {
+          await axios
+            .get(`/api/controllers/${prevSelDevice.id}`)
+            .then((res) => {
+              if (res.status === 200) {
+                axios.put(
+                  `/api/controllers/${prevSelDevice.id}`,
+                  getDevice(prevSelDevice)
+                );
+              }
+            });
+        };
       }
       if (prevSelDevice.type === "switch") {
-        axios.get(`/api/switches/${prevSelDevice.id}`).then((res) => {
-          if (res.status === 200) {
-            axios.put(
-              `/api/switches/${prevSelDevice.id}`,
-              getDevice(prevSelDevice)
-            );
-          }
-        });
+        const deleteSwitch = async () => {
+          await axios.get(`/api/switches/${prevSelDevice.id}`).then((res) => {
+            if (res.status === 200) {
+              axios.put(
+                `/api/switches/${prevSelDevice.id}`,
+                getDevice(prevSelDevice)
+              );
+            }
+          });
+        };
       }
       if (prevSelDevice.type === "host") {
-        axios.get(`/api/hosts/${prevSelDevice.id}`).then((res) => {
-          if (res.status === 200) {
-            axios.put(
-              `/api/hosts/${prevSelDevice.id}`,
-              getDevice(prevSelDevice)
-            );
-          }
-        });
+        const deleteHost = async () => {
+          await axios.get(`/api/hosts/${prevSelDevice.id}`).then((res) => {
+            if (res.status === 200) {
+              axios.put(
+                `/api/hosts/${prevSelDevice.id}`,
+                getDevice(prevSelDevice)
+              );
+            }
+          });
+        };
       }
       if (prevSelDevice.type === "link") {
-        axios.get(`/api/links/${prevSelDevice.id}`).then((res) => {
-          if (res.status === 200) {
-            axios.put(
-              `/api/links/${prevSelDevice.id}`,
-              getDevice(prevSelDevice)
-            );
-          }
-        });
+        const deleteLink = async () => {
+          await axios.get(`/api/links/${prevSelDevice.id}`).then((res) => {
+            if (res.status === 200) {
+              axios.put(
+                `/api/links/${prevSelDevice.id}`,
+                getDevice(prevSelDevice)
+              );
+            }
+          });
+        };
       }
     }
   }, [selectedDevice]);
@@ -195,17 +205,23 @@ export const AppContextWrapper = (props) => {
   };
 
   const deleteLinks = async (device) => {
+    const delArr = links.filter((link) => link.to.id === device.id);
+    const delArr2 = links.filter((link) => link.from.id === device.id);
     const arr = links.filter((link) => link.to.id !== device.id);
     const arr2 = arr.filter((link) => link.from.id !== device.id);
     setLinks(arr2);
 
     //database cleaning
-    const oldLinks = (await axios.get("/api/links")).data;
-    oldLinks.map((link) => {
-      //map indicator to id
-      let idLink = { ...link, id: link.indicator };
-      axios.delete(`/api/links/${idLink.id}`);
-    });
+    if (delArr.length !== 0) {
+      delArr.map((link) => {
+        axios.delete(`/api/links/${link.id}`);
+      });
+    }
+    if (delArr2.length !== 0) {
+      delArr2.map((link) => {
+        axios.delete(`/api/links/${link.id}`);
+      });
+    }
   };
 
   // ----------- exported states and methods -----------

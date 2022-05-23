@@ -11,8 +11,6 @@ function createConnectionPoints(source, destination) {
 }
 
 function Canva() {
-  useEffect(() => {});
-
   const state = useContext(AppContext);
 
   const [connectionPreview, setConnectionPreview] = useState(null);
