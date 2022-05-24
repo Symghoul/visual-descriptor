@@ -24,6 +24,10 @@ generalController.getScript = async (req, res) => {
     };
   
     //switch2Controller();
+
+    const err = exportDb();
+    if(!err){
+      res.status(501).send(err.message);}
   
     //comando para escribir el script
     topocustom(topology, req.params.nameArchive);
@@ -40,10 +44,32 @@ generalController.getScript = async (req, res) => {
 };
 
 function switch2Controller(){
-  const links = link.find({"source":"c1"}||{"destination":"c1"})
+  const links = link.find({"source":"c1"}||{"destination":"c1"});
+  let changer;
   links.forEach(element => {
-    
+    console.log(changer)
   });
+}
+
+async function exportDb() {
+  try {
+    const controllers = await controller.find();
+    const hosts = await host.find();
+    const switches = await switche.find();
+    const links = await link.find();
+  
+    
+    let db = 
+    `{"controllers": ${JSON.stringify(controllers)}, "switches":${JSON.stringify(switches)}, "hosts":${JSON.stringify(hosts)}, "links":${JSON.stringify(links)}}`;
+    
+    fs.writeFileSync("./data/data.json", db);
+    temp = "Salió todo perfectamente"
+    return temp;
+
+  } catch (error) {
+    console.log(error)
+    return error;
+  }
 }
 
 function topocustom(topology, nameArchive) {
@@ -138,7 +164,7 @@ function topocustom(topology, nameArchive) {
 
   // Aqui va el comando para crear el script createScript();
 
-  fs.writeFileSync(`${nameArchive}.sh`, writeFileSync);
+  fs.writeFileSync(`./data/${nameArchive}.sh`, writeFileSync);
 }
 
 
