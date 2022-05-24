@@ -2,6 +2,7 @@ const services = {};
 
 services.newIp = (req, res) => {
 
+
     let ip = req.body.ip
     let mask = req.body.mask
     let split = ip.split(".")
@@ -50,6 +51,7 @@ services.newIp = (req, res) => {
 
 services.newMac = (req,res) => {
 
+
     let mac = req.body.mac;
     let split = mac.split(":");
     let newMac1 = "";
@@ -80,8 +82,8 @@ services.newMac = (req,res) => {
     res.send({"mac":`${mac.replaceAll(",",":", "")}`})
 }
 
-
 function convert2Hex(n){
+
     
     if(n=="9")
         n="A";

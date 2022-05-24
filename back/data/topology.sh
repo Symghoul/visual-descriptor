@@ -9,28 +9,20 @@ def topology():
  net = Mininet( controller=Controller )
 
  info("*** Creating nodes")
- c1 = net.RemoteController( 'c1', ip='192.168.4.109', port=4000)
- c1 = net.RemoteController( 'c1', ip='192.168.4.120', port=4000)
- s1 = net.addSwitch( 's1', procotols='OVS', listenPort=undefined, mac='10::02')
  s1 = net.addSwitch( 's1', procotols='OVS', listenPort=undefined, mac='10::11')
- h1 = net.addHost( 'h1', mac='00::08', ip='192.168.4.50/255.255.255.0') 
- h2 = net.addHost( 'h2', mac='00::09', ip='192.168.4.51/255.255.255.0') 
+ s1 = net.addSwitch( 's1', procotols='OVS', listenPort=undefined, mac='10::12')
+ s2 = net.addSwitch( 's2', procotols='OVS', listenPort=undefined, mac='10::13')
 
 
  info("*** Creating links")
- net.addLink(h1, s1 , delay= 15, loss= 5) 
- net.addLink(h2, s1 , delay= 15, loss= 5) 
- net.addLink(s1, c1 , delay= 15, loss= 5) 
- net.addLink(h2, s1 , delay= 15, loss= 5) 
 
  info("*** Starting network")
  net.configureWifiNodes()
 
  net.build()
- c1.start()
- c1.start()
  s1.start( [c1] )
- s1.start( [c1] )
+ s1.start( [NotLinkedYet] )
+ s2.start( [NotLinkedYet] )
 
 
  info("*** Running CLI")

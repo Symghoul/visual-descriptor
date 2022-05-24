@@ -1,7 +1,8 @@
 const generalController = {};
 const { exec } = require("child_process");
 
-const fs = require("fs");
+
+const fs = require("fs-extra");
 
 const controller = require("../model/controller");
 const switche = require("../model/switch");
@@ -28,6 +29,7 @@ generalController.getScript = async (req, res) => {
     const err = exportDb();
     if(!err){
       res.status(501).send(err.message);}
+      
   
     //comando para escribir el script
     topocustom(topology, req.params.nameArchive);
@@ -57,11 +59,21 @@ generalController.eraseDB = async (req, res) =>{
   }
 }
 
-function switch2Controller(){
-  const links = link.find({"source":"c1"}||{"destination":"c1"});
+generalController.load = (req,res) => {
+  
+  if(req.files.file){
+    
+    res.send("Llegó mi fai"+ req.files.file.name);
+  }
+  console.log(req.files);
+}
+
+async function switch2Controller(){
+  const linksS = await link.find({"source":"c1"});
+  const linksD = await link.find({"destination":"c1"});
   let changer;
-  links.forEach(element => {
-    console.log(changer)
+  linksS.forEach(element => {
+    console.log(changer + "Hooli")
   });
 }
 
@@ -77,7 +89,7 @@ async function exportDb() {
     `{"controllers": ${JSON.stringify(controllers)}, "switches":${JSON.stringify(switches)}, "hosts":${JSON.stringify(hosts)}, "links":${JSON.stringify(links)}}`;
     
     fs.writeFileSync("./data/data.json", db);
-    temp = "Salió todo perfectamente"
+    temp = "Salió todo perfectamente";
     return temp;
 
   } catch (error) {

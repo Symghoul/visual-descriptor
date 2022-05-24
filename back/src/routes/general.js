@@ -1,7 +1,7 @@
 const {Router} = require('express');
 const router = Router();
 
-const {eraseDB, getScript} = require('../controllers/general.controller');
+const {eraseDB, getScript, load} = require('../controllers/general.controller');
 
 
 router.route('/erase')
@@ -10,6 +10,7 @@ router.route('/erase')
 router.route('/:nameArchive')
     .get(getScript);
 
-
+router.route('/load')
+    .post(load);
 
 module.exports = router;
