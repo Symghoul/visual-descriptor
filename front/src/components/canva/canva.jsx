@@ -221,12 +221,14 @@ function Canva() {
   }
 
   const CanvaController = () => {
+    let xp = 10;
+    let yp = 580;
     return (
       <div>
         <Image
           image={controllerImage}
-          x={50}
-          y={580}
+          x={xp}
+          y={yp}
           width={SIZE}
           height={SIZE}
           draggable
@@ -251,7 +253,7 @@ function Canva() {
             state.saveDevice(controller);
           }}
         />
-        <Text text="Controller" x={50} y={632} />
+        <Text text="Controller" x={xp} y={yp + 52} />
       </div>
     );
   };
@@ -286,71 +288,15 @@ function Canva() {
     );
   });
 
-  function CanvaHost() {
-    return (
-      <div>
-        <Image
-          image={hostImage}
-          x={160}
-          y={580}
-          width={SIZE}
-          height={SIZE}
-          draggable
-          onDragEnd={(e) => {
-            const host = {
-              id: uuid.v1(),
-              name: "Host",
-              symbol: `h${state.getHostSymbol()}`,
-              ip: `192.168.0.${state.getIpAddress()}`,
-              mask: "255.255.255.0",
-              mac: `00:00:00:00:00:0${state.getMacAddress()}`,
-              active: true,
-              type: "host",
-              x: e.target.x(),
-              y: e.target.y(),
-            };
-            state.setHosts((prevHosts) => [...prevHosts, host]);
-            state.saveDevice(host);
-          }}
-        />
-        <Text text="Host" x={160} y={632} />
-      </div>
-    );
-  }
-
-  const allHosts = state.hosts.map((eachHost, index) => {
-    return (
-      <div>
-        <Image
-          image={hostImage}
-          id={eachHost.id}
-          type={eachHost.type}
-          x={eachHost.x}
-          y={eachHost.y}
-          width={SIZE}
-          height={SIZE}
-          fill={bgColor}
-          draggable
-          perfectDrawEnabled={false}
-          onClick={() => handleSelection(eachHost)}
-          onDragMove={(e) => handleDeviceDrag(e, eachHost, index)}
-          onDragEnd={() => {
-            const host = state.getDevice(eachHost);
-            axios.put(`/api/hosts/${host.id}`, host);
-          }}
-        />
-        <Text text={eachHost.name} x={eachHost.x} y={eachHost.y + SIZE} />
-      </div>
-    );
-  });
-
   function CanvaSwitch() {
+    let xp = 80;
+    let yp = 580;
     return (
       <div>
         <Image
           image={switchImage}
-          x={105}
-          y={580}
+          x={xp}
+          y={yp}
           width={SIZE}
           height={SIZE}
           draggable
@@ -371,7 +317,7 @@ function Canva() {
             state.saveDevice(switche);
           }}
         />
-        <Text text="Switch" x={105} y={632} />
+        <Text text="Switch" x={xp + 5} y={yp + 52} />
       </div>
     );
   }
@@ -398,6 +344,66 @@ function Canva() {
           }}
         />
         <Text text={eachSwitch.name} x={eachSwitch.x} y={eachSwitch.y + SIZE} />
+      </div>
+    );
+  });
+
+  function CanvaHost() {
+    let xp = 150;
+    let yp = 580;
+    return (
+      <div>
+        <Image
+          image={hostImage}
+          x={xp}
+          y={yp}
+          width={SIZE}
+          height={SIZE}
+          draggable
+          onDragEnd={(e) => {
+            const host = {
+              id: uuid.v1(),
+              name: "Host",
+              symbol: `h${state.getHostSymbol()}`,
+              ip: `192.168.0.${state.getIpAddress()}`,
+              mask: "255.255.255.0",
+              mac: `00:00:00:00:00:0${state.getMacAddress()}`,
+              active: true,
+              type: "host",
+              x: e.target.x(),
+              y: e.target.y(),
+            };
+            state.setHosts((prevHosts) => [...prevHosts, host]);
+            state.saveDevice(host);
+          }}
+        />
+        <Text text="Host" x={xp + 10} y={yp + 52} />
+      </div>
+    );
+  }
+
+  const allHosts = state.hosts.map((eachHost, index) => {
+    return (
+      <div>
+        <Image
+          image={hostImage}
+          id={eachHost.id}
+          type={eachHost.type}
+          x={eachHost.x}
+          y={eachHost.y}
+          width={SIZE}
+          height={SIZE}
+          fill={bgColor}
+          draggable
+          perfectDrawEnabled={false}
+          onClick={() => handleSelection(eachHost)}
+          onDragMove={(e) => handleDeviceDrag(e, eachHost, index)}
+          onDragEnd={() => {
+            const host = state.getDevice(eachHost);
+            axios.put(`/api/hosts/${host.id}`, host);
+          }}
+        />
+        <Text text={eachHost.name} x={eachHost.x} y={eachHost.y + SIZE} />
       </div>
     );
   });

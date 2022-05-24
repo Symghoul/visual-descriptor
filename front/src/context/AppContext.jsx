@@ -50,26 +50,6 @@ export const AppContextWrapper = (props) => {
     //console.log(testMAC);
   };
 
-  const modalHelp = () =>{
-    <Modal
-    open={open}
-    onClose={handleClose}
-    aria-labelledby="modal-modal-title"
-    aria-describedby="modal-modal-description"
-  >
-    <Box sx={style}>
-      <Typography id="modal-modal-title" variant="h6" component="h2">
-      User guide
-      </Typography>
-      <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-      - To use the tool and draw the topology, you must select one of the devices located at the bottom and drag it anywhere on the screen where you want to place it.
-      - to edit the device values, you must click the device you want to configure, there you will see a panel with the device configuration, when you finish making changes click the device again to close the panel, or click a link or another device to configure it.
-      - To create links click once on the device you are starting from, then click on one of the balls and hold and drag the ball to the device you want to connect. Remember that it is not possible to connect controller to host directly.
-      </Typography>
-    </Box>
-  </Modal>
-  };
-
   const getControllerSymbol = () => {
     controllerSymbol.current = controllerSymbol.current + 1;
     return controllerSymbol.current;
@@ -244,12 +224,21 @@ export const AppContextWrapper = (props) => {
     }
   };
 
+  const startOver = () => {
+    //comando para borrar toda la base de datos
+    setSelectedDevice(null);
+    setSelectedDevice(null);
+    setSelectedLink(null);
+    setControllers([]);
+    setHosts([]);
+    setSwitches([]);
+    setLinks([]);
+  };
+
   // ----------- exported states and methods -----------
 
   const state = {
     testStuff,
-    modalHelp,
-
     selectedDevice,
     setSelectedDevice,
     selectedLink,
@@ -274,6 +263,8 @@ export const AppContextWrapper = (props) => {
     setHosts,
     links,
     setLinks,
+
+    startOver,
   };
 
   return (
