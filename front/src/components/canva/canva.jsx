@@ -1,11 +1,26 @@
 import React, { useContext, useEffect, useState } from "react";
 import AppContext from "../../context/AppContext";
 import { Stage, Layer, Text, Line, Image } from "react-konva";
+import { Modal, Typography, Box } from "@mui/material";
 import useImage from "use-image";
 import { SIZE } from "./config";
 import * as uuid from "uuid";
 import Border from "./border";
 import axios from "../../config/axios";
+import ToolsPanel from "../tools/toolsPanel";
+
+const style = {
+  position: "absolute",
+  gap: 2,
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 function createConnectionPoints(source, destination) {
   return [source.x, source.y, destination.x, destination.y];
@@ -16,11 +31,37 @@ function Canva() {
   const bgColor = "#90caf9";
   const linkColor = "#6a6fea";
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
+
   const [controllerImage] = useImage("/images/controller.png");
   const [switchImage] = useImage("/images/switch.png");
   const [hostImage] = useImage("/images/host.png");
 
   const [connectionPreview, setConnectionPreview] = useState(null);
+
+  const ModalError = () => {
+    return (
+      <Modal
+        open={modalOpen}
+        onClose={handleModalClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={style}
+          display="flex"
+          flex-direction="column"
+          alignItems="center"
+        >
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            You cannot do that!
+          </Typography>
+        </Box>
+      </Modal>
+    );
+  };
 
   function getMousePos(e) {
     const position = e.target.position();
@@ -154,21 +195,28 @@ function Canva() {
     const mousePos = stage.getPointerPosition();
 
     const connectionTo = detectConnection(mousePos, device);
-    if (connectionTo !== null) {
-      const link = {
-        id: uuid.v1(),
-        delay: 0,
-        loss: 0,
-        bandwidth: 0,
-        from: device,
-        to: connectionTo,
-        source: device.symbol,
-        destination: connectionTo.symbol,
-        type: "link",
-        color: linkColor,
-      };
-      state.setLinks([...state.links, link]);
-      state.saveDevice(link);
+
+    if (device.type === "controller" && connectionTo.type === "host") {
+      handleModalOpen();
+    } else if (device.type === "host" && connectionTo.type === "controller") {
+      handleModalOpen();
+    } else {
+      if (connectionTo !== null) {
+        const link = {
+          id: uuid.v1(),
+          delay: 0,
+          loss: 0,
+          bandwidth: 0,
+          from: device,
+          to: connectionTo,
+          source: device.symbol,
+          destination: connectionTo.symbol,
+          type: "link",
+          color: linkColor,
+        };
+        state.setLinks([...state.links, link]);
+        state.saveDevice(link);
+      }
     }
   }
 
@@ -394,19 +442,25 @@ function Canva() {
 
   //return that renders everything on the canva
   return (
-    <Stage width={window.innerWidth} height={window.innerHeight}>
-      <Layer>
-        <CanvaController />
-        <CanvaSwitch />
-        <CanvaHost />
-        {allLinks}
-        {allControllers}
-        {allSwitches}
-        {allHosts}
-        {borders}
-        {connectionPreview}
-      </Layer>
-    </Stage>
+    <div>
+      <ToolsPanel />
+      <div>
+        <Stage width={window.innerWidth} height={window.innerHeight}>
+          <Layer>
+            <CanvaController />
+            <CanvaSwitch />
+            <CanvaHost />
+            {allLinks}
+            {allControllers}
+            {allSwitches}
+            {allHosts}
+            {borders}
+            {connectionPreview}
+          </Layer>
+        </Stage>
+      </div>
+      <ModalError />
+    </div>
   );
 }
 

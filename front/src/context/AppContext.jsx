@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as uuid from "uuid";
-
 import axios from "../config/axios";
 
 const AppContext = React.createContext();
@@ -86,54 +85,30 @@ export const AppContextWrapper = (props) => {
   useEffect(() => {
     if (prevSelDevice) {
       if (prevSelDevice.type === "controller") {
-        const deleteController = async () => {
-          await axios
-            .get(`/api/controllers/${prevSelDevice.id}`)
-            .then((res) => {
-              if (res.status === 200) {
-                axios.put(
-                  `/api/controllers/${prevSelDevice.id}`,
-                  getDevice(prevSelDevice)
-                );
-              }
-            });
-        };
+        if (getDevice(prevSelDevice)) {
+          axios.put(
+            `/api/controllers/${prevSelDevice.id}`,
+            getDevice(prevSelDevice)
+          );
+        }
       }
       if (prevSelDevice.type === "switch") {
-        const deleteSwitch = async () => {
-          await axios.get(`/api/switches/${prevSelDevice.id}`).then((res) => {
-            if (res.status === 200) {
-              axios.put(
-                `/api/switches/${prevSelDevice.id}`,
-                getDevice(prevSelDevice)
-              );
-            }
-          });
-        };
+        if (getDevice(prevSelDevice)) {
+          axios.put(
+            `/api/switches/${prevSelDevice.id}`,
+            getDevice(prevSelDevice)
+          );
+        }
       }
       if (prevSelDevice.type === "host") {
-        const deleteHost = async () => {
-          await axios.get(`/api/hosts/${prevSelDevice.id}`).then((res) => {
-            if (res.status === 200) {
-              axios.put(
-                `/api/hosts/${prevSelDevice.id}`,
-                getDevice(prevSelDevice)
-              );
-            }
-          });
-        };
+        if (getDevice(prevSelDevice)) {
+          axios.put(`/api/hosts/${prevSelDevice.id}`, getDevice(prevSelDevice));
+        }
       }
       if (prevSelDevice.type === "link") {
-        const deleteLink = async () => {
-          await axios.get(`/api/links/${prevSelDevice.id}`).then((res) => {
-            if (res.status === 200) {
-              axios.put(
-                `/api/links/${prevSelDevice.id}`,
-                getDevice(prevSelDevice)
-              );
-            }
-          });
-        };
+        if (getDevice(prevSelDevice)) {
+          axios.put(`/api/links/${prevSelDevice.id}`, getDevice(prevSelDevice));
+        }
       }
     }
   }, [selectedDevice]);

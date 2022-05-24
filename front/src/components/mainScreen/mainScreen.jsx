@@ -8,9 +8,6 @@ function MainScreen() {
   return (
     <div className="row">
       <div className="panel">
-        <ToolsPanel />
-      </div>
-      <div className="panel">
         <Canva />
       </div>
     </div>
