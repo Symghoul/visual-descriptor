@@ -71,7 +71,10 @@ const Preferences = () => {
 
   const handleUpload = (e) => {
     if (loadedFile !== null) {
+      let formData = new FormData();
+      formData.append("file", loadedFile);
       //call axios method
+      handleCloseLoadFile();
     } else {
       handleOpenError();
       handleCloseLoadFile();
