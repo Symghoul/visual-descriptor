@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as uuid from "uuid";
+
 import axios from "../config/axios";
 
 const AppContext = React.createContext();
@@ -49,6 +50,26 @@ export const AppContextWrapper = (props) => {
     //console.log(testMAC);
   };
 
+  const modalHelp = () =>{
+    <Modal
+    open={open}
+    onClose={handleClose}
+    aria-labelledby="modal-modal-title"
+    aria-describedby="modal-modal-description"
+  >
+    <Box sx={style}>
+      <Typography id="modal-modal-title" variant="h6" component="h2">
+      User guide
+      </Typography>
+      <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+      - To use the tool and draw the topology, you must select one of the devices located at the bottom and drag it anywhere on the screen where you want to place it.
+      - to edit the device values, you must click the device you want to configure, there you will see a panel with the device configuration, when you finish making changes click the device again to close the panel, or click a link or another device to configure it.
+      - To create links click once on the device you are starting from, then click on one of the balls and hold and drag the ball to the device you want to connect. Remember that it is not possible to connect controller to host directly.
+      </Typography>
+    </Box>
+  </Modal>
+  };
+
   const getControllerSymbol = () => {
     controllerSymbol.current = controllerSymbol.current + 1;
     return controllerSymbol.current;
@@ -85,30 +106,54 @@ export const AppContextWrapper = (props) => {
   useEffect(() => {
     if (prevSelDevice) {
       if (prevSelDevice.type === "controller") {
-        if (getDevice(prevSelDevice)) {
-          axios.put(
-            `/api/controllers/${prevSelDevice.id}`,
-            getDevice(prevSelDevice)
-          );
-        }
+        const deleteController = async () => {
+          await axios
+            .get(`/api/controllers/${prevSelDevice.id}`)
+            .then((res) => {
+              if (res.status === 200) {
+                axios.put(
+                  `/api/controllers/${prevSelDevice.id}`,
+                  getDevice(prevSelDevice)
+                );
+              }
+            });
+        };
       }
       if (prevSelDevice.type === "switch") {
-        if (getDevice(prevSelDevice)) {
-          axios.put(
-            `/api/switches/${prevSelDevice.id}`,
-            getDevice(prevSelDevice)
-          );
-        }
+        const deleteSwitch = async () => {
+          await axios.get(`/api/switches/${prevSelDevice.id}`).then((res) => {
+            if (res.status === 200) {
+              axios.put(
+                `/api/switches/${prevSelDevice.id}`,
+                getDevice(prevSelDevice)
+              );
+            }
+          });
+        };
       }
       if (prevSelDevice.type === "host") {
-        if (getDevice(prevSelDevice)) {
-          axios.put(`/api/hosts/${prevSelDevice.id}`, getDevice(prevSelDevice));
-        }
+        const deleteHost = async () => {
+          await axios.get(`/api/hosts/${prevSelDevice.id}`).then((res) => {
+            if (res.status === 200) {
+              axios.put(
+                `/api/hosts/${prevSelDevice.id}`,
+                getDevice(prevSelDevice)
+              );
+            }
+          });
+        };
       }
       if (prevSelDevice.type === "link") {
-        if (getDevice(prevSelDevice)) {
-          axios.put(`/api/links/${prevSelDevice.id}`, getDevice(prevSelDevice));
-        }
+        const deleteLink = async () => {
+          await axios.get(`/api/links/${prevSelDevice.id}`).then((res) => {
+            if (res.status === 200) {
+              axios.put(
+                `/api/links/${prevSelDevice.id}`,
+                getDevice(prevSelDevice)
+              );
+            }
+          });
+        };
       }
     }
   }, [selectedDevice]);
@@ -203,6 +248,7 @@ export const AppContextWrapper = (props) => {
 
   const state = {
     testStuff,
+    modalHelp,
 
     selectedDevice,
     setSelectedDevice,
