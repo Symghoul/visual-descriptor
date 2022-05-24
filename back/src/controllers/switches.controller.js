@@ -3,8 +3,13 @@ const switchesCtrl = {};
 const switche = require("../model/switch");
 
 switchesCtrl.getSwitches = async (req, res) => {
-  const switches = await switche.find();
-  res.json(switche);
+  try {
+    const switches = await switche.find();
+    res.json(switche);
+    
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 };
 
 switchesCtrl.createSwitch = async (req, res) => {
@@ -44,40 +49,55 @@ switchesCtrl.createSwitch = async (req, res) => {
 };
 
 switchesCtrl.getSwitchById = async (req, res) => {
-  const s = await switche.find({ indicator: req.params.indicator });
-
-  res.send(s);
+  try {
+    const s = await switche.find({ indicator: req.params.indicator });
+  
+    res.send(s);
+    
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 };
 
 switchesCtrl.updateSwitch = async (req, res) => {
-  const { name, symbol, protocol, port, mac, controller, type, x, y, color } =
-    req.body;
-  const action = await switche.updateOne(
-    { indicator: req.params.indicator },
-    {
-      name,
-      symbol,
-      protocol,
-      port,
-      controller,
-      mac,
-      type,
-      x,
-      y,
-      color,
+  try {
+    const { name, symbol, protocol, port, mac, controller, type, x, y, color } =
+      req.body;
+    const action = await switche.updateOne(
+      { indicator: req.params.indicator },
+      {
+        name,
+        symbol,
+        protocol,
+        port,
+        controller,
+        mac,
+        type,
+        x,
+        y,
+        color,
+      }
+    );
+    if (action.matchedCount === 1) res.send({ message: "switch modificado" });
+    else {
+      res.send({ message: "No se modificó el switch" });
     }
-  );
-  if (action.matchedCount === 1) res.send({ message: "switch modificado" });
-  else {
-    res.send({ message: "No se modificó el switch" });
+    
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 };
 
 switchesCtrl.deleteSwitch = async (req, res) => {
-  const action = await switche.deleteOne({ indicator: req.params.indicator });
-  if (action.deletedCount === 1) res.send({ message: "switch eliminado" });
-  else {
-    res.send({ message: "switch no eliminado" });
+  try {
+    const action = await switche.deleteOne({ indicator: req.params.indicator });
+    if (action.deletedCount === 1) res.send({ message: "switch eliminado" });
+    else {
+      res.send({ message: "switch no eliminado" });
+    }
+    
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 };
 
