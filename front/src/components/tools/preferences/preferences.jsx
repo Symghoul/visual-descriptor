@@ -73,7 +73,7 @@ const Preferences = () => {
     if (loadedFile !== null) {
       let formData = new FormData();
       formData.append("file", loadedFile);
-      //call axios method
+      axios.post(`/api/general/load/`, formData);
       handleCloseLoadFile();
     } else {
       handleOpenError();
