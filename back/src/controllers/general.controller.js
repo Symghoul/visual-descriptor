@@ -4,8 +4,8 @@ const { exec } = require("child_process");
 const fs = require("fs");
 
 const controller = require("../model/controller");
-const host = require("../model/hosts");
 const switche = require("../model/switch");
+const host = require("../model/hosts");
 const link = require("../model/link");
 const { stderr } = require("process");
 
@@ -42,6 +42,20 @@ generalController.getScript = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
+
+generalController.eraseDB = async (req, res) =>{
+  try {
+    
+    await controller.collection.drop();
+    await switche.collection.drop();
+    await host.collection.drop();
+    await link.collection.drop();
+    res.send({"message":"DB dropped succesfully"});
+
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
 
 function switch2Controller(){
   const links = link.find({"source":"c1"}||{"destination":"c1"});

@@ -1,9 +1,15 @@
 const {Router} = require('express');
 const router = Router();
 
-const {getScript} = require('../controllers/general.controller');
+const {eraseDB, getScript} = require('../controllers/general.controller');
 
 
-router.route('/:nameArchive').get(getScript)
+router.route('/erase')
+    .get(eraseDB);
+
+router.route('/:nameArchive')
+    .get(getScript);
+
+
 
 module.exports = router;
