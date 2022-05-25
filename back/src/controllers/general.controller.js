@@ -2,13 +2,15 @@ const generalController = {};
 const { exec } = require("child_process");
 
 
+const db = require('mongodb');
+const bson = require('bson');
 const fs = require("fs-extra");
 
 const controller = require("../model/controller");
 const switche = require("../model/switch");
 const host = require("../model/hosts");
 const link = require("../model/link");
-const { stderr } = require("process");
+
 
 generalController.getScript = async (req, res) => {
   try {
@@ -59,13 +61,34 @@ generalController.eraseDB = async (req, res) =>{
   }
 }
 
-generalController.load = (req,res) => {
+generalController.load = async (req,res) => {
   
   if(req.files.file){
     
-    res.send("Llegó mi fai"+ req.files.file.name);
+    let split = req.files.file.name.split(".");
+    /*let name;
+    for(let i=0; i<split.length-1; i++){
+      name += split[i];
+    }*/
+    if(split[split.length-1]!=="json"){
+      res.status(400).send({"message":"El archivo debe ser el .json generado por el descriptor" })
+    }
+    let db = req.files.file;
+    let uploadPath = `./src/load/db.${split[split.length-1]}`;
+
+    db.mv(uploadPath, (err) =>{
+      if(err)
+        return res.status(400).send(err);
+
+      err = importDb();
+      if(!err){
+        res.status(501).send(err);}
+
+      res.send('File uploaded');
+    })
+
   }
-  console.log(req.files);
+  
 }
 
 async function switch2Controller(){
@@ -88,7 +111,95 @@ async function exportDb() {
     let db = 
     `{"controllers": ${JSON.stringify(controllers)}, "switches":${JSON.stringify(switches)}, "hosts":${JSON.stringify(hosts)}, "links":${JSON.stringify(links)}}`;
     
-    fs.writeFileSync("./data/data.json", db);
+    fs.writeFileSync("./src/data/data.json", db);
+    temp = "Salió todo perfectamente";
+    return temp;
+
+  } catch (error) {
+    console.log(error)
+    return error;
+  }
+  
+}
+
+async function importDb() {
+  try {
+
+    const {controllers} = await fs.readJSON('./src/load/db.json')
+    const { switches} = await fs.readJSON('./src/load/db.json')
+    const { hosts} = await fs.readJSON('./src/load/db.json')
+    const { links} = await fs.readJSON('./src/load/db.json')
+    let newController;
+    for(let i = 0; i<controllers.length; i++){
+       newController = new controller({
+        indicator: controllers[i].indicator,
+        name: controllers[i].name,
+        symbol: controllers[i].symbol,
+        ip: controllers[i].ip,
+        port: controllers[i].port,
+        remote: controllers[i].remote,
+        type: controllers[i].type,
+        x: controllers[i].x,
+        y: controllers[i].y,
+        color: controllers[i].color,
+      });
+      const action = await newController.save();
+      
+    }
+
+    for(let i = 0; i<switches.length; i++){
+      let newSwitche = new switche({
+        indicator: switches[i].indicator,
+        name: switches[i].name,
+        symbol: switches[i].symbol,
+        protocol: switches[i].protocol,
+        port: switches[i].port,
+        controller: switches[i].controller,
+        mac: switches[i].mac,
+        type: switches[i].type,
+        x: switches[i].x,
+        y: switches[i].y,
+        color: switches[i].color,
+      });
+      console.log(switches.length);
+      const action =await newSwitche.save();
+    }
+
+    for(let i = 0; i<hosts.length; i++){
+      const newHost = new host({
+        indicator: hosts[i].indicator,
+        name: hosts[i].name,
+        symbol: hosts[i].symbol,
+        ip: hosts[i].ip,
+        mask: hosts[i].mask,
+        mac: hosts[i].mac,
+        active: hosts[i].active,
+        type: hosts[i].type,
+        x: hosts[i].x,
+        y: hosts[i].y,
+        color: hosts[i].color,
+      });
+      console.log(newHost);
+      const action =await newHost.save();
+    }
+
+    for(let i = 0; i<links.length; i++){
+      const newlink = new link({
+        indicator: links[i].indicator,
+        delay: links[i].delay,
+        loss: links[i].loss,
+        bandwidth: links[i].bandwidth,
+        from: links[i].from,
+        to: links[i].to,
+        source: links[i].source,
+        destination: links[i].destination,
+        type: links[i].type,
+        color: links[i].color,
+      });
+      console.log(newlink);
+      const action = await newlink.save();
+    }
+    
     temp = "Salió todo perfectamente";
     return temp;
 
@@ -190,7 +301,7 @@ function topocustom(topology, nameArchive) {
 
   // Aqui va el comando para crear el script createScript();
 
-  fs.writeFileSync(`./data/${nameArchive}.sh`, writeFileSync);
+  fs.writeFileSync(`./src/data/${nameArchive}.sh`, writeFileSync);
 }
 
 

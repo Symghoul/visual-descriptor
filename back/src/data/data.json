@@ -1,0 +1,165 @@
+{
+    "controllers": [
+        {
+            "_id": "628dd3db10fb3f20ca9d2f21",
+            "indicator": "4445",
+            "name": "controller1",
+            "symbol": "c1",
+            "ip": "192.168.4.122",
+            "port": 4000,
+            "remote": true,
+            "type": "controller",
+            "x": 15,
+            "y": 20,
+            "color": "red",
+            "__v": 0
+        }
+    ],
+    "switches": [
+        {
+            "_id": "628dd393f0e9f32d19cf17a2",
+            "indicator": "89456",
+            "name": "switch1",
+            "symbol": "s2",
+            "protocol": "OVS",
+            "port": 4000,
+            "mac": "10::13",
+            "controller": "NotLinkedYet",
+            "type": "String",
+            "x": "15",
+            "y": "20",
+            "color": "red",
+            "__v": 0
+        },
+        {
+            "_id": "628dd393f0e9f32d19cf17a4",
+            "indicator": "89456",
+            "name": "switch1",
+            "symbol": "s2",
+            "protocol": "OVS",
+            "port": 4000,
+            "mac": "10::14",
+            "controller": "NotLinkedYet",
+            "type": "String",
+            "x": "15",
+            "y": "20",
+            "color": "red",
+            "__v": 0
+        },
+        {
+            "_id": "628dd43bb54f72acbd860a95",
+            "indicator": "89456",
+            "name": "switch1",
+            "symbol": "s2",
+            "protocol": "OVS",
+            "port": 4000,
+            "mac": "10::15",
+            "controller": "NotLinkedYet",
+            "type": "String",
+            "x": "15",
+            "y": "20",
+            "color": "red",
+            "__v": 0
+        }
+    ],
+    "hosts": [
+        {
+            "_id": "628dd393f0e9f32d19cf17a6",
+            "indicator": "945615",
+            "name": "pc2",
+            "symbol": "h1",
+            "ip": "192.168.4.56",
+            "mask": "24",
+            "mac": "00::10",
+            "active": true,
+            "__v": 0
+        },
+        {
+            "_id": "628dd393f0e9f32d19cf17a8",
+            "indicator": "945615",
+            "name": "pc2",
+            "symbol": "h1",
+            "ip": "192.168.4.57",
+            "mask": "24",
+            "mac": "00::11",
+            "active": true,
+            "__v": 0
+        },
+        {
+            "_id": "628dd451b54f72acbd860a97",
+            "indicator": "945615",
+            "name": "pc2",
+            "symbol": "h1",
+            "ip": "192.168.4.58",
+            "mask": "24",
+            "mac": "00::12",
+            "active": true,
+            "__v": 0
+        }
+    ],
+    "links": [
+        {
+            "_id": "628dd393f0e9f32d19cf17aa",
+            "indicator": "321846525463",
+            "delay": 15,
+            "loss": 5,
+            "source": "h1",
+            "destination": "s2",
+            "__v": 0
+        },
+        {
+            "_id": "628dd393f0e9f32d19cf17ac",
+            "indicator": "321846525463",
+            "delay": 15,
+            "loss": 5,
+            "source": "h1",
+            "destination": "s2",
+            "__v": 0
+        },
+        {
+            "_id": "628dd393f0e9f32d19cf17ae",
+            "indicator": "321846525463",
+            "delay": 15,
+            "loss": 5,
+            "source": "h1",
+            "destination": "s2",
+            "__v": 0
+        },
+        {
+            "_id": "628dd457b54f72acbd860a99",
+            "indicator": "321846525463",
+            "delay": 15,
+            "loss": 5,
+            "source": "h1",
+            "destination": "s2",
+            "__v": 0
+        },
+        {
+            "_id": "628dd45eb54f72acbd860a9b",
+            "indicator": "321846525463",
+            "delay": 15,
+            "loss": 5,
+            "source": "h2",
+            "destination": "s1",
+            "__v": 0
+        },
+        {
+            "_id": "628dd464b54f72acbd860a9d",
+            "indicator": "321846525463",
+            "delay": 15,
+            "loss": 5,
+            "source": "c1",
+            "destination": "s1",
+            "__v": 0
+        },
+        {
+            "_id": "628dd46bb54f72acbd860a9f",
+            "indicator": "321846525463",
+            "delay": 15,
+            "loss": 5,
+            "source": "c2",
+            "destination": "s2",
+            "__v": 0
+        }
+    ]
+}
