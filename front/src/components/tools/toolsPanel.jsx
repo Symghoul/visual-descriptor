@@ -4,7 +4,7 @@ import "./toolsPanel.css";
 
 import Preferences from "./preferences/preferences";
 
-import ControllerConfig from "./configPanel/controllerConfig";
+import ControllerConfig from "./configPanel/controllerConfigFormik";
 import HostConfig from "./configPanel/hostConfig";
 import SwitchConfig from "./configPanel/switchConfig";
 import LinkConfig from "./configPanel/linkConfig";
@@ -21,7 +21,7 @@ function ToolsPanel() {
     if (configDevice === null) {
       return <></>;
     } else if (configDevice.type === "controller") {
-      return <ControllerConfig name={configDevice.name} />;
+      return <ControllerConfig />;
     } else if (configDevice.type === "host") {
       return <HostConfig />;
     } else if (configDevice.type === "switch") {
