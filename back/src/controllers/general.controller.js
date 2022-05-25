@@ -26,7 +26,7 @@ generalController.getScript = async (req, res) => {
       links,
     };
   
-    //switch2Controller();
+    switch2Controller();
 
     const err = exportDb();
     if(!err){
@@ -109,14 +109,15 @@ async function switch2Controller(){
     for(let j=0; j<linksS.length;j++){
       let adder = i+1;
       changer = linksS[j].to;
-      console.log(linksS[j])
+      
       await switche.updateOne({"indicator":`${changer.indicator}`}, {"controller":`c${adder}`});
     }
-
+    
     for(let j=0; j<linksD.length;j++){
       let adder = i+1;
       changer = linksD[j].from;
-      await switche.updateOne({"indicator":`${changer.indicator}`}, {"controller":`c${adder}`});
+      
+      await switche.updateOne({"indicator":`${changer.indicator}`}, {"controller":`${c[i].symbol}`});
     }
   }
 }
@@ -151,6 +152,7 @@ async function importDb() {
     const { hosts} = await fs.readJSON('./src/load/db.json')
     const { links} = await fs.readJSON('./src/load/db.json')
     let newController;
+    
     for(let i = 0; i<controllers.length; i++){
        newController = new controller({
         indicator: controllers[i].indicator,
@@ -165,8 +167,8 @@ async function importDb() {
         color: controllers[i].color,
       });
       const action = await newController.save();
-      
     }
+    
 
     for(let i = 0; i<switches.length; i++){
       let newSwitche = new switche({
