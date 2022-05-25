@@ -92,12 +92,33 @@ generalController.load = async (req,res) => {
 }
 
 async function switch2Controller(){
-  const linksS = await link.find({"source":"c1"});
-  const linksD = await link.find({"destination":"c1"});
+  
+  const c = await controller.find();
+  let adder = 0;
+  let linksS;
+  let linksD;
   let changer;
-  linksS.forEach(element => {
-    console.log(changer + "Hooli")
-  });
+
+  for(let i=0; i<c.length;i++){
+    
+    
+    linksS = await link.find({"source":`${c[i].symbol}`});
+    linksD = await link.find({"destination":`${c[i].symbol}`});
+    changer;
+    
+    for(let j=0; j<linksS.length;j++){
+      let adder = i+1;
+      changer = linksS[j].to;
+      console.log(linksS[j])
+      await switche.updateOne({"indicator":`${changer.indicator}`}, {"controller":`c${adder}`});
+    }
+
+    for(let j=0; j<linksD.length;j++){
+      let adder = i+1;
+      changer = linksD[j].from;
+      await switche.updateOne({"indicator":`${changer.indicator}`}, {"controller":`c${adder}`});
+    }
+  }
 }
 
 async function exportDb() {
