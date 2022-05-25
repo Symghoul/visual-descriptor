@@ -1,0 +1,115 @@
+{
+    "controllers": [
+        {
+            "_id": "628ddda83370ae28ef6be1b8",
+            "indicator": "4445",
+            "name": "controller1",
+            "symbol": "c1",
+            "ip": "192.168.4.122",
+            "port": 4000,
+            "remote": true,
+            "type": "controller",
+            "x": 15,
+            "y": 20,
+            "color": "red",
+            "__v": 0
+        },
+        {
+            "_id": "628df29ab59dd59935caa57d",
+            "indicator": "4446",
+            "name": "controller1",
+            "symbol": "c2",
+            "ip": "192.168.4.123",
+            "port": 4000,
+            "remote": true,
+            "type": "controller",
+            "x": 15,
+            "y": 20,
+            "color": "red",
+            "__v": 0
+        }
+    ],
+    "switches": [
+        {
+            "_id": "628df246b59dd59935caa578",
+            "indicator": "89456",
+            "name": "switch1",
+            "symbol": "s2",
+            "protocol": "OVS",
+            "port": 4000,
+            "mac": "10::15",
+            "controller": "NotLinkedYet",
+            "type": "String",
+            "x": "15",
+            "y": "20",
+            "color": "red",
+            "__v": 0
+        },
+        {
+            "_id": "628df256b59dd59935caa57a",
+            "indicator": "89456",
+            "name": "switch1",
+            "symbol": "s1",
+            "protocol": "OVS",
+            "port": 4000,
+            "mac": "10::16",
+            "controller": "NotLinkedYet",
+            "type": "String",
+            "x": "15",
+            "y": "20",
+            "color": "red",
+            "__v": 0
+        }
+    ],
+    "hosts": [
+        {
+            "_id": "628df2e8b59dd59935caa584",
+            "indicator": "945615",
+            "name": "pc2",
+            "symbol": "h1",
+            "ip": "192.168.4.58",
+            "mask": "24",
+            "mac": "00::12",
+            "active": true,
+            "__v": 0
+        }
+    ],
+    "links": [
+        {
+            "_id": "628df2b9b59dd59935caa57f",
+            "indicator": "321846525463",
+            "delay": 15,
+            "loss": 5,
+            "source": "c2",
+            "destination": "s2",
+            "__v": 0
+        },
+        {
+            "_id": "628df2cab59dd59935caa581",
+            "indicator": "321846525463",
+            "delay": 15,
+            "loss": 5,
+            "source": "c1",
+            "destination": "s1",
+            "__v": 0
+        },
+        {
+            "_id": "628df2f1b59dd59935caa586",
+            "indicator": "321846525463",
+            "delay": 15,
+            "loss": 5,
+            "source": "h1",
+            "destination": "s1",
+            "__v": 0
+        },
+        {
+            "_id": "628df2f5b59dd59935caa588",
+            "indicator": "321846525463",
+            "delay": 15,
+            "loss": 5,
+            "source": "h1",
+            "destination": "s2",
+            "__v": 0
+        }
+    ]
+}

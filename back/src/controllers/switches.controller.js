@@ -5,7 +5,8 @@ const switche = require("../model/switch");
 switchesCtrl.getSwitches = async (req, res) => {
   try {
     const switches = await switche.find();
-    res.json(switche);
+    
+    res.json(switches);
     
   } catch (error) {
     res.status(500).send(error.message);
