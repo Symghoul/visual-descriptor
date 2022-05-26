@@ -24,14 +24,12 @@ hostsCtrl.createhosts = async (req, res) => {
     y,
     color,
   });
-  try{
-  await newHost.save();
-  res.send({ message: "host guardado" });
-  }catch(error){
-    if(error.keyValue.ip)
-      res.status(401).send( error);
-    else if(error.keyValue.mac)
-      res.status(402).send(error);
+  try {
+    await newHost.save();
+    res.send({ message: "host guardado" });
+  } catch (error) {
+    if (error.keyValue.ip) res.status(401).send(error);
+    else if (error.keyValue.mac) res.status(402).send(error);
   }
 };
 
@@ -68,7 +66,8 @@ hostsCtrl.updatehost = async (req, res) => {
       res.send({ message: "No se modificó el host" });
     }
   } catch (error) {
-    res.status(500).send(error.message);
+    if (error.keyValue.ip) res.status(401).send(error);
+    else if (error.keyValue.mac) res.status(402).send(error);
   }
 };
 
@@ -84,24 +83,22 @@ hostsCtrl.deletehost = async (req, res) => {
   }
 };
 
-function sMask(mask){
-
-  let bits = (mask)
-  let split = bits.split(".")
+function sMask(mask) {
+  let bits = mask;
+  let split = bits.split(".");
   let sum = 1;
   let exit = false;
   for (let i = 0; i < split.length && !exit; i++) {
-  
-      if(Number(split[i])===0){
-          exit = true
-      }else{
-      sum = sum*Number(split[i]);
-      }
+    if (Number(split[i]) === 0) {
+      exit = true;
+    } else {
+      sum = sum * Number(split[i]);
+    }
   }
-  
-  bits = Math.log(sum)/Math.log(2)
-  bits = Math.round(bits)
+
+  bits = Math.log(sum) / Math.log(2);
+  bits = Math.round(bits);
   return bits;
-  }
+}
 
 module.exports = hostsCtrl;

@@ -34,6 +34,8 @@ const Preferences = () => {
   const [loadFile, setLoadFile] = useState(false);
   const [openError, setOpenError] = useState(false);
 
+  const [bigError, setBigError] = useState(false);
+
   const handleOpenExport = () => {
     state.setSelectedDevice(null);
     setOpenExport(true);
@@ -74,6 +76,29 @@ const Preferences = () => {
   const handleOpenError = () => setOpenError(true);
   const handleCloseError = () => setOpenError(false);
 
+  /**
+   * Error de put starts
+   */
+  let errorMessage = "";
+
+  const openBigError = () => setBigError(true);
+  const closeBigError = () => {
+    state.setError("");
+    setBigError(false);
+  };
+
+  useEffect(() => {
+    if (state.error !== "") {
+      errorMessage =
+        state.error === "IP" ? "La Ip ya existe!" : "La MAC ya existe!";
+      openBigError();
+    }
+  }, [state.error]);
+
+  /**
+   * Error de put ends
+   */
+
   const handleFile = (e) => {
     setLoadedFile(e.target.files[0]);
   };
@@ -100,6 +125,25 @@ const Preferences = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <div>
+        <Modal
+          open={bigError}
+          onClose={closeBigError}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={style}
+            display="flex"
+            flex-direction="column"
+            alignItems="center"
+          >
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              {errorMessage}
+            </Typography>
+          </Box>
+        </Modal>
+      </div>
       <div className="prefContainer">
         <div className="prefItems">
           <Button

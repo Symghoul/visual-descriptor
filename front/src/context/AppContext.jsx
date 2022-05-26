@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import * as uuid from "uuid";
 
 import axios from "../config/axios";
 
@@ -17,6 +16,7 @@ export const AppContextWrapper = (props) => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [selectedLink, setSelectedLink] = useState(null);
   const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
+  const [error, setError] = useState("");
 
   const [controllers, setControllers] = useState([]);
   const [switches, setSwitches] = useState([]);
@@ -29,26 +29,6 @@ export const AppContextWrapper = (props) => {
   const ipAddress = useRef(0);
   const macAddress = useRef(0);
   const portNumber = useRef(0);
-
-  const testStuff = () => {
-    let testIP = "";
-    let testMAC = "";
-
-    const ipTestMethod = () => {
-      //codigo
-      testIP = "ip";
-    };
-
-    const macTestMethod = () => {
-      //codigo
-      testMAC = "mac";
-    };
-
-    //ipTestMethod();
-    //macTestMethod();
-    //console.log(testIP);
-    //console.log(testMAC);
-  };
 
   const getControllerSymbol = () => {
     controllerSymbol.current = controllerSymbol.current + 1;
@@ -87,7 +67,6 @@ export const AppContextWrapper = (props) => {
     if (prevSelDevice) {
       if (prevSelDevice.type === "controller") {
         const updateController = async () => {
-          console.log("encontro update");
           await axios
             .get(`/api/controllers/${prevSelDevice.id}`)
             .then((res) => {
@@ -116,14 +95,25 @@ export const AppContextWrapper = (props) => {
       }
       if (prevSelDevice.type === "host") {
         const updateHost = async () => {
-          await axios.get(`/api/hosts/${prevSelDevice.id}`).then((res) => {
-            if (res.status === 200) {
-              axios.put(
-                `/api/hosts/${prevSelDevice.id}`,
-                getDevice(prevSelDevice)
-              );
+          console.log("host");
+          let response = await axios.get(`/api/hosts/${prevSelDevice.id}`);
+          console.log(response, "1st response");
+          if (response.status === 200) {
+            console.log("existe");
+            response = await axios.put(
+              `/api/hosts/${prevSelDevice.id}`,
+              getDevice(prevSelDevice)
+            );
+            console.log(response, "2nd response");
+            if (response.status === 401) {
+              console.log(response.status);
+              state.setError("IP");
             }
-          });
+            if (response.status === 402) {
+              console.log(response.status);
+              state.setError("MACs");
+            }
+          }
         };
         updateHost();
       }
@@ -250,7 +240,6 @@ export const AppContextWrapper = (props) => {
   // ----------- exported states and methods -----------
 
   const state = {
-    testStuff,
     selectedDevice,
     setSelectedDevice,
     selectedLink,
@@ -277,6 +266,8 @@ export const AppContextWrapper = (props) => {
     setLinks,
 
     startOver,
+    error,
+    setError,
   };
 
   return (
