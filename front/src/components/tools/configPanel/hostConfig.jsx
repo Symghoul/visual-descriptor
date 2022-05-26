@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AppContext from "../../../context/AppContext";
 import { InitName, InitMac, InitIP, InitMask } from "./initialDeviceValues";
 import { ThemeProvider } from "@mui/material/styles";
@@ -34,6 +34,7 @@ const HostConfig = () => {
     });
 
     state.setHosts(arr);
+    state.setSelectedDevice(null);
   };
 
   const regex = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$";

@@ -34,7 +34,10 @@ const Preferences = () => {
   const [loadFile, setLoadFile] = useState(false);
   const [openError, setOpenError] = useState(false);
 
-  const handleOpenExport = () => setOpenExport(true);
+  const handleOpenExport = () => {
+    state.setSelectedDevice(null);
+    setOpenExport(true);
+  };
   const handleCloseExport = () => {
     setOpenExport(false);
     if (fieldFileName === "") {
@@ -53,7 +56,10 @@ const Preferences = () => {
   const handleCloseSuccess = () => setSuccess(false);
   const handleOpenHelp = () => setOpenHelp(true);
   const handleCloseHelp = () => setOpenHelp(false);
-  const handleOpenStartOver = () => setStartOver(true);
+  const handleOpenStartOver = () => {
+    state.setSelectedDevice(null);
+    setStartOver(true);
+  };
   const handleCloseStartOver = () => {
     setStartOver(false);
     state.startOver();
@@ -61,7 +67,10 @@ const Preferences = () => {
   const handleCloseStartOver2 = () => setStartOver(false);
 
   const handleCloseLoadFile = () => setLoadFile(false);
-  const handleOpenLoadFile = () => setLoadFile(true);
+  const handleOpenLoadFile = () => {
+    state.setSelectedDevice(null);
+    setLoadFile(true);
+  };
   const handleOpenError = () => setOpenError(true);
   const handleCloseError = () => setOpenError(false);
 

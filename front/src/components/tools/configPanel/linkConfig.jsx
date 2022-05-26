@@ -32,6 +32,7 @@ const LinkConfig = () => {
     });
 
     state.setLinks(arr);
+    state.setSelectedDevice(null);
   };
 
   const schema = object({

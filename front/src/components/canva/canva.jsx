@@ -75,12 +75,14 @@ function Canva() {
 
   function handleSelection(device) {
     if (state.selectedDevice === null) {
+      state.setSelectedDevice(null);
       state.setSelectedDevice(device);
     } else if (state.selectedDevice.id !== device.id) {
       if (state.selectedLink !== null) {
         changeLinkColor(state.getDevice(state.selectedLink), linkColor);
         state.setSelectedLink(null);
       }
+      state.setSelectedDevice(null);
       state.setSelectedDevice(device);
     } else {
       state.setSelectedDevice(null);
@@ -288,7 +290,7 @@ function Canva() {
     );
   });
 
-  function CanvaSwitch() {
+  const CanvaSwitch = () => {
     let xp = 80;
     let yp = 580;
     return (
@@ -320,7 +322,7 @@ function Canva() {
         <Text text="Switch" x={xp + 5} y={yp + 52} />
       </div>
     );
-  }
+  };
 
   const allSwitches = state.switches.map((eachSwitch, index) => {
     return (

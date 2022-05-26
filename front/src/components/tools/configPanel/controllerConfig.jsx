@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import AppContext from "../../../context/AppContext";
+import axios from "../../../config/axios";
 import { InitName, InitIP, InitPort, InitRemote } from "./initialDeviceValues";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme, CssTextField } from "../../../config/theme";
@@ -34,6 +35,7 @@ const ControllerConfig = () => {
     });
 
     state.setControllers(arr);
+    state.setSelectedDevice(null);
   };
 
   const schema = object({

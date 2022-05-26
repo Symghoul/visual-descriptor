@@ -86,7 +86,8 @@ export const AppContextWrapper = (props) => {
   useEffect(() => {
     if (prevSelDevice) {
       if (prevSelDevice.type === "controller") {
-        const deleteController = async () => {
+        const updateController = async () => {
+          console.log("encontro update");
           await axios
             .get(`/api/controllers/${prevSelDevice.id}`)
             .then((res) => {
@@ -98,9 +99,10 @@ export const AppContextWrapper = (props) => {
               }
             });
         };
+        updateController();
       }
       if (prevSelDevice.type === "switch") {
-        const deleteSwitch = async () => {
+        const updateSwitch = async () => {
           await axios.get(`/api/switches/${prevSelDevice.id}`).then((res) => {
             if (res.status === 200) {
               axios.put(
@@ -110,9 +112,10 @@ export const AppContextWrapper = (props) => {
             }
           });
         };
+        updateSwitch();
       }
       if (prevSelDevice.type === "host") {
-        const deleteHost = async () => {
+        const updateHost = async () => {
           await axios.get(`/api/hosts/${prevSelDevice.id}`).then((res) => {
             if (res.status === 200) {
               axios.put(
@@ -122,9 +125,10 @@ export const AppContextWrapper = (props) => {
             }
           });
         };
+        updateHost();
       }
       if (prevSelDevice.type === "link") {
-        const deleteLink = async () => {
+        const updateLink = async () => {
           await axios.get(`/api/links/${prevSelDevice.id}`).then((res) => {
             if (res.status === 200) {
               axios.put(
@@ -134,6 +138,7 @@ export const AppContextWrapper = (props) => {
             }
           });
         };
+        updateLink();
       }
     }
   }, [selectedDevice]);
@@ -225,7 +230,7 @@ export const AppContextWrapper = (props) => {
   };
 
   const startOver = () => {
-    //comando para borrar toda la base de datos
+    axios.get("/api/general/erase").then((res) => console.log(res.data));
     setSelectedDevice(null);
     setSelectedDevice(null);
     setSelectedLink(null);

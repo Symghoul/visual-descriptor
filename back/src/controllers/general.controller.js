@@ -1,12 +1,9 @@
 const generalController = {};
 const { exec } = require("child_process");
 
-
-
-const db = require('mongodb');
-const bson = require('bson');
+const db = require("mongodb");
+const bson = require("bson");
 const fs = require("fs-extra");
-
 
 const controller = require("../model/controller");
 const switche = require("../model/switch");
@@ -18,116 +15,121 @@ let newSwitche;
 let newHost;
 let newlink;
 
-
-
 generalController.getScript = async (req, res) => {
   try {
     const controllers = await controller.find();
     const hosts = await host.find();
     const switches = await switche.find();
     const links = await link.find();
-  
+
     var topology = {
       controllers,
       hosts,
       switches,
       links,
     };
-  
+
     switch2Controller();
 
     const err = exportDb();
-    if(!err){
-      res.status(501).send(err.message);}
-      
-  
+    if (!err) {
+      res.status(501).send(err.message);
+    }
+
     //comando para escribir el script
     topocustom(topology, req.params.nameArchive);
-  
+
     /** 
       //Comando para ejecutar el script junto a mininet
       exectMininet(req.params.nameArchive)
       */
     res.status(200).json({ message: "El script está corriendo" });
-    
   } catch (error) {
     res.status(500).send(error.message);
   }
 };
 
-generalController.eraseDB = async (req, res) =>{
-  console.log('Borrando base de datos');
+generalController.eraseDB = async (req, res) => {
   try {
-    
     await controller.collection.drop();
-    await switche.collection.drop();
-    await host.collection.drop();
-    await link.collection.drop();
-    res.send({"message":"DB dropped succesfully"});
-
   } catch (error) {
-    res.status(500).send(error.message);
+    console.log("controller collection does not exist");
   }
-}
+  try {
+    await switche.collection.drop();
+  } catch (error) {
+    console.log("switche collection does not exist");
+  }
+  try {
+    await host.collection.drop();
+  } catch (error) {
+    console.log("host collection does not exist");
+  }
+  try {
+    await link.collection.drop();
+  } catch (error) {
+    console.log("link collection does not exist");
+  }
+  console.log("DB cleaned");
+  res.send({ message: "DB dropped succesfully" });
+};
 
-generalController.load = async (req,res) => {
-  
-  if(req.files.file){
-    
+generalController.load = async (req, res) => {
+  if (req.files.file) {
     var split = req.files.file.name.split(".");
 
-    if(split[split.length-1]!=="json"){
-      res.status(400).send({"message":"El archivo debe ser el .json generado por el descriptor" });
+    if (split[split.length - 1] !== "json") {
+      res.status(400).send({
+        message: "El archivo debe ser el .json generado por el descriptor",
+      });
       return;
     }
     var file = req.files.file;
 
     var oldPath = `${file.tempFilePath}`;
-    var newPath = './load/alfa.json';
-
+    var newPath = "./load/alfa.json";
 
     console.log(`Renombrando ${db.tempFilePath}`);
-    fs.renameSync(oldPath,newPath);
-    
-    
+    fs.renameSync(oldPath, newPath);
+
     err = importDb();
-    if(!err){
+    if (!err) {
       res.status(501).send(err);
     }
   }
-    res.send(`File uploaded`);
+  res.send(`File uploaded`);
+};
 
-}
-  
-
-
-async function switch2Controller(){
-  
+async function switch2Controller() {
   const c = await controller.find();
   let adder = 0;
   let linksS;
   let linksD;
   let changer;
 
-  for(let i=0; i<c.length;i++){
-    
-    
-    linksS = await link.find({"source":`${c[i].symbol}`});
-    linksD = await link.find({"destination":`${c[i].symbol}`});
+  for (let i = 0; i < c.length; i++) {
+    linksS = await link.find({ source: `${c[i].symbol}` });
+    linksD = await link.find({ destination: `${c[i].symbol}` });
     changer;
-    
-    for(let j=0; j<linksS.length;j++){
-      let adder = i+1;
+
+    for (let j = 0; j < linksS.length; j++) {
+      let adder = i + 1;
       changer = linksS[j].to;
-      
-      await switche.updateOne({"indicator":`${changer.indicator}`}, {"controller":`c${adder}`});
+
+      await switche.updateOne(
+        { indicator: `${changer.indicator}` },
+        { controller: `c${adder}` }
+      );
     }
-    
-    for(let j=0; j<linksD.length;j++){
-      let adder = i+1;
+
+    for (let j = 0; j < linksD.length; j++) {
+      let adder = i + 1;
       changer = linksD[j].from;
-      
-      await switche.updateOne({"indicator":`${changer.indicator}`}, {"controller":`${c[i].symbol}`});
+
+      await switche.updateOne(
+        { indicator: `${changer.indicator}` },
+        { controller: `${c[i].symbol}` }
+      );
     }
   }
 }
@@ -138,41 +140,39 @@ async function exportDb() {
     const hosts = await host.find();
     const switches = await switche.find();
     const links = await link.find();
-  
-    
-    let db = 
-    `{"controllers": ${JSON.stringify(controllers)}, "switches":${JSON.stringify(switches)}, "hosts":${JSON.stringify(hosts)}, "links":${JSON.stringify(links)}}`;
-    
+
+    let db = `{"controllers": ${JSON.stringify(
+      controllers
+    )}, "switches":${JSON.stringify(switches)}, "hosts":${JSON.stringify(
+      hosts
+    )}, "links":${JSON.stringify(links)}}`;
+
     fs.writeFileSync("./src/data/data.json", db);
     temp = "Salió todo perfectamente";
     return temp;
-
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return error;
   }
-  
 }
 
 async function importDb() {
   try {
-
-    const {controllers} = await fs.readJSON('./load/alfa.json');
-    const { switches} = await fs.readJSON('./load/alfa.json');
-    const { hosts} = await fs.readJSON('./load/alfa.json');
-    const { links} = await fs.readJSON('./load/alfa.json');
+    const { controllers } = await fs.readJSON("./load/alfa.json");
+    const { switches } = await fs.readJSON("./load/alfa.json");
+    const { hosts } = await fs.readJSON("./load/alfa.json");
+    const { links } = await fs.readJSON("./load/alfa.json");
 
     console.log("---->");
     console.log(controllers);
     console.log(switches);
     console.log(hosts);
     console.log(links);
-    
 
     console.log(`&&&&&&& Controladores${controllers.length}`);
-    for(let i = 0; i<controllers.length; i++){
-        console.log("&&&&&&&");
-       newController = new controller({
+    for (let i = 0; i < controllers.length; i++) {
+      console.log("&&&&&&&");
+      newController = new controller({
         indicator: controllers[i].indicator,
         name: controllers[i].name,
         symbol: controllers[i].symbol,
@@ -184,17 +184,16 @@ async function importDb() {
         y: controllers[i].y,
         color: controllers[i].color,
       });
-   
+
       console.log(newController);
-      let result = await newController.save(); 
+      let result = await newController.save();
       console.log(result);
       console.log(`Controller ${i} subido`);
-      
     }
     console.log("Fin controllers&&&&&&&");
-    
+
     console.log(`&&&&&&& Switches${switches.length}`);
-    for(let i = 0; i<switches.length; i++){
+    for (let i = 0; i < switches.length; i++) {
       newSwitche = new switche({
         indicator: switches[i].indicator,
         name: switches[i].name,
@@ -208,12 +207,12 @@ async function importDb() {
         y: switches[i].y,
         color: switches[i].color,
       });
-      await newSwitche.save(); 
+      await newSwitche.save();
       console.log(`Switch ${i} subido`);
     }
 
     console.log(`&&&&&&& Host${hosts.length}`);
-    for(let i = 0; i<hosts.length; i++){
+    for (let i = 0; i < hosts.length; i++) {
       newHost = new host({
         indicator: hosts[i].indicator,
         name: hosts[i].name,
@@ -232,8 +231,8 @@ async function importDb() {
     }
 
     console.log(`&&&&&&& Links: ${hosts.length}`);
-    for(let i = 0; i<links.length; i++){
-       newlink = new link({
+    for (let i = 0; i < links.length; i++) {
+      newlink = new link({
         indicator: links[i].indicator,
         delay: links[i].delay,
         loss: links[i].loss,
@@ -248,10 +247,9 @@ async function importDb() {
       await newlink.save();
       console.log(`Link ${i} subido`);
     }
-    
+
     temp = "Salió todo perfectamente";
     return temp;
-
   } catch (error) {
     console.log("error");
     console.log(error);
@@ -353,7 +351,6 @@ function topocustom(topology, nameArchive) {
 
   fs.writeFileSync(`./src/data/${nameArchive}.sh`, writeFileSync);
 }
-
 
 function exectMininet(nameArchive) {
   exec(`mn --custom=${nameArchive}`, (error, stdout, stderr) => {
