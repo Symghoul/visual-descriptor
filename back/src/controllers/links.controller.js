@@ -6,7 +6,6 @@ linksCtrl.getLinks = async (req, res) => {
   try {
     const links = await link.find();
     res.json(links);
-    
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -26,7 +25,7 @@ linksCtrl.createLink = async (req, res) => {
     color,
   } = req.body;
   const newlink = new link({
-    indicators,
+    indicator,
     delay,
     loss,
     bandwidth,
@@ -40,7 +39,6 @@ linksCtrl.createLink = async (req, res) => {
   try {
     await newlink.save();
     res.send({ message: "link guardado" });
-    
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -50,7 +48,6 @@ linksCtrl.getLinkById = async (req, res) => {
   try {
     const l = await link.find({ indicator: req.params.indicator });
     res.send(l);
-    
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -88,7 +85,6 @@ linksCtrl.updateLink = async (req, res) => {
     else {
       res.send({ message: "link no modificado" });
     }
-    
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -101,7 +97,6 @@ linksCtrl.deleteLink = async (req, res) => {
     else {
       res.send({ message: "link no eliminado" });
     }
-    
   } catch (error) {
     res.status(500).send(error.message);
   }

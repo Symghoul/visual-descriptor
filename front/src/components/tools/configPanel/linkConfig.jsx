@@ -8,6 +8,8 @@ import { Field, Form, Formik } from "formik";
 import { number, object } from "yup";
 import "./linkConfig.css";
 
+const color = "#6a6fea";
+
 const LinkConfig = () => {
   const state = useContext(AppContext);
 
@@ -22,7 +24,7 @@ const LinkConfig = () => {
     let delay = data.delay;
     let loss = data.loss;
     let bandwidth = data.bandwidth;
-    let update = { ...oldLink, delay, loss, bandwidth };
+    let update = { ...oldLink, delay, loss, bandwidth, color };
 
     const arr = state.links.map((link) => {
       if (link.indicator === oldLink.indicator) {
@@ -32,6 +34,7 @@ const LinkConfig = () => {
     });
 
     state.setLinks(arr);
+    state.setSelectedLink(null);
     state.updateDevice();
   };
 
@@ -39,15 +42,15 @@ const LinkConfig = () => {
     delay: number()
       .integer("Must be a natural number")
       .required("Cannot be empty")
-      .positive(),
+      .min(0, "Must be positive or cero"),
     loss: number()
       .integer("Must be a natural number")
       .required("Cannot be empty")
-      .positive(),
+      .min(0, "Must be positive or cero"),
     bandwidth: number()
       .integer("Must be a natural number")
       .required("Cannot be empty")
-      .positive(),
+      .min(0, "Must be positive or cero"),
   });
 
   return (
@@ -107,7 +110,7 @@ const LinkConfig = () => {
               <span> </span>
               <Button
                 className="field2"
-                color="primary"
+                color="error"
                 variant="contained"
                 size="small"
                 onClick={() => {

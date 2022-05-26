@@ -139,7 +139,7 @@ const HostConfig = () => {
               <span> </span>
               <Button
                 className="field2"
-                color="primary"
+                color="error"
                 variant="contained"
                 size="small"
                 onClick={() => {

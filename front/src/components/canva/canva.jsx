@@ -227,7 +227,7 @@ function Canva() {
 
   const CanvaController = () => {
     let xp = 10;
-    let yp = 580;
+    let yp = 1;
     return (
       <div>
         <Image
@@ -295,7 +295,7 @@ function Canva() {
 
   const CanvaSwitch = () => {
     let xp = 80;
-    let yp = 580;
+    let yp = 1;
     return (
       <div>
         <Image
@@ -355,7 +355,7 @@ function Canva() {
 
   function CanvaHost() {
     let xp = 150;
-    let yp = 580;
+    let yp = 1;
     return (
       <div>
         <Image

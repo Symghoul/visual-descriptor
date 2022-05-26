@@ -1,21 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 import axios from "../config/axios";
 
 const AppContext = React.createContext();
 
-const usePreviousSelectedDevice = (prevSelDevice) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = prevSelDevice;
-  }, [prevSelDevice]);
-  return ref.current;
-};
-
 export const AppContextWrapper = (props) => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [selectedLink, setSelectedLink] = useState(null);
-  const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
   const [error, setError] = useState("");
 
   const [controllers, setControllers] = useState([]);
@@ -103,31 +94,29 @@ export const AppContextWrapper = (props) => {
     if (selectedDevice) {
       if (selectedDevice.type === "controller") {
         const updateController = async () => {
-          await axios
-            .get(`/api/controllers/${selectedDevice.indicator}`)
-            .then((res) => {
-              if (res.status === 200) {
-                axios.put(
-                  `/api/controllers/${selectedDevice.indicator}`,
-                  getDevice(selectedDevice)
-                );
-              }
-            });
+          let response = await axios.get(
+            `/api/controllers/${selectedDevice.indicator}`
+          );
+          if (response.status === 200) {
+            await axios.put(
+              `/api/controllers/${selectedDevice.indicator}`,
+              getDevice(selectedDevice)
+            );
+          }
         };
         updateController();
       }
       if (selectedDevice.type === "switch") {
         const updateSwitch = async () => {
-          await axios
-            .get(`/api/switches/${selectedDevice.indicator}`)
-            .then((res) => {
-              if (res.status === 200) {
-                axios.put(
-                  `/api/switches/${selectedDevice.indicator}`,
-                  getDevice(selectedDevice)
-                );
-              }
-            });
+          let response = await axios.get(
+            `/api/switches/${selectedDevice.indicator}`
+          );
+          if (response.status === 200) {
+            await axios.put(
+              `/api/switches/${selectedDevice.indicator}`,
+              getDevice(selectedDevice)
+            );
+          }
         };
         updateSwitch();
       }
@@ -159,16 +148,15 @@ export const AppContextWrapper = (props) => {
       }
       if (selectedDevice.type === "link") {
         const updateLink = async () => {
-          await axios
-            .get(`/api/links/${selectedDevice.indicator}`)
-            .then((res) => {
-              if (res.status === 200) {
-                axios.put(
-                  `/api/links/${selectedDevice.indicator}`,
-                  getDevice(selectedDevice)
-                );
-              }
-            });
+          let response = await axios.get(
+            `/api/links/${selectedDevice.indicator}`
+          );
+          if (response.status === 200) {
+            await axios.put(
+              `/api/links/${selectedDevice.indicator}`,
+              getDevice(selectedDevice)
+            );
+          }
         };
         updateLink();
       }
@@ -248,9 +236,12 @@ export const AppContextWrapper = (props) => {
     const DBHosts = await axios.get("/api/hosts");
     const DBLinks = await axios.get("/api/links");
 
-    DBControllers.map((controller) => {
-      //
-    });
+    setControllers(DBControllers.map());
+    setSwitches(DBSwitches.map());
+    setHosts(DBHosts.map());
+    setLinks(DBLinks.map());
+    //DBSwitches.map((switche) => setSwitches(...switches, switche));
+    //DBHosts.map((host) => setHosts(...hosts, host));
   };
 
   // ----------- exported states and methods -----------
