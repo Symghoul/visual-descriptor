@@ -77,7 +77,7 @@ generalController.eraseDB = async (req, res) => {
 generalController.load = async (req, res) => {
   if (req.files.file) {
     var split = req.files.file.name.split(".");
-
+      //Hallo
     if (split[split.length - 1] !== "json") {
       res.status(400).send({
         message: "El archivo debe ser el .json generado por el descriptor",
