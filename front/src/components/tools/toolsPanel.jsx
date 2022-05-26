@@ -4,7 +4,7 @@ import "./toolsPanel.css";
 
 import Preferences from "./preferences/preferences";
 
-import ControllerConfig from "./configPanel/controllerConfigFormik";
+import ControllerConfig from "./configPanel/controllerConfig";
 import HostConfig from "./configPanel/hostConfig";
 import SwitchConfig from "./configPanel/switchConfig";
 import LinkConfig from "./configPanel/linkConfig";

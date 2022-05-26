@@ -1,37 +1,30 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext } from "react";
+import AppContext from "../../../context/AppContext";
+import { InitName, InitMac, InitIP, InitMask } from "./initialDeviceValues";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme, CssTextField } from "../../../config/theme";
-import { Button } from "@mui/material";
-import AppContext from "../../../context/AppContext";
+import { Button, Box } from "@mui/material";
+import { Field, Form, Formik } from "formik";
+import { object, string } from "yup";
 import "./hostConfig.css";
 
 const HostConfig = () => {
   const state = useContext(AppContext);
 
-  const [name, setName] = useState("");
-  const [ip, setIP] = useState("");
-  const [subNetMask, setSubNetMask] = useState("");
-  const [mac, setMac] = useState("");
+  const initialValues = {
+    name: InitName(),
+    mac: InitMac(),
+    ip: InitIP(),
+    mask: InitMask(),
+  };
 
-  /**
-   * Fill the editable fields
-   */
-  useEffect(() => {
-    if (state.selectedDevice !== null) {
-      const device = state.getDevice(state.selectedDevice);
-      setName(device.name);
-      setIP(device.ip);
-      setSubNetMask(device.mask);
-      setMac(device.mac);
-    }
-  }, [state.selectedDevice]);
-
-  /**
-   * handle name change
-   */
-  useEffect(() => {
+  const handleSubmit = (data) => {
     let oldHost = state.getDevice(state.selectedDevice);
-    let update = { ...oldHost, name };
+    let name = data.name;
+    let mac = data.mac;
+    let ip = data.ip;
+    let mask = data.mask;
+    let update = { ...oldHost, name, mac, ip, mask };
 
     const arr = state.hosts.map((host) => {
       if (host.id === oldHost.id) {
@@ -41,110 +34,117 @@ const HostConfig = () => {
     });
 
     state.setHosts(arr);
-  }, [name]);
+  };
 
-  /**
-   * handle ip change
-   */
-  useEffect(() => {
-    let oldHost = state.getDevice(state.selectedDevice);
-    let update = { ...oldHost, ip };
-
-    const arr = state.hosts.map((host) => {
-      if (host.id === oldHost.id) {
-        return update;
-      }
-      return host;
-    });
-
-    state.setHosts(arr);
-  }, [ip]);
-
-  /**
-   * handle subNetMask change
-   */
-  useEffect(() => {
-    let oldHost = state.getDevice(state.selectedDevice);
-    let update = { ...oldHost, subNetMask };
-
-    const arr = state.hosts.map((host) => {
-      if (host.id === oldHost.id) {
-        return update;
-      }
-      return host;
-    });
-
-    state.setHosts(arr);
-  }, [subNetMask]);
-
-  /**
-   * handle mac change
-   */
-  useEffect(() => {
-    let oldHost = state.getDevice(state.selectedDevice);
-    let update = { ...oldHost, mac };
-
-    const arr = state.hosts.map((host) => {
-      if (host.id === oldHost.id) {
-        return update;
-      }
-      return host;
-    });
-
-    state.setHosts(arr);
-  }, [mac]);
+  const schema = object({
+    name: string().required("Cannot be empty"),
+    mac: string().required("Cannot be empty"),
+    ip: string()
+      .required("Cannot be empty")
+      .matches(/(^(\d{1,3}\.){3}(\d{1,3})$)/, {
+        message: "Invalid IP address",
+        excludeEmptyString: true,
+      })
+      .test(
+        "ipAddress",
+        "IP address value should be less or equal to 255",
+        (value) => {
+          if (value === undefined || value.trim() === "") return true;
+          return value.split(".").find((i) => parseInt(i) > 255) === undefined;
+        }
+      ),
+    mask: string()
+      .required("Cannot be empty")
+      .matches(/(^(\d{1,3}\.){3}(\d{1,3})$)/, {
+        message: "Invalid mask",
+        excludeEmptyString: true,
+      })
+      .test(
+        "ipAddress",
+        "IP address value should be less or equal to 255",
+        (value) => {
+          if (value === undefined || value.trim() === "") return true;
+          return value.split(".").find((i) => parseInt(i) > 255) === undefined;
+        }
+      ),
+  });
 
   return (
     <ThemeProvider theme={theme}>
       <div className="container">
-        <div className="field">
-          <CssTextField
-            id="hostName"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            label={"Host Name"}
-          />
-        </div>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={(values, formikHelpers) => {
+            handleSubmit(values);
+          }}
+          validationSchema={schema}
+        >
+          {({ errors, isValid, touched }) => (
+            <Form>
+              <Field
+                className="field2"
+                name="name"
+                type="text"
+                as={CssTextField}
+                label="Host Name"
+                error={Boolean(errors.name) && Boolean(touched.name)}
+                helperText={Boolean(touched.name) && errors.name}
+              />
+              <Field
+                className="field2"
+                name="mac"
+                type="text"
+                as={CssTextField}
+                label={"Mac Address"}
+                error={Boolean(errors.mac) && Boolean(touched.mac)}
+                helperText={Boolean(touched.mac) && errors.mac}
+              />
+              <Field
+                className="field2"
+                name="ip"
+                type="text"
+                as={CssTextField}
+                label={"IP Adress"}
+                error={Boolean(errors.ip) && Boolean(touched.ip)}
+                helperText={Boolean(touched.ip) && errors.ip}
+              />
+              <Field
+                className="field2"
+                name="mask"
+                type="text"
+                as={CssTextField}
+                label={"Subnet Mask"}
+                error={Boolean(errors.mask) && Boolean(touched.mask)}
+                helperText={Boolean(touched.mask) && errors.mask}
+              />
 
-        <div className="field">
-          <CssTextField
-            id="hostIp"
-            value={ip}
-            onChange={(event) => setIP(event.target.value)}
-            label={"IP Adress"}
-          />
-        </div>
+              <Box className="field2" />
 
-        <div className="field">
-          <CssTextField
-            id="hostSubMask"
-            value={subNetMask}
-            onChange={(event) => setSubNetMask(event.target.value)}
-            label={"Subnet Mask"}
-          />
-        </div>
-
-        <div className="field">
-          <CssTextField
-            id="hostMac"
-            value={mac}
-            onChange={(event) => setMac(event.target.value)}
-            label={"Mac Address"}
-          />
-        </div>
-
-        <div className="btn">
-          <Button
-            color="primary"
-            variant="contained"
-            size="small"
-            onClick={() => {
-              state.deleteDevice();
-            }}
-          >
-            Delete Host
-          </Button>
-        </div>
+              <Button
+                className="field2"
+                color="primary"
+                variant="contained"
+                size="small"
+                type="submit"
+                disabled={!isValid}
+              >
+                Save Changes
+              </Button>
+              <span> </span>
+              <Button
+                className="field2"
+                color="primary"
+                variant="contained"
+                size="small"
+                onClick={() => {
+                  state.deleteDevice();
+                }}
+              >
+                Delete Host
+              </Button>
+            </Form>
+          )}
+        </Formik>
       </div>
     </ThemeProvider>
   );

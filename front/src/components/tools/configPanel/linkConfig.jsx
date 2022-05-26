@@ -1,36 +1,28 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
+import AppContext from "../../../context/AppContext";
+import { InitDelay, InitLoss, InitBandwidth } from "./initialDeviceValues";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme, CssTextField } from "../../../config/theme";
-import { Button } from "@mui/material";
-import AppContext from "../../../context/AppContext";
+import { Button, Box } from "@mui/material";
+import { Field, Form, Formik } from "formik";
+import { number, object } from "yup";
 import "./linkConfig.css";
 
 const LinkConfig = () => {
   const state = useContext(AppContext);
 
-  const [delay, setDelay] = useState("");
-  const [loss, setLoss] = useState("");
-  const [bandwidth, setBandwidth] = useState("");
+  const initialValues = {
+    delay: InitDelay(),
+    loss: InitLoss(),
+    bandwidth: InitBandwidth(),
+  };
 
-  /**
-   * Fill the editable fields
-   */
-  useEffect(() => {
-    if (state.selectedDevice !== null) {
-      const device = state.getDevice(state.selectedDevice);
-
-      setDelay(device.delay);
-      setLoss(device.loss);
-      setBandwidth(device.bandwidth);
-    }
-  }, [state.selectedDevice]);
-
-  /**
-   * handle delay change
-   */
-  useEffect(() => {
+  const handleSubmit = (data) => {
     let oldLink = state.getDevice(state.selectedDevice);
-    let update = { ...oldLink, delay };
+    let delay = data.delay;
+    let loss = data.loss;
+    let bandwidth = data.bandwidth;
+    let update = { ...oldLink, delay, loss, bandwidth };
 
     const arr = state.links.map((link) => {
       if (link.id === oldLink.id) {
@@ -40,84 +32,92 @@ const LinkConfig = () => {
     });
 
     state.setLinks(arr);
-  }, [delay]);
+  };
 
-  /**
-   * handle loss change
-   */
-  useEffect(() => {
-    let oldLink = state.getDevice(state.selectedDevice);
-    let update = { ...oldLink, loss };
-
-    const arr = state.links.map((link) => {
-      if (link.id === oldLink.id) {
-        return update;
-      }
-      return link;
-    });
-
-    state.setLinks(arr);
-  }, [loss]);
-
-  /**
-   * handle bandwidth change
-   */
-  useEffect(() => {
-    let oldLink = state.getDevice(state.selectedDevice);
-    let update = { ...oldLink, bandwidth };
-
-    const arr = state.links.map((link) => {
-      if (link.id === oldLink.id) {
-        return update;
-      }
-      return link;
-    });
-
-    state.setLinks(arr);
-  }, [bandwidth]);
+  const schema = object({
+    delay: number()
+      .integer("Must be a natural number")
+      .required("Cannot be empty")
+      .positive(),
+    loss: number()
+      .integer("Must be a natural number")
+      .required("Cannot be empty")
+      .positive(),
+    bandwidth: number()
+      .integer("Must be a natural number")
+      .required("Cannot be empty")
+      .positive(),
+  });
 
   return (
     <ThemeProvider theme={theme}>
       <div className="container">
-        <div className="field">
-          <CssTextField
-            id="linkDelay"
-            value={delay}
-            onChange={(event) => setDelay(event.target.value)}
-            label={"Delay (ms)"}
-          />
-        </div>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={(values, formikHelpers) => {
+            handleSubmit(values);
+          }}
+          validationSchema={schema}
+        >
+          {({ errors, isValid, touched }) => (
+            <Form>
+              <Field
+                className="field2"
+                name="delay"
+                type="text"
+                as={CssTextField}
+                label={"Delay (ms)"}
+                error={Boolean(errors.delay) && Boolean(touched.delay)}
+                helperText={Boolean(touched.delay) && errors.delay}
+              />
 
-        <div className="field">
-          <CssTextField
-            id="linkLoss"
-            value={loss}
-            onChange={(event) => setLoss(event.target.value)}
-            label={"Loss %"}
-          />
-        </div>
+              <Field
+                className="field2"
+                name="loss"
+                type="text"
+                as={CssTextField}
+                label={"Loss (%)"}
+                error={Boolean(errors.loss) && Boolean(touched.loss)}
+                helperText={Boolean(touched.loss) && errors.loss}
+              />
 
-        <div className="field">
-          <CssTextField
-            id="linkBandwidth"
-            value={bandwidth}
-            onChange={(event) => setBandwidth(event.target.value)}
-            label={"Bandwidth"}
-          />
-        </div>
+              <Field
+                className="field2"
+                name="bandwidth"
+                type="text"
+                as={CssTextField}
+                label={"Bandwidth"}
+                error={Boolean(errors.bandwidth) && Boolean(touched.bandwidth)}
+                helperText={Boolean(touched.bandwidth) && errors.bandwidth}
+              />
 
-        <div className="btn">
-          <Button
-            color="primary"
-            variant="contained"
-            size="small"
-            onClick={() => {
-              state.deleteDevice();
-            }}
-          >
-            Delete Link
-          </Button>
-        </div>
+              <Box className="field2" />
+
+              <Button
+                className="field2"
+                color="primary"
+                variant="contained"
+                size="small"
+                type="submit"
+                disabled={!isValid}
+              >
+                Save Changes
+              </Button>
+              <span> </span>
+              <Button
+                className="field2"
+                color="primary"
+                variant="contained"
+                size="small"
+                onClick={() => {
+                  state.deleteDevice();
+                }}
+              >
+                Delete Link
+              </Button>
+            </Form>
+          )}
+        </Formik>
       </div>
     </ThemeProvider>
   );

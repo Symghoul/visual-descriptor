@@ -1,132 +1,129 @@
-import React, { useEffect, useContext, useState, useRef } from "react";
-import { Button, Autocomplete, ThemeProvider } from "@mui/material";
-import { theme, CssTextField } from "../../../config/theme";
-import "./switchConfig.css";
+import React, { useContext } from "react";
 import AppContext from "../../../context/AppContext";
+import {
+  InitName,
+  InitMac,
+  InitPort,
+  InitProtocol,
+} from "./initialDeviceValues";
+import { ThemeProvider } from "@mui/material/styles";
+import { theme, CssTextField } from "../../../config/theme";
+import { Button, Box } from "@mui/material";
+import { Field, Form, Formik } from "formik";
+import { number, object, string } from "yup";
+import "./switchConfig.css";
 
 const SwitchConfig = () => {
   const state = useContext(AppContext);
 
-  const [name, setName] = useState("");
-  const protocol = useRef("");
-  const [port, setPort] = useState("");
-  const [mac, setMac] = useState("");
+  const initialValues = {
+    name: InitName(),
+    mac: InitMac(),
+    port: InitPort(),
+    protocol: InitProtocol(),
+  };
 
-  /**
-   * Fill the editable fields
-   */
-  useEffect(() => {
-    if (state.selectedDevice !== null) {
-      const device = state.getDevice(state.selectedDevice);
-      setName(device.name);
-      protocol.current = device.protocol;
-      setPort(device.port);
-      setMac(device.mac);
-    }
-  }, [state.selectedDevice]);
-
-  /**
-   * handle name change
-   */
-  useEffect(() => {
-    let oldSwitche = state.getDevice(state.selectedDevice);
-    let update = { ...oldSwitche, name };
+  const handleSubmit = (data) => {
+    let oldSwitch = state.getDevice(state.selectedDevice);
+    let name = data.name;
+    let mac = data.mac;
+    let port = data.port;
+    let protocol = data.protocol;
+    let update = { ...oldSwitch, name, mac, port, protocol };
 
     const arr = state.switches.map((switche) => {
-      if (switche.id === oldSwitche.id) {
+      if (switche.id === oldSwitch.id) {
         return update;
       }
       return switche;
     });
-
     state.setSwitches(arr);
-  }, [name]);
+  };
 
-  /**
-   * handle port change
-   */
-  useEffect(() => {
-    let oldSwitche = state.getDevice(state.selectedDevice);
-    let update = { ...oldSwitche, port };
-
-    const arr = state.switches.map((switche) => {
-      if (switche.id === oldSwitche.id) {
-        return update;
-      }
-      return switche;
-    });
-
-    state.setSwitches(arr);
-  }, [port]);
-
-  /**
-   * handle mac change
-   */
-  useEffect(() => {
-    let oldSwitche = state.getDevice(state.selectedDevice);
-    let update = { ...oldSwitche, mac };
-
-    const arr = state.switches.map((switche) => {
-      if (switche.id === oldSwitche.id) {
-        return update;
-      }
-      return switche;
-    });
-
-    state.setSwitches(arr);
-  }, [mac]);
+  const schema = object({
+    name: string().required("Cannot be empty"),
+    mac: string().required("Cannot be empty"),
+    port: number()
+      .integer("Must be a natural number")
+      .required("Cannot be empty")
+      .positive(),
+  });
 
   return (
     <ThemeProvider theme={theme}>
       <div className="container">
-        <div className="field">
-          <CssTextField
-            id="switchName"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            label={"Switch Name"}
-          />
-        </div>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={(values, formikHelpers) => {
+            handleSubmit(values);
+          }}
+          validationSchema={schema}
+        >
+          {({ errors, isValid, touched }) => (
+            <Form>
+              <Field
+                className="field2"
+                name="name"
+                type="text"
+                as={CssTextField}
+                label="Host Name"
+                error={Boolean(errors.name) && Boolean(touched.name)}
+                helperText={Boolean(touched.name) && errors.name}
+              />
+              <Field
+                className="field2"
+                name="mac"
+                type="text"
+                as={CssTextField}
+                label={"Mac Address"}
+                error={Boolean(errors.mac) && Boolean(touched.mac)}
+                helperText={Boolean(touched.mac) && errors.mac}
+              />
+              <Field
+                className="field2"
+                name="port"
+                type="text"
+                as={CssTextField}
+                label={"Port Number"}
+                error={Boolean(errors.port) && Boolean(touched.port)}
+                helperText={Boolean(touched.port) && errors.port}
+              />
+              <Field
+                className="field2"
+                name="protocol"
+                type="text"
+                as={CssTextField}
+                label={"Protocol"}
+                disabled
+              />
 
-        <div className="field">
-          <CssTextField
-            disabled
-            id="switchProtocol"
-            value={protocol.current}
-            label={"Protocol"}
-          />
-        </div>
+              <Box className="field2" />
 
-        <div className="field">
-          <CssTextField
-            id="switchPort"
-            value={port}
-            onChange={(event) => setPort(event.target.value)}
-            label={"Port"}
-          />
-        </div>
-
-        <div className="field">
-          <CssTextField
-            id="switchMac"
-            value={mac}
-            onChange={(event) => setMac(event.target.value)}
-            label={"MAC Address"}
-          />
-        </div>
-
-        <div className="field">
-          <Button
-            color="primary"
-            variant="contained"
-            size="small"
-            onClick={() => {
-              state.deleteDevice();
-            }}
-          >
-            Delete Switch
-          </Button>
-        </div>
+              <Button
+                className="field2"
+                color="primary"
+                variant="contained"
+                size="small"
+                type="submit"
+                disabled={!isValid}
+              >
+                Save Changes
+              </Button>
+              <span> </span>
+              <Button
+                className="field2"
+                color="primary"
+                variant="contained"
+                size="small"
+                onClick={() => {
+                  state.deleteDevice();
+                }}
+              >
+                Delete Switch
+              </Button>
+            </Form>
+          )}
+        </Formik>
       </div>
     </ThemeProvider>
   );

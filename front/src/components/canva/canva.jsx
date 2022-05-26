@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import AppContext from "../../context/AppContext";
 import { Stage, Layer, Text, Line, Image } from "react-konva";
 import { Modal, Typography, Box } from "@mui/material";
@@ -438,7 +438,6 @@ function Canva() {
     state.selectedDevice !== null && state.selectedDevice.type !== "link" ? (
       <Border
         id={state.selectedDevice.id}
-        //device={selectedDevice}
         device={state.getDevice(state.selectedDevice)}
         onAnchorDragEnd={(e) => handleAnchorDragEnd(e, state.selectedDevice)}
         onAnchorDragMove={handleAnchorDragMove}
