@@ -1,7 +1,11 @@
 const { Schema, model } = require("mongoose");
 
 const hostSchema = new Schema({
-  indicator: String,
+  indicator: {
+    type:String,
+    required:true,
+    unique:true
+  } ,
   name: String,
   symbol: String,
   ip: {
