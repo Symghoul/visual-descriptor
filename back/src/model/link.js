@@ -1,7 +1,11 @@
 const { Schema, model } = require("mongoose");
 
 const linkSchema = new Schema({
-  indicator: String,
+  indicator: {
+    type:String,
+    required:true,
+    unique:true
+  } ,
   delay: Number,
   loss: Number,
   bandwidth: Number,
