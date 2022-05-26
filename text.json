@@ -17,6 +17,7 @@
           "symbol": "s1",
           "object": "switch",
           "controller": "c1",
+          "port": "5000",
           "mac": "00::01",
           "protocol":"OpenFlow10",
           "listenPort":"4555"

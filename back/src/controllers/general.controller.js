@@ -2,14 +2,22 @@ const generalController = {};
 const { exec } = require("child_process");
 
 
+
 const db = require('mongodb');
 const bson = require('bson');
 const fs = require("fs-extra");
+
 
 const controller = require("../model/controller");
 const switche = require("../model/switch");
 const host = require("../model/hosts");
 const link = require("../model/link");
+
+let newController;
+let newSwitche;
+let newHost;
+let newlink;
+
 
 
 generalController.getScript = async (req, res) => {
@@ -48,6 +56,7 @@ generalController.getScript = async (req, res) => {
 };
 
 generalController.eraseDB = async (req, res) =>{
+  console.log('Borrando base de datos');
   try {
     
     await controller.collection.drop();
@@ -65,31 +74,32 @@ generalController.load = async (req,res) => {
   
   if(req.files.file){
     
-    let split = req.files.file.name.split(".");
-    /*let name;
-    for(let i=0; i<split.length-1; i++){
-      name += split[i];
-    }*/
+    var split = req.files.file.name.split(".");
+
     if(split[split.length-1]!=="json"){
-      res.status(400).send({"message":"El archivo debe ser el .json generado por el descriptor" })
+      res.status(400).send({"message":"El archivo debe ser el .json generado por el descriptor" });
+      return;
     }
-    let db = req.files.file;
-    let uploadPath = `./src/load/db.${split[split.length-1]}`;
+    var file = req.files.file;
 
-    db.mv(uploadPath, (err) =>{
-      if(err)
-        return res.status(400).send(err);
+    var oldPath = `${file.tempFilePath}`;
+    var newPath = './load/alfa.json';
 
-      err = importDb();
-      if(!err){
-        res.status(501).send(err);}
 
-      res.send('File uploaded');
-    })
-
+    console.log(`Renombrando ${db.tempFilePath}`);
+    fs.renameSync(oldPath,newPath);
+    
+    
+    err = importDb();
+    if(!err){
+      res.status(501).send(err);
+    }
   }
-  
+    res.send(`File uploaded`);
+
 }
+  
+
 
 async function switch2Controller(){
   
@@ -147,13 +157,21 @@ async function exportDb() {
 async function importDb() {
   try {
 
-    const {controllers} = await fs.readJSON('./src/load/db.json')
-    const { switches} = await fs.readJSON('./src/load/db.json')
-    const { hosts} = await fs.readJSON('./src/load/db.json')
-    const { links} = await fs.readJSON('./src/load/db.json')
-    let newController;
+    const {controllers} = await fs.readJSON('./load/alfa.json');
+    const { switches} = await fs.readJSON('./load/alfa.json');
+    const { hosts} = await fs.readJSON('./load/alfa.json');
+    const { links} = await fs.readJSON('./load/alfa.json');
+
+    console.log("---->");
+    console.log(controllers);
+    console.log(switches);
+    console.log(hosts);
+    console.log(links);
     
+
+    console.log(`&&&&&&& Controladores${controllers.length}`);
     for(let i = 0; i<controllers.length; i++){
+        console.log("&&&&&&&");
        newController = new controller({
         indicator: controllers[i].indicator,
         name: controllers[i].name,
@@ -166,12 +184,18 @@ async function importDb() {
         y: controllers[i].y,
         color: controllers[i].color,
       });
-      const action = await newController.save();
+   
+      console.log(newController);
+      let result = await newController.save(); 
+      console.log(result);
+      console.log(`Controller ${i} subido`);
+      
     }
+    console.log("Fin controllers&&&&&&&");
     
-
+    console.log(`&&&&&&& Switches${switches.length}`);
     for(let i = 0; i<switches.length; i++){
-      let newSwitche = new switche({
+      newSwitche = new switche({
         indicator: switches[i].indicator,
         name: switches[i].name,
         symbol: switches[i].symbol,
@@ -184,12 +208,13 @@ async function importDb() {
         y: switches[i].y,
         color: switches[i].color,
       });
-      console.log(switches.length);
-      const action =await newSwitche.save();
+      await newSwitche.save(); 
+      console.log(`Switch ${i} subido`);
     }
 
+    console.log(`&&&&&&& Host${hosts.length}`);
     for(let i = 0; i<hosts.length; i++){
-      const newHost = new host({
+      newHost = new host({
         indicator: hosts[i].indicator,
         name: hosts[i].name,
         symbol: hosts[i].symbol,
@@ -202,12 +227,13 @@ async function importDb() {
         y: hosts[i].y,
         color: hosts[i].color,
       });
-      console.log(newHost);
-      const action =await newHost.save();
+      await newHost.save();
+      console.log(`Host ${i} subido`);
     }
 
+    console.log(`&&&&&&& Links: ${hosts.length}`);
     for(let i = 0; i<links.length; i++){
-      const newlink = new link({
+       newlink = new link({
         indicator: links[i].indicator,
         delay: links[i].delay,
         loss: links[i].loss,
@@ -219,15 +245,16 @@ async function importDb() {
         type: links[i].type,
         color: links[i].color,
       });
-      console.log(newlink);
-      const action = await newlink.save();
+      await newlink.save();
+      console.log(`Link ${i} subido`);
     }
     
     temp = "Salió todo perfectamente";
     return temp;
 
   } catch (error) {
-    console.log(error)
+    console.log("error");
+    console.log(error);
     return error;
   }
 }
