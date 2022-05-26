@@ -5,9 +5,8 @@ const switche = require("../model/switch");
 switchesCtrl.getSwitches = async (req, res) => {
   try {
     const switches = await switche.find();
-    
+
     res.json(switches);
-    
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -15,7 +14,7 @@ switchesCtrl.getSwitches = async (req, res) => {
 
 switchesCtrl.createSwitch = async (req, res) => {
   const {
-    id,
+    indicator,
     name,
     symbol,
     protocol,
@@ -28,7 +27,7 @@ switchesCtrl.createSwitch = async (req, res) => {
     color,
   } = req.body;
   const newSwitch = new switche({
-    indicator: id,
+    indicator,
     name,
     symbol,
     protocol,
@@ -40,21 +39,19 @@ switchesCtrl.createSwitch = async (req, res) => {
     y,
     color,
   });
-  try{
+  try {
     await newSwitch.save();
     res.send({ message: "switch creado" });
-  }catch(error){
-    if(error)
-      res.status(402).send(error);
-    }
+  } catch (error) {
+    if (error) res.status(402).send(error);
+  }
 };
 
 switchesCtrl.getSwitchById = async (req, res) => {
   try {
     const s = await switche.find({ indicator: req.params.indicator });
-  
+
     res.send(s);
-    
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -83,7 +80,6 @@ switchesCtrl.updateSwitch = async (req, res) => {
     else {
       res.send({ message: "No se modificó el switch" });
     }
-    
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -96,7 +92,6 @@ switchesCtrl.deleteSwitch = async (req, res) => {
     else {
       res.send({ message: "switch no eliminado" });
     }
-    
   } catch (error) {
     res.status(500).send(error.message);
   }

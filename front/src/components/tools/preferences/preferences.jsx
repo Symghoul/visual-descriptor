@@ -109,6 +109,7 @@ const Preferences = () => {
       formData.append("file", loadedFile);
       axios.post(`/api/general/load/`, formData);
       handleCloseLoadFile();
+      state.loadFromDB();
     } else {
       handleOpenError();
       handleCloseLoadFile();
@@ -117,7 +118,7 @@ const Preferences = () => {
 
   useEffect(() => {
     if (fileName !== "" && fileName !== null) {
-      axios.get(`/api/export/${fileName}`);
+      axios.get(`/api/general/export/${fileName}`);
       setFieldFileName("");
       setFileName("");
     }

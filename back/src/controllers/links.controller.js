@@ -14,7 +14,7 @@ linksCtrl.getLinks = async (req, res) => {
 
 linksCtrl.createLink = async (req, res) => {
   const {
-    id,
+    indicator,
     delay,
     loss,
     bandwidth,
@@ -26,7 +26,7 @@ linksCtrl.createLink = async (req, res) => {
     color,
   } = req.body;
   const newlink = new link({
-    indicator: id,
+    indicators,
     delay,
     loss,
     bandwidth,

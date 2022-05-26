@@ -29,7 +29,7 @@ function getAnchorPoints(x, y) {
 
 function Border({
   device,
-  id,
+  indicator,
   onAnchorDragStart,
   onAnchorDragMove,
   onAnchorDragEnd,
@@ -39,7 +39,7 @@ function Border({
   const anchors = anchorPoints.map((position, index) => (
     <Anchor
       key={`anchor-${index}`}
-      id={id}
+      indicator={indicator}
       x={position.x}
       y={position.y}
       onDragStart={onAnchorDragStart}

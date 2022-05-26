@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import AppContext from "../../../context/AppContext";
 import { InitName, InitMac, InitIP, InitMask } from "./initialDeviceValues";
 import { ThemeProvider } from "@mui/material/styles";
@@ -27,14 +27,14 @@ const HostConfig = () => {
     let update = { ...oldHost, name, mac, ip, mask };
 
     const arr = state.hosts.map((host) => {
-      if (host.id === oldHost.id) {
+      if (host.indicator === oldHost.indicator) {
         return update;
       }
       return host;
     });
 
     state.setHosts(arr);
-    state.setSelectedDevice(null);
+    state.updateDevice();
   };
 
   const regex = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$";

@@ -8,11 +8,11 @@ hostsCtrl.gethosts = async (req, res) => {
 };
 
 hostsCtrl.createhosts = async (req, res) => {
-  const { id, name, symbol, ip, mask, mac, active, type, x, y, color } =
+  const { indicator, name, symbol, ip, mask, mac, active, type, x, y, color } =
     req.body;
   const simpleMask = sMask(mask);
   const newHost = new host({
-    indicator: id,
+    indicator,
     name,
     symbol,
     ip,

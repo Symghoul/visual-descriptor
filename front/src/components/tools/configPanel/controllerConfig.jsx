@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import AppContext from "../../../context/AppContext";
-import axios from "../../../config/axios";
 import { InitName, InitIP, InitPort, InitRemote } from "./initialDeviceValues";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme, CssTextField } from "../../../config/theme";
@@ -28,14 +27,14 @@ const ControllerConfig = () => {
     let update = { ...oldController, name, ip, port, remote };
 
     const arr = state.controllers.map((controller) => {
-      if (controller.id === oldController.id) {
+      if (controller.indicator === oldController.indicator) {
         return update;
       }
       return controller;
     });
 
     state.setControllers(arr);
-    state.setSelectedDevice(null);
+    state.updateDevice();
   };
 
   const schema = object({

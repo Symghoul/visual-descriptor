@@ -25,14 +25,14 @@ const LinkConfig = () => {
     let update = { ...oldLink, delay, loss, bandwidth };
 
     const arr = state.links.map((link) => {
-      if (link.id === oldLink.id) {
+      if (link.indicator === oldLink.indicator) {
         return update;
       }
       return link;
     });
 
     state.setLinks(arr);
-    state.setSelectedDevice(null);
+    state.updateDevice();
   };
 
   const schema = object({

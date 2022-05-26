@@ -32,13 +32,13 @@ const SwitchConfig = () => {
     let update = { ...oldSwitch, name, mac, port, protocol };
 
     const arr = state.switches.map((switche) => {
-      if (switche.id === oldSwitch.id) {
+      if (switche.indicator === oldSwitch.indicator) {
         return update;
       }
       return switche;
     });
     state.setSwitches(arr);
-    state.setSelectedDevice(null);
+    state.updateDevice();
   };
 
   const regex = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$";

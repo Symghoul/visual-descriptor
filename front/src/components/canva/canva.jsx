@@ -77,7 +77,7 @@ function Canva() {
     if (state.selectedDevice === null) {
       state.setSelectedDevice(null);
       state.setSelectedDevice(device);
-    } else if (state.selectedDevice.id !== device.id) {
+    } else if (state.selectedDevice.indicator !== device.indicator) {
       if (state.selectedLink !== null) {
         changeLinkColor(state.getDevice(state.selectedLink), linkColor);
         state.setSelectedLink(null);
@@ -91,7 +91,9 @@ function Canva() {
 
   const changeLinkColor = (link, color) => {
     let prevLinks = [
-      ...state.links.filter((foundlink) => foundlink.id !== link.id),
+      ...state.links.filter(
+        (foundlink) => foundlink.indicator !== link.indicator
+      ),
     ];
     const prevLink = state.getDevice(link);
     prevLink.color = color;
@@ -105,14 +107,14 @@ function Canva() {
       state.setSelectedLink(state.getDevice(link));
       state.setSelectedDevice(state.getDevice(link));
     } else {
-      if (state.selectedDevice.id !== link.id) {
+      if (state.selectedDevice.indicator !== link.indicator) {
         if (state.selectedLink !== null) {
           changeLinkColor(state.selectedLink, linkColor);
         }
         changeLinkColor(link, "black");
         state.setSelectedLink(state.getDevice(link));
         state.setSelectedDevice(state.getDevice(link));
-      } else if (state.selectedDevice.id === link.id) {
+      } else if (state.selectedDevice.indicator === link.indicator) {
         changeLinkColor(state.getDevice(link), linkColor);
         state.setSelectedDevice(null);
         state.setSelectedLink(null);
@@ -158,7 +160,8 @@ function Canva() {
     const devices = [...state.controllers, ...state.hosts, ...state.switches];
 
     intersectingDevice = devices.find(
-      (dev) => dev.id !== device.id && hasIntersection(position, dev)
+      (dev) =>
+        dev.indicator !== device.indicator && hasIntersection(position, dev)
     );
 
     return intersectingDevice ?? null;
@@ -205,7 +208,7 @@ function Canva() {
     } else {
       if (connectionTo !== null) {
         const link = {
-          id: uuid.v1(),
+          indicator: uuid.v1(),
           delay: 0,
           loss: 0,
           bandwidth: 0,
@@ -236,7 +239,7 @@ function Canva() {
           draggable
           onDragEnd={(e) => {
             let controller = {
-              id: uuid.v1(),
+              indicator: uuid.v1(),
               name: "Controller",
               symbol: `c${state.getControllerSymbol()}`,
               ip: `192.161.0.${state.getIpAddress()}`,
@@ -265,7 +268,7 @@ function Canva() {
       <div>
         <Image
           image={controllerImage}
-          id={eachController.id}
+          indicator={eachController.indicator}
           type={eachController.type}
           x={eachController.x}
           y={eachController.y}
@@ -278,7 +281,7 @@ function Canva() {
           onDragMove={(e) => handleDeviceDrag(e, eachController, index)}
           onDragEnd={() => {
             const controller = state.getDevice(eachController);
-            axios.put(`/api/controllers/${controller.id}`, controller);
+            axios.put(`/api/controllers/${controller.indicator}`, controller);
           }}
         />
         <Text
@@ -304,7 +307,7 @@ function Canva() {
           draggable
           onDragEnd={(e) => {
             const switche = {
-              id: uuid.v1(),
+              indicator: uuid.v1(),
               name: "Switch",
               symbol: `s${state.getSwitchSymbol()}`,
               protocol: "OVS",
@@ -329,7 +332,7 @@ function Canva() {
       <div>
         <Image
           image={switchImage}
-          id={eachSwitch.id}
+          indicator={eachSwitch.indicator}
           type={eachSwitch.type}
           x={eachSwitch.x}
           y={eachSwitch.y}
@@ -342,7 +345,7 @@ function Canva() {
           onDragMove={(e) => handleDeviceDrag(e, eachSwitch, index)}
           onDragEnd={() => {
             const switche = state.getDevice(eachSwitch);
-            axios.put(`/api/switches/${switche.id}`, switche);
+            axios.put(`/api/switches/${switche.indicator}`, switche);
           }}
         />
         <Text text={eachSwitch.name} x={eachSwitch.x} y={eachSwitch.y + SIZE} />
@@ -364,7 +367,7 @@ function Canva() {
           draggable
           onDragEnd={(e) => {
             const host = {
-              id: uuid.v1(),
+              indicator: uuid.v1(),
               name: "Host",
               symbol: `h${state.getHostSymbol()}`,
               ip: `192.168.0.${state.getIpAddress()}`,
@@ -389,7 +392,7 @@ function Canva() {
       <div>
         <Image
           image={hostImage}
-          id={eachHost.id}
+          indicator={eachHost.indicator}
           type={eachHost.type}
           x={eachHost.x}
           y={eachHost.y}
@@ -402,7 +405,7 @@ function Canva() {
           onDragMove={(e) => handleDeviceDrag(e, eachHost, index)}
           onDragEnd={() => {
             const host = state.getDevice(eachHost);
-            axios.put(`/api/hosts/${host.id}`, host);
+            axios.put(`/api/hosts/${host.indicator}`, host);
           }}
         />
         <Text text={eachHost.name} x={eachHost.x} y={eachHost.y + SIZE} />
@@ -423,7 +426,7 @@ function Canva() {
     const points = createConnectionPoints({ x: 0, y: 0 }, lineEnd);
     return (
       <Line
-        id={connection.id}
+        indicator={connection.indicator}
         type={connection.type}
         x={fromDevice.x + SIZE / 2}
         y={fromDevice.y + SIZE / 2}
@@ -439,7 +442,7 @@ function Canva() {
   const borders =
     state.selectedDevice !== null && state.selectedDevice.type !== "link" ? (
       <Border
-        id={state.selectedDevice.id}
+        indicator={state.selectedDevice.indicator}
         device={state.getDevice(state.selectedDevice)}
         onAnchorDragEnd={(e) => handleAnchorDragEnd(e, state.selectedDevice)}
         onAnchorDragMove={handleAnchorDragMove}
