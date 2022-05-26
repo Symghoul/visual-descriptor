@@ -87,10 +87,12 @@ generalController.load = async (req, res) => {
     var file = req.files.file;
 
     var oldPath = `${file.tempFilePath}`;
-    var newPath = "./load/alfa.json";
+    var newPath = "./src/load/alfa.json";
 
-    console.log(`Renombrando ${db.tempFilePath}`);
+    console.log(`Renombrando ${file.tempFilePath}`);
     fs.renameSync(oldPath, newPath);
+    
+    
 
     err = importDb();
     if (!err) {
@@ -158,10 +160,10 @@ async function exportDb() {
 
 async function importDb() {
   try {
-    const { controllers } = await fs.readJSON("./load/alfa.json");
-    const { switches } = await fs.readJSON("./load/alfa.json");
-    const { hosts } = await fs.readJSON("./load/alfa.json");
-    const { links } = await fs.readJSON("./load/alfa.json");
+    const { controllers } = await fs.readJSON("./src/load/alfa.json");
+    const { switches } = await fs.readJSON("./src/load/alfa.json");
+    const { hosts } = await fs.readJSON("./src/load/alfa.json");
+    const { links } = await fs.readJSON("./src/load/alfa.json");
 
     console.log("---->");
     console.log(controllers);
@@ -169,9 +171,9 @@ async function importDb() {
     console.log(hosts);
     console.log(links);
 
-    console.log(`&&&&&&& Controladores${controllers.length}`);
+    console.log(`Listing Controlllers ${controllers.length}`);
     for (let i = 0; i < controllers.length; i++) {
-      console.log("&&&&&&&");
+      
       newController = new controller({
         indicator: controllers[i].indicator,
         name: controllers[i].name,
@@ -190,9 +192,9 @@ async function importDb() {
       console.log(result);
       console.log(`Controller ${i} subido`);
     }
-    console.log("Fin controllers&&&&&&&");
+    console.log("end listing controllers");
 
-    console.log(`&&&&&&& Switches${switches.length}`);
+    console.log(`Listing Switches${switches.length}`);
     for (let i = 0; i < switches.length; i++) {
       newSwitche = new switche({
         indicator: switches[i].indicator,
@@ -211,7 +213,7 @@ async function importDb() {
       console.log(`Switch ${i} subido`);
     }
 
-    console.log(`&&&&&&& Host${hosts.length}`);
+    console.log(`Listing Host${hosts.length}`);
     for (let i = 0; i < hosts.length; i++) {
       newHost = new host({
         indicator: hosts[i].indicator,
@@ -230,7 +232,7 @@ async function importDb() {
       console.log(`Host ${i} subido`);
     }
 
-    console.log(`&&&&&&& Links: ${hosts.length}`);
+    console.log(`Listing Links: ${hosts.length}`);
     for (let i = 0; i < links.length; i++) {
       newlink = new link({
         indicator: links[i].indicator,
