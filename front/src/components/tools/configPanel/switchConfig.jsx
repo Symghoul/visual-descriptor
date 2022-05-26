@@ -40,9 +40,14 @@ const SwitchConfig = () => {
     state.setSwitches(arr);
   };
 
+  const regex = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$";
+
   const schema = object({
     name: string().required("Cannot be empty"),
-    mac: string().required("Cannot be empty"),
+    mac: string().required("Cannot be empty").matches(regex, {
+      message: "Invalid Mac address",
+      excludeEmptyString: true,
+    }),
     port: number()
       .integer("Must be a natural number")
       .required("Cannot be empty")

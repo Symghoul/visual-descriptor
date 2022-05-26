@@ -36,9 +36,14 @@ const HostConfig = () => {
     state.setHosts(arr);
   };
 
+  const regex = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$";
+
   const schema = object({
     name: string().required("Cannot be empty"),
-    mac: string().required("Cannot be empty"),
+    mac: string().required("Cannot be empty").matches(regex, {
+      message: "Invalid Mac address",
+      excludeEmptyString: true,
+    }),
     ip: string()
       .required("Cannot be empty")
       .matches(/(^(\d{1,3}\.){3}(\d{1,3})$)/, {

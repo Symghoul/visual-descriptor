@@ -235,6 +235,13 @@ export const AppContextWrapper = (props) => {
     setLinks([]);
   };
 
+  const loadFromDB = async () => {
+    await axios.get("/api/controllers").then((res) => {
+      //
+      console.log(res);
+    });
+  };
+
   // ----------- exported states and methods -----------
 
   const state = {
