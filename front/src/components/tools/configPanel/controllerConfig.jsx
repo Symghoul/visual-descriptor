@@ -34,7 +34,7 @@ const ControllerConfig = () => {
     });
 
     state.setControllers(arr);
-    state.updateDevice();
+    state.setSelectedDevice(null);
   };
 
   const schema = object({

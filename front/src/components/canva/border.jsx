@@ -34,24 +34,26 @@ function Border({
   onAnchorDragMove,
   onAnchorDragEnd,
 }) {
-  const { x, y } = device;
-  const anchorPoints = getAnchorPoints(x, y);
-  const anchors = anchorPoints.map((position, index) => (
-    <Anchor
-      key={`anchor-${index}`}
-      indicator={indicator}
-      x={position.x}
-      y={position.y}
-      onDragStart={onAnchorDragStart}
-      onDragMove={onAnchorDragMove}
-      onDragEnd={onAnchorDragEnd}
-    />
-  ));
-  return (
-    <>
-      <Line x={x} y={y} points={points} perfectDrawEnabled={false} />
-      {anchors}
-    </>
-  );
+  if (device) {
+    const { x, y } = device;
+    const anchorPoints = getAnchorPoints(x, y);
+    const anchors = anchorPoints.map((position, index) => (
+      <Anchor
+        key={`anchor-${index}`}
+        indicator={indicator}
+        x={position.x}
+        y={position.y}
+        onDragStart={onAnchorDragStart}
+        onDragMove={onAnchorDragMove}
+        onDragEnd={onAnchorDragEnd}
+      />
+    ));
+    return (
+      <>
+        <Line x={x} y={y} points={points} perfectDrawEnabled={false} />
+        {anchors}
+      </>
+    );
+  }
 }
 export default Border;

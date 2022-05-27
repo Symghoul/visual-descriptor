@@ -34,7 +34,7 @@ const HostConfig = () => {
     });
 
     state.setHosts(arr);
-    state.updateDevice();
+    state.setSelectedDevice(null);
   };
 
   const regex = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$";
