@@ -51,6 +51,10 @@ controllerCtrl.getControllerById = async (req, res) => {
 controllerCtrl.updateController = async (req, res) => {
   try {
     const { name, symbol, ip, port, remote, type, x, y, color } = req.body;
+    const objOnDB = await controller.find({"indicator": `${req.params.indicator}`});
+    const repeated = await controller.find({"indicator": `${req.params.indicator}`, "ip":`${objOnDB.ip}`});
+
+
     const action = await controller.updateOne(
       { indicator: req.params.indicator },
       {
@@ -66,7 +70,6 @@ controllerCtrl.updateController = async (req, res) => {
       }
     );
 
-    
     if (action.matchedCount === 1)
       res.send({ message: "Controlador modificado" });
     else {
