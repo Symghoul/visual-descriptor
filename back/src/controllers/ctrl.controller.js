@@ -30,7 +30,11 @@ controllerCtrl.createControllers = async (req, res) => {
     await newcontroller.save();
     res.send({ message: "Controlador guardado" });
   } catch (error) {
-    res.status(401).send(error);
+    if (error.keyValue.ip) res.status(401).send(error);
+    else{
+      res.send(error);
+    }    
+  
   }
 };
 
@@ -62,6 +66,7 @@ controllerCtrl.updateController = async (req, res) => {
       }
     );
 
+    
     if (action.matchedCount === 1)
       res.send({ message: "Controlador modificado" });
     else {

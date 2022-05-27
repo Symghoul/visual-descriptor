@@ -15,6 +15,8 @@ let newSwitche;
 let newHost;
 let newlink;
 
+
+
 generalController.getScript = async (req, res) => {
   try {
     const controllers = await controller.find();
@@ -31,7 +33,7 @@ generalController.getScript = async (req, res) => {
 
     switch2Controller();
 
-    const err = exportDb();
+    const err = exportDb(req.params.nameArchive);
     if (!err) {
       res.status(501).send(err.message);
     }
@@ -136,7 +138,7 @@ async function switch2Controller() {
   }
 }
 
-async function exportDb() {
+async function exportDb(name) {
   try {
     const controllers = await controller.find();
     const hosts = await host.find();
@@ -149,7 +151,7 @@ async function exportDb() {
       hosts
     )}, "links":${JSON.stringify(links)}}`;
 
-    fs.writeFileSync("./src/data/data.json", db);
+    fs.writeFileSync(`./src/data/${name}.json`, db);
     temp = "Salió todo perfectamente";
     return temp;
   } catch (error) {
