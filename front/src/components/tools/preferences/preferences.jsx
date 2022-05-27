@@ -224,6 +224,7 @@ const Preferences = () => {
             variant="contained"
             color="primary"
             onClick={handleOpenLoadFile}
+            disabled
           >
             Load
           </Button>
