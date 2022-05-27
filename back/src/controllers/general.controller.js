@@ -145,7 +145,7 @@ async function exportDb(name) {
     )}, "switches":${JSON.stringify(switches)}, "hosts":${JSON.stringify(
       hosts
     )}, "links":${JSON.stringify(links)}}`;
-
+    name.replace(" ","");
     fs.writeFileSync(`./src/data/${name}.json`, db);
     temp = "Salió todo perfectamente";
     return temp;

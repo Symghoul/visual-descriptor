@@ -51,10 +51,15 @@ controllerCtrl.getControllerById = async (req, res) => {
 controllerCtrl.updateController = async (req, res) => {
   try {
     const { name, symbol, ip, port, remote, type, x, y, color } = req.body;
-    const objOnDB = await controller.find({"indicator": `${req.params.indicator}`});
-    const repeated = await controller.find({"indicator": `${req.params.indicator}`, "ip":`${objOnDB.ip}`});
-
-
+    const objOnDB = await controller.find({"ip": `${req.body.ip}`});
+    console.log(objOnDB)
+    console.log(req.params.indicator)
+    if(objOnDB.indicator!=undefined){
+      if(objOnDB.indicator !== req.params.indicator){
+        res.status(401).send({"message":"Use another IP"});
+        return;
+      }
+    }
     const action = await controller.updateOne(
       { indicator: req.params.indicator },
       {
