@@ -45,6 +45,9 @@ hostsCtrl.gethostById = async (req, res) => {
 hostsCtrl.updatehost = async (req, res) => {
   try {
     const { name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
+    const objOnDB = await controller.find({"ip": `${req.params.ip}`});
+
+
     const simpleMask = sMask(mask);
     const action = await host.updateOne(
       { indicator: req.params.indicator },

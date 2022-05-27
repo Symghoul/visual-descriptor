@@ -14,14 +14,33 @@
       ,
       "switches": [
         {
+          "_id": "629058aa546bd9581a852",
+          "indicator": "30f4b1a0-dd44-11ec-a737-5d89d595eaf7",
+          "name": "Switch",
           "symbol": "s1",
-          "object": "switch",
-          "controller": "c1",
-          "port": "5000",
-          "mac": "00::01",
-          "protocol":"OpenFlow10",
-          "listenPort":"4555"
-        }
+          "protocol": "OVS",
+          "port": 3002,
+          "mac": "00:00:00:00:00:01",
+          "controller": "NotLinkedYet",
+          "type": "switch",
+          "x": "407",
+          "y": "284",
+          "__v": 0
+      },
+      {
+        "_id": "248058aa546bd95818852",
+        "indicator": "30f4b1a0-h3o3-11ec-a737-5d89d595eaf7",
+        "name": "Switch",
+        "symbol": "s2",
+        "protocol": "OVS",
+        "port": 3002,
+        "mac": "00:00:00:00:00:02",
+        "controller": "NotLinkedYet",
+        "type": "switch",
+        "x": "407",
+        "y": "284",
+        "__v": 0
+    }
         ]
       ,
       "hosts": [
