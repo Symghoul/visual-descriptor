@@ -137,7 +137,6 @@ export const AppContextWrapper = (props) => {
           let response = await axios.get(
             `/api/hosts/${prevSelDevice.indicator}`
           );
-          console.log(response, "response");
           if (response.status === 200) {
             response = await axios.put(
               `/api/hosts/${prevSelDevice.indicator}`,
@@ -162,6 +161,7 @@ export const AppContextWrapper = (props) => {
         updateLink();
       }
     }
+    console.log(selectedDevice);
   }, [selectedDevice]);
 
   const deleteDevice = async () => {
@@ -231,19 +231,35 @@ export const AppContextWrapper = (props) => {
   };
 
   const loadFromDB = async (formData) => {
+    await axios.get("/api/general/erase");
     await axios.post(`/api/general/load/`, formData);
 
     wait(5000);
 
-    const DBControllers = await axios.get("/api/controllers");
-    const DBSwitches = await axios.get("/api/switches");
-    const DBHosts = await axios.get("/api/hosts");
-    const DBLinks = await axios.get("/api/links");
+    let DBControllers = await axios.get("/api/controllers");
+    let DBSwitches = await axios.get("/api/switches");
+    let DBHosts = await axios.get("/api/hosts");
+    let DBLinks = await axios.get("/api/links");
 
     setControllers(DBControllers.data);
     setSwitches(DBSwitches.data);
     setHosts(DBHosts.data);
     setLinks(DBLinks.data);
+
+    DBControllers = await axios.get("/api/controllers");
+    DBSwitches = await axios.get("/api/switches");
+    DBHosts = await axios.get("/api/hosts");
+    DBLinks = await axios.get("/api/links");
+
+    setControllers(DBControllers.data);
+    setSwitches(DBSwitches.data);
+    setHosts(DBHosts.data);
+    setLinks(DBLinks.data);
+
+    console.log(controllers, "controller");
+    console.log(switches, "switches");
+    console.log(hosts, "hosts");
+    console.log(links, "links");
   };
 
   // ----------- exported states and methods -----------
