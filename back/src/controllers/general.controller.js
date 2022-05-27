@@ -92,10 +92,8 @@ generalController.load = async (req, res) => {
     console.log(`Renombrando ${file.tempFilePath}`);
     fs.renameSync(oldPath, newPath);
 
-    err = importDb();
-    if (!err) {
-      res.status(501).send(err);
-    }
+    await importDb();
+    // se quito la validacion del error
   }
   res.send(`File uploaded`);
 };

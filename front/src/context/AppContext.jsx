@@ -232,14 +232,43 @@ export const AppContextWrapper = (props) => {
 
   const loadFromDB = async (formData) => {
     await axios.get("/api/general/erase");
+    console.log("pasa erase");
     await axios.post(`/api/general/load/`, formData);
+    console.log("pasa la carga del archivo");
 
-    wait(5000);
-
+    console.log("iniciando carga");
     let DBControllers = await axios.get("/api/controllers");
     let DBSwitches = await axios.get("/api/switches");
     let DBHosts = await axios.get("/api/hosts");
     let DBLinks = await axios.get("/api/links");
+
+    console.log(DBControllers.data, "controller");
+    console.log(DBSwitches.data, "switches");
+    console.log(DBHosts.data, "hosts");
+    console.log(DBLinks.data, "links");
+
+    setControllers(DBControllers.data);
+    setSwitches(DBSwitches.data);
+    setHosts(DBHosts.data);
+    setLinks(DBLinks.data);
+
+    //setTimeout(async () => {
+    //}, 10000);
+
+    /**
+ 
+
+    
+
+    setControllers(DBControllers.data);
+    setSwitches(DBSwitches.data);
+    setHosts(DBHosts.data);
+    setLinks(DBLinks.data);
+ * 
+    DBControllers = await axios.get("/api/controllers");
+    DBSwitches = await axios.get("/api/switches");
+    DBHosts = await axios.get("/api/hosts");
+    DBLinks = await axios.get("/api/links");
 
     setControllers(DBControllers.data);
     setSwitches(DBSwitches.data);
@@ -251,15 +280,15 @@ export const AppContextWrapper = (props) => {
     DBHosts = await axios.get("/api/hosts");
     DBLinks = await axios.get("/api/links");
 
-    setControllers(DBControllers.data);
-    setSwitches(DBSwitches.data);
-    setHosts(DBHosts.data);
-    setLinks(DBLinks.data);
+    
 
-    console.log(controllers, "controller");
-    console.log(switches, "switches");
-    console.log(hosts, "hosts");
-    console.log(links, "links");
+    setTimeout(() => {
+      console.log(controllers, "controller");
+      console.log(switches, "switches");
+      console.log(hosts, "hosts");
+      console.log(links, "links");
+    }, 2000);
+     */
   };
 
   // ----------- exported states and methods -----------
