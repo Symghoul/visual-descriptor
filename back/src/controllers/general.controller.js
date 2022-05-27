@@ -39,10 +39,10 @@ generalController.getScript = async (req, res) => {
     //comando para escribir el script
     topocustom(topology, req.params.nameArchive);
 
-    /** 
+    
       //Comando para ejecutar el script junto a mininet
       exectMininet(req.params.nameArchive)
-      */
+     
     res.status(200).json({ message: "El script está corriendo" });
   } catch (error) {
     res.status(500).send(error.message);
@@ -99,7 +99,7 @@ generalController.load = async (req, res) => {
 };
 
 async function switch2Controller() {
-  console.log("entra ;D");
+  
   const c = await controller.find();
   let adder = 0;
   let linksS;
@@ -351,7 +351,8 @@ function topocustom(topology, nameArchive) {
 }
 
 function exectMininet(nameArchive) {
-  exec(`mn --custom=${nameArchive}`, (error, stdout, stderr) => {
+
+  exec(`echo mininet | sudo -S mn --custom=./src/data/${nameArchive}.sh`, (error, stdout, stderr) => {
     if (error) {
       console.log(`error: ${error.message}`);
       return;
