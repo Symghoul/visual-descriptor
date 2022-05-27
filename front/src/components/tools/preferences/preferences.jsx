@@ -107,18 +107,22 @@ const Preferences = () => {
     if (loadedFile !== null) {
       let formData = new FormData();
       formData.append("file", loadedFile);
-      axios.post(`/api/general/load/`, formData);
+      state.loadFromDB(formData);
       handleCloseLoadFile();
-      state.loadFromDB();
     } else {
       handleOpenError();
       handleCloseLoadFile();
     }
   };
 
+  const exportFileAxios = async (fileName) => {
+    await axios.get(`/api/general/export/${fileName}`);
+    await axios.get(`/api/general/export/${fileName}`);
+  };
+
   useEffect(() => {
     if (fileName !== "" && fileName !== null) {
-      axios.get(`/api/general/export/${fileName}`);
+      exportFileAxios(fileName);
       setFieldFileName("");
       setFileName("");
     }

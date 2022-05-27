@@ -15,8 +15,6 @@ let newSwitche;
 let newHost;
 let newlink;
 
-
-
 generalController.getScript = async (req, res) => {
   try {
     const controllers = await controller.find();
@@ -79,7 +77,7 @@ generalController.eraseDB = async (req, res) => {
 generalController.load = async (req, res) => {
   if (req.files.file) {
     var split = req.files.file.name.split(".");
-      //Hallo
+    //Hallo
     if (split[split.length - 1] !== "json") {
       res.status(400).send({
         message: "El archivo debe ser el .json generado por el descriptor",
@@ -93,8 +91,6 @@ generalController.load = async (req, res) => {
 
     console.log(`Renombrando ${file.tempFilePath}`);
     fs.renameSync(oldPath, newPath);
-    
-    
 
     err = importDb();
     if (!err) {
@@ -105,6 +101,7 @@ generalController.load = async (req, res) => {
 };
 
 async function switch2Controller() {
+  console.log("entra ;D");
   const c = await controller.find();
   let adder = 0;
   let linksS;
@@ -175,7 +172,6 @@ async function importDb() {
 
     console.log(`Listing Controlllers ${controllers.length}`);
     for (let i = 0; i < controllers.length; i++) {
-      
       newController = new controller({
         indicator: controllers[i].indicator,
         name: controllers[i].name,
