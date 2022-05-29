@@ -2,10 +2,10 @@ const { Schema, model } = require("mongoose");
 
 const switchSchema = new Schema({
   indicator: {
-    type:String,
-    required:true,
-    unique:true
-  } ,
+    type: String,
+    required: true,
+    unique: true,
+  },
   name: String,
   symbol: String,
   protocol: {
@@ -26,8 +26,8 @@ const switchSchema = new Schema({
     required: true,
   },
   type: String,
-  x: String,
-  y: String,
+  x: Number,
+  y: Number,
   color: String,
 });
 
