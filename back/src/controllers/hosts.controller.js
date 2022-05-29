@@ -2,6 +2,10 @@ const hostsCtrl = {};
 
 const host = require("../model/hosts");
 
+//Son requeridos para acceder a sus bases de datos netamente para validar
+const controller = require("../model/controller");
+const switche = require("../model/switch");
+
 hostsCtrl.gethosts = async (req, res) => {
   const hosts = await host.find();
   res.json(hosts);
@@ -39,19 +43,37 @@ hostsCtrl.gethostById = async (req, res) => {
     res.send(h);
   } catch (error) {
     res.status(500).send(error.message);
-  }
+  }     
 };
 
 hostsCtrl.updatehost = async (req, res) => {
   try {
     const { name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
-    //y el controller? onta definido?
-    /*console.log(host.collection, "host.collection");
+    
+    /* // Un intento para validar que no hubiesen Keys repetidas pero al parecer la base de datos ya se encarga de eso
     if (host.collection) {
+      
+      const objOnDB = await host.find({ ip: `${req.body.ip}` });
+      console.log("----------")
+      console.log(objOnDB);
+
+      if(objOnDB.length > 0){
+        if(objOnDB.ip === req.body.ip){
+          if(objOnDB.indicator !== req.body.indicator){
+            throw new Error({"keyValue": {"ip" : "req.body.ip"}});
+          }
+          console.log("llegó hasta acá")
+          console.log(objOnDB.indicator !== req.body.indicator);
+        }
+      }
+      
     }*/
-    const objOnDB = await host.find({ ip: `${req.body.ip}` });
-    //no encontro un controlador con esa ip se crashea
-    console.log(objOnDB, "host del db");
+
+
+    await validateIp(req.params.indicator, ip);
+
+    await validateMac(req.params.indicator, mac);
+
 
     const simpleMask = sMask(mask);
     const action = await host.updateOne(
@@ -69,7 +91,9 @@ hostsCtrl.updatehost = async (req, res) => {
         color,
       }
     );
+    
     if (action.matchedCount === 1) res.send({ message: "host modificado" });
+    //else if(action.acknowledged && )
     else {
       res.send({ message: "No se modificó el host" });
     }
@@ -108,6 +132,32 @@ function sMask(mask) {
   bits = Math.log(sum) / Math.log(2);
   bits = Math.round(bits);
   return bits;
+}
+
+async function validateIp(indicator, ip){
+  const objOnDB = await controller.findOne( {ip: {ip} });
+  console.log(objOnDB);
+  if(objOnDB.length > 0){
+
+    
+      throw new Error({"keyValue": {"ip" : `${ip}`}});
+    
+    
+  }
+  return;
+}
+
+async function validateMac(indicator, mac){
+  const objOnDB = await switche.find({ mac: `${mac}` });
+
+  if(objOnDB.length > 0){
+
+    if(objOnDB.indicator !== indicator){
+      throw new Error({"keyValue": {"mac" : `${mac}`}});
+    }
+    
+  }
+  return;
 }
 
 module.exports = hostsCtrl;
