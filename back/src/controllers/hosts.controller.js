@@ -46,10 +46,10 @@ hostsCtrl.updatehost = async (req, res) => {
   try {
     const { name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
     //y el controller? onta definido?
-    console.log(controller.collection, "controller.collection");
-    if (controller.collection) {
-    }
-    const objOnDB = await controller.find({ ip: `${req.body.ip}` });
+    /*console.log(host.collection, "host.collection");
+    if (host.collection) {
+    }*/
+    const objOnDB = await host.find({ ip: `${req.body.ip}` });
     //no encontro un controlador con esa ip se crashea
     console.log(objOnDB, "host del db");
 
