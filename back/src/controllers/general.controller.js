@@ -39,10 +39,9 @@ generalController.getScript = async (req, res) => {
     //comando para escribir el script
     topocustom(topology, req.params.nameArchive);
 
-    /** 
-      //Comando para ejecutar el script junto a mininet
-      exectMininet(req.params.nameArchive)
-      */
+    //Comando para ejecutar el script junto a mininet
+    exectMininet(req.params.nameArchive);
+
     res.status(200).json({ message: "El script está corriendo" });
   } catch (error) {
     res.status(500).send(error.message);
@@ -353,17 +352,20 @@ function topocustom(topology, nameArchive) {
 }
 
 function exectMininet(nameArchive) {
-  exec(`mn --custom=${nameArchive}`, (error, stdout, stderr) => {
-    if (error) {
-      console.log(`error: ${error.message}`);
-      return;
+  exec(
+    `echo mininet | sudo -S mn --custom=./src/data/${nameArchive}.sh`,
+    (error, stdout, stderr) => {
+      if (error) {
+        console.log(`error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
     }
-    if (stderr) {
-      console.log(`stderr: ${stderr}`);
-      return;
-    }
-    console.log(`stdout: ${stdout}`);
-  });
+  );
 }
 
 module.exports = generalController;
