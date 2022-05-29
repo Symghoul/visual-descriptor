@@ -306,7 +306,7 @@ function Canva() {
           height={SIZE}
           draggable
           onDragEnd={(e) => {
-            const switche = {
+            let switche = {
               indicator: uuid.v1(),
               name: "Switch",
               symbol: `s${state.getSwitchSymbol()}`,
