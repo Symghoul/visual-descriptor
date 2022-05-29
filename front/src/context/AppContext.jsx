@@ -238,14 +238,10 @@ export const AppContextWrapper = (props) => {
     let DBHosts = await axios.get("/api/hosts");
     let DBLinks = await axios.get("/api/links");
 
-    console.log(DBSwitches, "dbswitches");
     setControllers(DBControllers.data);
-    //console.log(controllers, "controllers")
     setSwitches(DBSwitches.data);
-    console.log(switches, "switches");
     setHosts(DBHosts.data);
     setLinks(DBLinks.data);
-    console.log(links, "links");
   };
 
   // ----------- exported states and methods -----------
