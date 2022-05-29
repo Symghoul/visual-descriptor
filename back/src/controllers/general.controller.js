@@ -92,14 +92,16 @@ generalController.load = async (req, res) => {
     console.log(`Renombrando ${file.tempFilePath}`);
     fs.renameSync(oldPath, newPath);
 
-    await importDb();
-    // se quito la validacion del error
+    try {
+      await importDb();
+      res.send("File Uploaded");
+    } catch (e) {
+      res.status(501).send(e);
+    }
   }
-  res.send(`File uploaded`);
 };
 
 async function switch2Controller() {
-  console.log("entra ;D");
   const c = await controller.find();
   let adder = 0;
   let linksS;
@@ -145,7 +147,7 @@ async function exportDb(name) {
     )}, "switches":${JSON.stringify(switches)}, "hosts":${JSON.stringify(
       hosts
     )}, "links":${JSON.stringify(links)}}`;
-    name.replace(" ","");
+
     fs.writeFileSync(`./src/data/${name}.json`, db);
     temp = "Salió todo perfectamente";
     return temp;
