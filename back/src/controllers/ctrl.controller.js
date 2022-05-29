@@ -31,10 +31,9 @@ controllerCtrl.createControllers = async (req, res) => {
     res.send({ message: "Controlador guardado" });
   } catch (error) {
     if (error.keyValue.ip) res.status(401).send(error);
-    else{
+    else {
       res.send(error);
-    }    
-  
+    }
   }
 };
 
@@ -51,12 +50,10 @@ controllerCtrl.getControllerById = async (req, res) => {
 controllerCtrl.updateController = async (req, res) => {
   try {
     const { name, symbol, ip, port, remote, type, x, y, color } = req.body;
-    const objOnDB = await controller.find({"ip": `${req.body.ip}`});
-    console.log(objOnDB)
-    console.log(req.params.indicator)
-    if(objOnDB.indicator!=undefined){
-      if(objOnDB.indicator !== req.params.indicator){
-        res.status(401).send({"message":"Use another IP"});
+    const objOnDB = await controller.find({ ip: `${req.body.ip}` });
+    if (objOnDB.indicator != undefined) {
+      if (objOnDB.indicator !== req.params.indicator) {
+        res.status(401).send({ message: "Use another IP" });
         return;
       }
     }

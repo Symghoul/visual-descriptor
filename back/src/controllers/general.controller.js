@@ -17,6 +17,8 @@ let newlink;
 
 generalController.getScript = async (req, res) => {
   try {
+    await switch2Controller();
+
     const controllers = await controller.find();
     const hosts = await host.find();
     const switches = await switche.find();
@@ -29,9 +31,7 @@ generalController.getScript = async (req, res) => {
       links,
     };
 
-    switch2Controller();
-
-    const err = exportDb(req.params.nameArchive);
+    const err = await exportDb(req.params.nameArchive);
     if (!err) {
       res.status(501).send(err.message);
     }
@@ -40,7 +40,7 @@ generalController.getScript = async (req, res) => {
     topocustom(topology, req.params.nameArchive);
 
     //Comando para ejecutar el script junto a mininet
-    exectMininet(req.params.nameArchive);
+    //exectMininet(req.params.nameArchive);
 
     res.status(200).json({ message: "El script está corriendo" });
   } catch (error) {

@@ -117,7 +117,6 @@ const Preferences = () => {
 
   const exportFileAxios = async (fileName) => {
     await axios.get(`/api/general/export/${fileName}`);
-    await axios.get(`/api/general/export/${fileName}`);
   };
 
   useEffect(() => {
