@@ -45,8 +45,13 @@ hostsCtrl.gethostById = async (req, res) => {
 hostsCtrl.updatehost = async (req, res) => {
   try {
     const { name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
-    const objOnDB = await controller.find({"ip": `${req.params.ip}`});
-
+    //y el controller? onta definido?
+    console.log(controller.collection, "controller.collection");
+    if (controller.collection) {
+    }
+    const objOnDB = await controller.find({ ip: `${req.body.ip}` });
+    //no encontro un controlador con esa ip se crashea
+    console.log(objOnDB, "host del db");
 
     const simpleMask = sMask(mask);
     const action = await host.updateOne(
@@ -69,6 +74,7 @@ hostsCtrl.updatehost = async (req, res) => {
       res.send({ message: "No se modificó el host" });
     }
   } catch (error) {
+    console.log(error);
     if (error.keyValue.ip) res.status(401).send(error);
     else if (error.keyValue.mac) res.status(402).send(error);
   }
