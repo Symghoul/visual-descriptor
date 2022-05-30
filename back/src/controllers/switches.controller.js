@@ -1,6 +1,10 @@
 const switchesCtrl = {};
 
 const switche = require("../model/switch");
+const macErr = "Mac repeated with a host";
+
+//es requerido para acceder a su base de datos netamente para validar
+const host = require("../model/hosts");
 
 switchesCtrl.getSwitches = async (req, res) => {
   try {
@@ -41,7 +45,7 @@ switchesCtrl.createSwitch = async (req, res) => {
   });
   try {
     await newSwitch.save();
-    res.send({ message: "switch creado" });
+    res.send({ message: "switch saved" });
   } catch (error) {
     if (error) res.status(402).send(error);
   }
@@ -61,6 +65,7 @@ switchesCtrl.updateSwitch = async (req, res) => {
   try {
     const { name, symbol, protocol, port, mac, controller, type, x, y, color } =
       req.body;
+    await validateMac(mac);
     const action = await switche.updateOne(
       { indicator: req.params.indicator },
       {
@@ -76,25 +81,43 @@ switchesCtrl.updateSwitch = async (req, res) => {
         color,
       }
     );
-    if (action.matchedCount === 1) res.send({ message: "switch modificado" });
+    if (action.matchedCount === 1) res.send({ message: "switch modified" });
     else {
-      res.send({ message: "No se modificó el switch" });
+      res.send({ message: "Switch does not modified" });
     }
   } catch (error) {
-    res.status(500).send(error.message);
+    if(error.keyValue){
+      res.status(402).send(error);
+    }else{ 
+      if(error.message === macErr){
+        res.status(405).send(error);
+      }
+      else{
+        res.status(500).send(error.message);
+      }
+    }
   }
 };
 
 switchesCtrl.deleteSwitch = async (req, res) => {
   try {
     const action = await switche.deleteOne({ indicator: req.params.indicator });
-    if (action.deletedCount === 1) res.send({ message: "switch eliminado" });
+    if (action.deletedCount === 1) res.send({ message: "switch deleted" });
     else {
-      res.send({ message: "switch no eliminado" });
+      res.send({ message: "switch does not deleted" });
     }
   } catch (error) {
     res.status(500).send(error.message);
   }
 };
+
+async function validateMac(mac){
+  const objOnDB = await host.find({ mac: `${mac}` });
+
+  if(objOnDB.length > 0){
+      throw new Error(macErr);
+  }
+  return;
+}
 
 module.exports = switchesCtrl;

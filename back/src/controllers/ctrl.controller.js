@@ -2,6 +2,11 @@ const controllerCtrl = {};
 
 const controller = require("../model/controller");
 
+//Es requerido para acceder a su base de datos netamente para validar
+const host = require("../model/hosts");
+
+let ipErr = "ip repeated with a host"
+
 controllerCtrl.getControllers = async (req, res) => {
   try {
     const controllers = await controller.find();
@@ -28,7 +33,7 @@ controllerCtrl.createControllers = async (req, res) => {
   });
   try {
     await newcontroller.save();
-    res.send({ message: "Controlador guardado" });
+    res.send({ message: "Controller saved" });
   } catch (error) {
     if (error.keyValue.ip) res.status(401).send(error);
     else {
@@ -50,13 +55,8 @@ controllerCtrl.getControllerById = async (req, res) => {
 controllerCtrl.updateController = async (req, res) => {
   try {
     const { name, symbol, ip, port, remote, type, x, y, color } = req.body;
-    const objOnDB = await controller.find({ ip: `${req.body.ip}` });
-    if (objOnDB.indicator != undefined) {
-      if (objOnDB.indicator !== req.params.indicator) {
-        res.status(401).send({ message: "Use another IP" });
-        return;
-      }
-    }
+    await validateIp(ip);
+
     const action = await controller.updateOne(
       { indicator: req.params.indicator },
       {
@@ -73,12 +73,19 @@ controllerCtrl.updateController = async (req, res) => {
     );
 
     if (action.matchedCount === 1)
-      res.send({ message: "Controlador modificado" });
+      res.send({ message: "Controller modified" });
     else {
-      res.send({ message: "No se modificó el controlador" });
+      res.send({ message: "Controller does not modified" });
     }
   } catch (error) {
-    res.status(500).send(error.message);
+    if(error.keyValue){
+      res.status(401).send(error.message);}
+    else{
+      if(error.message === ipErr){
+        res.status(403).send(error);
+      }else{
+      res.status(500).send(error.message);}
+    }
   }
 };
 
@@ -88,13 +95,24 @@ controllerCtrl.deleteController = async (req, res) => {
       indicator: req.params.indicator,
     });
     if (action.deletedCount === 1)
-      res.send({ message: "Controlador eliminado" });
+      res.send({ message: "Controller deleted" });
     else {
-      res.send({ message: "Controlador no eliminado" });
+      res.send({ message: "Controller does not deleted" });
     }
   } catch (error) {
     res.status(500).send(error.message);
   }
 };
+
+async function validateIp(ip){
+  
+  const objOnDB = await host.find({ip:`${ip}`}).exec();
+
+  if(objOnDB.length > 0){
+      throw new Error(ipErr);
+  }
+  return;
+}
+
 
 module.exports = controllerCtrl;

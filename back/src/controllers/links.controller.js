@@ -38,7 +38,7 @@ linksCtrl.createLink = async (req, res) => {
   });
   try {
     await newlink.save();
-    res.send({ message: "link guardado" });
+    res.send({ message: "link saved" });
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -81,9 +81,9 @@ linksCtrl.updateLink = async (req, res) => {
         color,
       }
     );
-    if (action.matchedCount === 1) res.send({ message: "link modificado" });
+    if (action.matchedCount === 1) res.send({ message: "link modified" });
     else {
-      res.send({ message: "link no modificado" });
+      res.send({ message: "link does not modified" });
     }
   } catch (error) {
     res.status(500).send(error.message);
@@ -93,9 +93,9 @@ linksCtrl.updateLink = async (req, res) => {
 linksCtrl.deleteLink = async (req, res) => {
   try {
     const action = await link.deleteOne({ indicator: req.params.indicator });
-    if (action.deletedCount === 1) res.send({ message: "link eliminado" });
+    if (action.deletedCount === 1) res.send({ message: "link deleted" });
     else {
-      res.send({ message: "link no eliminado" });
+      res.send({ message: "link does not deleted" });
     }
   } catch (error) {
     res.status(500).send(error.message);

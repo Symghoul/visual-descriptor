@@ -1,6 +1,8 @@
 const hostsCtrl = {};
 
 const host = require("../model/hosts");
+const ipErr = "ip repeated with a Controller";
+const macErr = "Mac repeated with a Controller";
 
 //Son requeridos para acceder a sus bases de datos netamente para validar
 const controller = require("../model/controller");
@@ -14,8 +16,6 @@ hostsCtrl.gethosts = async (req, res) => {
 hostsCtrl.createhosts = async (req, res) => {
   const { indicator, name, symbol, ip, mask, mac, active, type, x, y, color } =
     req.body;
-    validateIp(ip);
-    validateMac(mac);
   const simpleMask = sMask(mask);
   const newHost = new host({
     indicator,
@@ -32,15 +32,15 @@ hostsCtrl.createhosts = async (req, res) => {
   });
   try {
     await newHost.save();
-    res.send({ message: "host guardado" });
+    res.send({ message: "host saved" });
   } catch (error) {
     if(error.keyValue){
       if (error.keyValue.ip) res.status(401).send(error);
       else if (error.keyValue.mac) res.status(402).send(error);}
     else{
-      if(error === "La Ip está repetida con un Controlador"){
+      if(error.message === ipErr){
         res.status(403).send(error);
-      }else if(error === "La Mac está repetida con un Controlador"){
+      }else if(error.message === macErr){
         res.status(405).send(error);
       }
       else{
@@ -63,8 +63,6 @@ hostsCtrl.updatehost = async (req, res) => {
   try {
     const { name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
     
-    // Un intento para validar que no hubiesen Keys repetidas pero al parecer la base de datos ya se encarga de eso
-
     await validateIp(ip);
 
     await validateMac(mac);
@@ -87,35 +85,34 @@ hostsCtrl.updatehost = async (req, res) => {
       }
     );
     
-    if (action.matchedCount === 1) res.send({ message: "host modificado" });
+    if (action.matchedCount === 1) res.send({ message: "host modified" });
     //else if(action.acknowledged && )
     else {
-      res.send({ message: "No se modificó el host" });
+      res.send({ message: "host does not modified" });
     }
   } catch (error) {
-    console.log(error);
-    if(error.keyValue){
-      if (error.keyValue.ip) res.status(401).send(error);
-      else if (error.keyValue.mac) res.status(402).send(error);}
-    else{ 
-      if(error === "La Ip está repetida con un Controlador"){
-        res.status(403).send(error);
-      }else if(error === "La Mac está repetida con un Controlador"){
-        res.status(405).send(error);
-      }
-      else{
-        console.log(error);
+      if(error.keyValue){
+        if (error.keyValue.ip) res.status(401).send(error);
+        else if (error.keyValue.mac) res.status(402).send(error);}
+      else{ 
+        if(error.message === ipErr){
+          res.status(403).send(error);
+        }else if(error.message === macErr){
+          res.status(405).send(error);
+        }
+        else{
+          res.status(500).send(error.message)
+        }
       }
     }
-  }
 };
 
 hostsCtrl.deletehost = async (req, res) => {
   try {
     const action = await host.deleteOne({ indicator: req.params.indicator });
-    if (action.deletedCount === 1) res.send({ message: "host eliminado" });
+    if (action.deletedCount === 1) res.send({ message: "host deleted" });
     else {
-      res.send({ message: "host no eliminado" });
+      res.send({ message: "host does not deleted" });
     }
   } catch (error) {
     res.status(500).send(error.message);
@@ -145,7 +142,7 @@ async function validateIp(ip){
   const objOnDB = await controller.find({ip:`${ip}`}).exec();
 
   if(objOnDB.length > 0){
-      throw new Error("La Ip está repetida con un Controlador");
+      throw new Error(ipErr);
   }
   return;
 }
@@ -154,7 +151,7 @@ async function validateMac(mac){
   const objOnDB = await switche.find({ mac: `${mac}` });
 
   if(objOnDB.length > 0){
-      throw new Error("La Mac está repetida con un Controlador");
+      throw new Error(macErr);
   }
   return;
 }
@@ -206,7 +203,6 @@ async function newMac(req,res){
   let split = mac.split(":");
   let newMac1 = "";
   let newMac2 = "";
-  let temp = "";
   let exit = false;
   //
   for(let i=(split.length-1) ;i>=0 && !exit;i--){
