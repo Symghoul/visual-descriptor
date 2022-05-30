@@ -353,7 +353,7 @@ function Canva() {
     );
   });
 
-  function CanvaHost() {
+  const CanvaHost = () => {
     let xp = 150;
     let yp = 1;
     return (
@@ -385,7 +385,7 @@ function Canva() {
         <Text text="Host" x={xp + 10} y={yp + 52} />
       </div>
     );
-  }
+  };
 
   const allHosts = state.hosts.map((eachHost, index) => {
     return (

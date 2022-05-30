@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useRef } from "react";
 import AppContext from "../../../context/AppContext";
 import axios from "../../../config/axios";
 import { InitName, InitMac, InitIP, InitMask } from "./initialDeviceValues";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme, CssTextField } from "../../../config/theme";
-import { Button, Box } from "@mui/material";
+import { Button, Box, Modal, Typography } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { object, string } from "yup";
 import "./hostConfig.css";
@@ -12,11 +12,33 @@ import "./hostConfig.css";
 const HostConfig = () => {
   const state = useContext(AppContext);
 
+  const [errorUpdate, setErrorUpdate] = useState(false);
+  const errorMessage = useRef("");
+
+  const handleOpenError = (msg) => {
+    errorMessage.current = msg;
+    setErrorUpdate(true);
+  };
+  const handleCloseError = () => setErrorUpdate(false);
+
   const initialValues = {
     name: InitName(),
     mac: InitMac(),
     ip: InitIP(),
     mask: InitMask(),
+  };
+
+  const style = {
+    position: "absolute",
+    gap: 2,
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
   };
 
   const handleSubmit = async (data) => {
@@ -28,7 +50,14 @@ const HostConfig = () => {
     let mask = data.mask;
     let update = { ...oldHost, name, mac, ip, mask };
 
-    let response = await axios.put(`/api/hosts/${update.indicator}`, update);
+    let response = null;
+
+    try {
+      response = await axios.put(`/api/hosts/${update.indicator}`, update);
+    } catch (err) {
+      response = err.response;
+    }
+
     console.log(response, "response");
 
     if (response.status === 200) {
@@ -42,7 +71,14 @@ const HostConfig = () => {
       state.setHosts(arr);
       state.setSelectedDevice(null);
     } else if (response.status === 401) {
-      console.log("IP already exists");
+      const msg = "IP already exists";
+      handleOpenError(msg);
+    } else if (response.status === 403) {
+      const msg = "IP already exists within controllers domain";
+      handleOpenError(msg);
+    } else if (response.status === 402) {
+      const msg = "Mac already exists in other host";
+      handleOpenError(msg);
     }
   };
 
@@ -85,83 +121,104 @@ const HostConfig = () => {
   });
 
   return (
-    <ThemeProvider theme={theme}>
-      <div className="container">
-        <Formik
-          initialValues={initialValues}
-          onSubmit={(values, formikHelpers) => {
-            handleSubmit(values);
-          }}
-          validationSchema={schema}
+    <div>
+      <div>
+        <Modal
+          open={errorUpdate}
+          onClose={handleCloseError}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
         >
-          {({ errors, isValid, touched }) => (
-            <Form>
-              <Field
-                className="field2"
-                name="name"
-                type="text"
-                as={CssTextField}
-                label="Host Name"
-                error={Boolean(errors.name) && Boolean(touched.name)}
-                helperText={Boolean(touched.name) && errors.name}
-              />
-              <Field
-                className="field2"
-                name="mac"
-                type="text"
-                as={CssTextField}
-                label={"Mac Address"}
-                error={Boolean(errors.mac) && Boolean(touched.mac)}
-                helperText={Boolean(touched.mac) && errors.mac}
-              />
-              <Field
-                className="field2"
-                name="ip"
-                type="text"
-                as={CssTextField}
-                label={"IP Adress"}
-                error={Boolean(errors.ip) && Boolean(touched.ip)}
-                helperText={Boolean(touched.ip) && errors.ip}
-              />
-              <Field
-                className="field2"
-                name="mask"
-                type="text"
-                as={CssTextField}
-                label={"Subnet Mask"}
-                error={Boolean(errors.mask) && Boolean(touched.mask)}
-                helperText={Boolean(touched.mask) && errors.mask}
-              />
-
-              <Box className="field2" />
-
-              <Button
-                className="field2"
-                color="primary"
-                variant="contained"
-                size="small"
-                type="submit"
-                disabled={!isValid}
-              >
-                Save Changes
-              </Button>
-              <span> </span>
-              <Button
-                className="field2"
-                color="error"
-                variant="contained"
-                size="small"
-                onClick={() => {
-                  state.deleteDevice();
-                }}
-              >
-                Delete Host
-              </Button>
-            </Form>
-          )}
-        </Formik>
+          <Box
+            sx={style}
+            display="flex"
+            flex-direction="column"
+            alignItems="center"
+          >
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              {errorMessage.current}
+            </Typography>
+          </Box>
+        </Modal>
       </div>
-    </ThemeProvider>
+      <ThemeProvider theme={theme}>
+        <div className="container">
+          <Formik
+            initialValues={initialValues}
+            onSubmit={(values, formikHelpers) => {
+              handleSubmit(values);
+            }}
+            validationSchema={schema}
+          >
+            {({ errors, isValid, touched }) => (
+              <Form>
+                <Field
+                  className="field2"
+                  name="name"
+                  type="text"
+                  as={CssTextField}
+                  label="Host Name"
+                  error={Boolean(errors.name) && Boolean(touched.name)}
+                  helperText={Boolean(touched.name) && errors.name}
+                />
+                <Field
+                  className="field2"
+                  name="mac"
+                  type="text"
+                  as={CssTextField}
+                  label={"Mac Address"}
+                  error={Boolean(errors.mac) && Boolean(touched.mac)}
+                  helperText={Boolean(touched.mac) && errors.mac}
+                />
+                <Field
+                  className="field2"
+                  name="ip"
+                  type="text"
+                  as={CssTextField}
+                  label={"IP Adress"}
+                  error={Boolean(errors.ip) && Boolean(touched.ip)}
+                  helperText={Boolean(touched.ip) && errors.ip}
+                />
+                <Field
+                  className="field2"
+                  name="mask"
+                  type="text"
+                  as={CssTextField}
+                  label={"Subnet Mask"}
+                  error={Boolean(errors.mask) && Boolean(touched.mask)}
+                  helperText={Boolean(touched.mask) && errors.mask}
+                />
+
+                <Box className="field2" />
+
+                <Button
+                  className="field2"
+                  color="primary"
+                  variant="contained"
+                  size="small"
+                  type="submit"
+                  disabled={!isValid}
+                >
+                  Save Changes
+                </Button>
+                <span> </span>
+                <Button
+                  className="field2"
+                  color="error"
+                  variant="contained"
+                  size="small"
+                  onClick={() => {
+                    state.deleteDevice();
+                  }}
+                >
+                  Delete Host
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </ThemeProvider>
+    </div>
   );
 };
 
