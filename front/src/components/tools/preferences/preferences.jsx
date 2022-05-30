@@ -76,29 +76,6 @@ const Preferences = () => {
   const handleOpenError = () => setOpenError(true);
   const handleCloseError = () => setOpenError(false);
 
-  /**
-   * Error de put starts
-   */
-  let errorMessage = "";
-
-  const openBigError = () => setBigError(true);
-  const closeBigError = () => {
-    state.setError("");
-    setBigError(false);
-  };
-
-  useEffect(() => {
-    if (state.error !== "") {
-      errorMessage =
-        state.error === "IP" ? "La Ip ya existe!" : "La MAC ya existe!";
-      openBigError();
-    }
-  }, [state.error]);
-
-  /**
-   * Error de put ends
-   */
-
   const handleFile = (e) => {
     setLoadedFile(e.target.files[0]);
   };
@@ -129,25 +106,6 @@ const Preferences = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div>
-        <Modal
-          open={bigError}
-          onClose={closeBigError}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box
-            sx={style}
-            display="flex"
-            flex-direction="column"
-            alignItems="center"
-          >
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              {errorMessage}
-            </Typography>
-          </Box>
-        </Modal>
-      </div>
       <div className="prefContainer">
         <div className="prefItems">
           <Button
@@ -297,21 +255,20 @@ const Preferences = () => {
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 - To use the tool and draw the topology, you must select one of
-                the devices located at the bottom and drag it anywhere on the
+                the devices located at the top and drag it anywhere on the
                 screen where you want to place it.
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 - To edit the device values, you must click the device you want
-                to configure, there you will see a panel with the device
-                configuration, when you finish making changes click the device
-                again to close the panel, or click a link or another device to
-                configure it.
+                to configure, then you will see a panel with the device
+                configuration, when you finish making changes click on save
+                changes otherwise the changes will not be saved.
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 - To create links click once on the device you are starting
-                from, then click on one of the circles and hold and drag the
-                circles to the device you want to connect. Remember that it is
-                not possible to connect controller to host directly.
+                from, then hold and drag on one of the dots to the device you
+                want to connect. Remember that it is not possible to connect
+                controller to host directly!
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 - And Remember, you can drag the devices once they are on the

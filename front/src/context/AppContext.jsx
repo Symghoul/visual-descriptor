@@ -162,6 +162,13 @@ export const AppContextWrapper = (props) => {
     setHosts([]);
     setSwitches([]);
     setLinks([]);
+
+    controllerSymbol.current = 1;
+    switchSymbol.current = 1;
+    hostSymbol.current = 1;
+    ipAddress.current = 0;
+    macAddress.current = 0;
+    portNumber.current = 0;
   };
 
   const loadFromDB = async (formData) => {
