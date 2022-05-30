@@ -1,10 +1,10 @@
 const { Router } = require("express");
 const router = Router();
 
-const { newIp, newMac } = require("../controllers/services.controller");
+const { dhcp, macAllowed } = require("../controllers/services.controller");
 
-router.route("/ip").post(newIp);
+router.route("/ip").post(dhcp);
 
-router.route("/mac").post(newMac);
+router.route("/mac").post(macAllowed);
 
 module.exports = router;

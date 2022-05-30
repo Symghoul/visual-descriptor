@@ -1,8 +1,70 @@
 const services = {};
 
-services.newIp = (req, res) => {
-    let ip = req.body.ip
-    let mask = req.body.mask
+const controller = require("../model/controller");
+const switche = require("../model/switch");
+const host = require("../model/hosts");
+
+services.dhcp = async (req, res) => {
+
+    //No es probable pero aún falta el caso de, qué pasa si se acaban las Ips disponibles?
+    let exit = false;
+    let mask = req.body.mask;
+    let dhcp = req.body.ip;
+    let repeated = false;
+    const objCtrls = await controller.find().exec();
+    const objhosts = await host.find().exec();
+    while(!exit){
+      for(let i=0; i<objCtrls.length; i++){
+        if(dhcp !== objCtrls[i].ip){
+          exit=true;
+        }else{
+            repeated = true;
+        }
+      }
+      for(let i=0; i<objhosts.length; i++){
+        if(dhcp !== objhosts[i].ip){
+        exit=true;
+        }else{
+            repeated = true;
+        }
+      }
+      if(repeated){
+        dhcp = newIp(dhcp,mask);}
+    }
+    res.send({"dhcp":`${dhcp}`});
+  }
+services.macAllowed = async(req, res) => {
+      
+      //No es probable (practicamente imposible) pero aún falta el caso de, qué pasa si se acaban las mac disponibles?
+      let exit = false;
+      let mac = req.body.mac;
+      let repeated = false;
+      const objswit = await switche.find().exec();
+      const objhosts = await host.find().exec();
+      while(!exit){
+      for(let i=0; i<objswit.length; i++){
+        if(mac !== objswit[i].mac){
+          exit=true;
+        }else{
+            repeated = true;
+        }
+    }
+      for(let i=0; i<objhosts.length; i++){
+        if(mac !== objhosts[i].mac){
+        exit=true;
+    }else{
+        repeated = true;
+        }
+    }
+    if(repeated){
+        mac = newMac(mac);}
+    }
+    res.send({"mac":`${mac}`});
+}
+
+function newIp(ipv4, mask1){
+    let ip = ipv4;
+    let mask = mask1;
     let split = ip.split(".")
     let newIp1 = Number(split[0]);
     let newIp2 = Number(split[1]);
@@ -45,8 +107,8 @@ services.newIp = (req, res) => {
     res.send({"ip":`${ip}`});
 }
 
-services.newMac = (req,res) => {
-    let mac = req.body.mac;
+function newMac(mac1){
+    let mac = mac1;
     let split = mac.split(":");
     let newMac1 = "";
     let newMac2 = "";
