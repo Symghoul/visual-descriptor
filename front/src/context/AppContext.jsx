@@ -103,38 +103,6 @@ export const AppContextWrapper = (props) => {
    */
   useEffect(() => {
     if (prevSelDevice) {
-      if (prevSelDevice.type === "controller") {
-        const updateController = async () => {
-          let response = await axios.get(
-            `/api/controllers/${prevSelDevice.indicator}`
-          );
-          if (response.status === 200) {
-            try {
-              response = await axios.put(
-                `/api/controllers/${prevSelDevice.indicator}`,
-                getDevice(prevSelDevice)
-              );
-            } catch (error) {
-              console.log(error, "error");
-            }
-          }
-        };
-        updateController();
-      }
-      if (prevSelDevice.type === "switch") {
-        const updateSwitch = async () => {
-          let response = await axios.get(
-            `/api/switches/${prevSelDevice.indicator}`
-          );
-          if (response.status === 200) {
-            response = await axios.put(
-              `/api/switches/${prevSelDevice.indicator}`,
-              getDevice(prevSelDevice)
-            );
-          }
-        };
-        updateSwitch();
-      }
       if (prevSelDevice.type === "link") {
         const updateLink = async () => {
           let response = await axios.get(

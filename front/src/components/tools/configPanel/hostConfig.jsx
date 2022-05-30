@@ -43,7 +43,6 @@ const HostConfig = () => {
 
   const handleSubmit = async (data) => {
     let oldHost = state.getDevice(state.selectedDevice);
-
     let name = data.name;
     let mac = data.mac;
     let ip = data.ip;
@@ -57,8 +56,6 @@ const HostConfig = () => {
     } catch (err) {
       response = err.response;
     }
-
-    console.log(response, "response");
 
     if (response.status === 200) {
       const arr = state.hosts.map((host) => {
@@ -78,6 +75,9 @@ const HostConfig = () => {
       handleOpenError(msg);
     } else if (response.status === 402) {
       const msg = "Mac already exists in other host";
+      handleOpenError(msg);
+    } else if (response.status === 405) {
+      const msg = "There is a switch with this mac already";
       handleOpenError(msg);
     }
   };
