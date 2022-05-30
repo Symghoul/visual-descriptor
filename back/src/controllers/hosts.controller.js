@@ -14,6 +14,8 @@ hostsCtrl.gethosts = async (req, res) => {
 hostsCtrl.createhosts = async (req, res) => {
   const { indicator, name, symbol, ip, mask, mac, active, type, x, y, color } =
     req.body;
+    validateIp(ip);
+    validateMac(mac);
   const simpleMask = sMask(mask);
   const newHost = new host({
     indicator,
@@ -32,8 +34,19 @@ hostsCtrl.createhosts = async (req, res) => {
     await newHost.save();
     res.send({ message: "host guardado" });
   } catch (error) {
-    if (error.keyValue.ip) res.status(401).send(error);
-    else if (error.keyValue.mac) res.status(402).send(error);
+    if(error.keyValue){
+      if (error.keyValue.ip) res.status(401).send(error);
+      else if (error.keyValue.mac) res.status(402).send(error);}
+    else{
+      if(error === "La Ip está repetida con un Controlador"){
+        res.status(403).send(error);
+      }else if(error === "La Mac está repetida con un Controlador"){
+        res.status(405).send(error);
+      }
+      else{
+        console.log(error);
+      }
+    }
   }
 };
 
@@ -50,29 +63,11 @@ hostsCtrl.updatehost = async (req, res) => {
   try {
     const { name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
     
-    /* // Un intento para validar que no hubiesen Keys repetidas pero al parecer la base de datos ya se encarga de eso
-    if (host.collection) {
-      
-      const objOnDB = await host.find({ ip: `${req.body.ip}` });
-      console.log("----------")
-      console.log(objOnDB);
+    // Un intento para validar que no hubiesen Keys repetidas pero al parecer la base de datos ya se encarga de eso
 
-      if(objOnDB.length > 0){
-        if(objOnDB.ip === req.body.ip){
-          if(objOnDB.indicator !== req.body.indicator){
-            throw new Error({"keyValue": {"ip" : "req.body.ip"}});
-          }
-          console.log("llegó hasta acá")
-          console.log(objOnDB.indicator !== req.body.indicator);
-        }
-      }
-      
-    }*/
+    await validateIp(ip);
 
-
-    await validateIp(req.params.indicator, ip);
-
-    await validateMac(req.params.indicator, mac);
+    await validateMac(mac);
 
 
     const simpleMask = sMask(mask);
@@ -99,8 +94,19 @@ hostsCtrl.updatehost = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    if (error.keyValue.ip) res.status(401).send(error);
-    else if (error.keyValue.mac) res.status(402).send(error);
+    if(error.keyValue){
+      if (error.keyValue.ip) res.status(401).send(error);
+      else if (error.keyValue.mac) res.status(402).send(error);}
+    else{ 
+      if(error === "La Ip está repetida con un Controlador"){
+        res.status(403).send(error);
+      }else if(error === "La Mac está repetida con un Controlador"){
+        res.status(405).send(error);
+      }
+      else{
+        console.log(error);
+      }
+    }
   }
 };
 
@@ -134,30 +140,94 @@ function sMask(mask) {
   return bits;
 }
 
-async function validateIp(indicator, ip){
-  const objOnDB = await controller.findOne( {ip: {ip} });
-  console.log(objOnDB);
-  if(objOnDB.length > 0){
+async function validateIp(ip){
+  
+  const objOnDB = await controller.find({ip:`${ip}`}).exec();
 
-    
-      throw new Error({"keyValue": {"ip" : `${ip}`}});
-    
-    
+  if(objOnDB.length > 0){
+      throw new Error("La Ip está repetida con un Controlador");
   }
   return;
 }
 
-async function validateMac(indicator, mac){
+async function validateMac(mac){
   const objOnDB = await switche.find({ mac: `${mac}` });
 
   if(objOnDB.length > 0){
-
-    if(objOnDB.indicator !== indicator){
-      throw new Error({"keyValue": {"mac" : `${mac}`}});
-    }
-    
+      throw new Error("La Mac está repetida con un Controlador");
   }
   return;
+}
+
+async function newIp(ip, mask){
+  let split = ip.split(".")
+  let newIp1 = Number(split[0]);
+  let newIp2 = Number(split[1]);
+  let newIp3 = Number(split[2]);
+  let newIp4 = Number(split[3]);
+  if(mask<=7){
+      if(newIp1===254 && newIp2===254 && newIp3===254 && newIp4===254){
+          newIp1=1;
+      }else if(newIp2===254 && newIp3===254 && newIp4===254){
+          newIp2 = 1;
+      }else if(newIp3===254 && newIp4===254){
+          newIp2+=1; 
+      }else if(newIp4===254){
+          newIp3+=1;
+      }
+  }
+  else if(mask<=15){
+      if(newIp2===254 && newIp3===254 && newIp4===254){
+          newIp2 = 1;
+      }else if(newIp3===254 && newIp4===254){
+          newIp2+=1; 
+      }else if(newIp4===254){
+          newIp3+=1;
+      }
+  }
+  else if(mask<=23){
+      if(newIp3===254 && newIp4===254){
+          newIp3=1; 
+      }else if(newIp4===254){
+          newIp3+=1;
+      }
+  }
+  if(newIp4===254){
+      newIp4 = 1;
+  }
+  else {newIp4 = newIp4+1;}
+
+  ip= newIp1+"."+newIp2+"."+newIp3+"."+newIp4;
+  return ip;
+}
+
+async function newMac(req,res){
+  let mac = req.body.mac;
+  let split = mac.split(":");
+  let newMac1 = "";
+  let newMac2 = "";
+  let temp = "";
+  let exit = false;
+  //
+  for(let i=(split.length-1) ;i>=0 && !exit;i--){
+      let six = split[i];
+      console.log()
+      if(six=="FF"){
+          newMac1="0";
+          newMac2="0";
+      }else if(six.substring(1)=="F"){
+          newMac1 = convert2Hex(six.substring(0,1));
+          newMac2 = "0"
+          exit = true;
+      }else{
+          newMac1 = six.substring(0,1);
+          newMac2 = convert2Hex(six.substring(1,2));
+          exit = true;
+      }
+      split[i] = ""+newMac1+newMac2;
+      }
+  mac = split.toString();
+  res.send({"mac":`${mac.replaceAll(",",":", "")}`})
 }
 
 module.exports = hostsCtrl;
