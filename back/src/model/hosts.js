@@ -22,6 +22,7 @@ const hostSchema = new Schema({
     required: true,
     unique: true,
   },
+  mac2script: String,
   active: Boolean,
   type: String,
   x: Number,
