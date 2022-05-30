@@ -8,6 +8,7 @@ services.newIp = (req, res) => {
     let newIp2 = Number(split[1]);
     let newIp3 = Number(split[2]);
     let newIp4 = Number(split[3]);
+
     if(mask<=7){
         if(newIp1===254 && newIp2===254 && newIp3===254 && newIp4===254){
             newIp1=1;
