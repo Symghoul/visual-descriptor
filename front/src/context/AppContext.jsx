@@ -135,20 +135,6 @@ export const AppContextWrapper = (props) => {
         };
         updateSwitch();
       }
-      if (prevSelDevice.type === "host") {
-        const updateHost = async () => {
-          let response = await axios.get(
-            `/api/hosts/${prevSelDevice.indicator}`
-          );
-          if (response.status === 200) {
-            response = await axios.put(
-              `/api/hosts/${prevSelDevice.indicator}`,
-              getDevice(prevSelDevice)
-            );
-          }
-        };
-        updateHost();
-      }
       if (prevSelDevice.type === "link") {
         const updateLink = async () => {
           let response = await axios.get(

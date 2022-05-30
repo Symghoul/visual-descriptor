@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import AppContext from "../../../context/AppContext";
+import axios from "../../../config/axios";
 import { InitName, InitMac, InitIP, InitMask } from "./initialDeviceValues";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme, CssTextField } from "../../../config/theme";
@@ -18,23 +19,31 @@ const HostConfig = () => {
     mask: InitMask(),
   };
 
-  const handleSubmit = (data) => {
+  const handleSubmit = async (data) => {
     let oldHost = state.getDevice(state.selectedDevice);
+
     let name = data.name;
     let mac = data.mac;
     let ip = data.ip;
     let mask = data.mask;
     let update = { ...oldHost, name, mac, ip, mask };
 
-    const arr = state.hosts.map((host) => {
-      if (host.indicator === oldHost.indicator) {
-        return update;
-      }
-      return host;
-    });
+    let response = await axios.put(`/api/hosts/${update.indicator}`, update);
+    console.log(response, "response");
 
-    state.setHosts(arr);
-    state.setSelectedDevice(null);
+    if (response.status === 200) {
+      const arr = state.hosts.map((host) => {
+        if (host.indicator === oldHost.indicator) {
+          return update;
+        }
+        return host;
+      });
+
+      state.setHosts(arr);
+      state.setSelectedDevice(null);
+    } else if (response.status === 401) {
+      console.log("IP already exists");
+    }
   };
 
   const regex = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$";
