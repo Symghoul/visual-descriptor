@@ -1,8 +1,6 @@
 const services = {};
 
 services.newIp = (req, res) => {
-
-
     let ip = req.body.ip
     let mask = req.body.mask
     let split = ip.split(".")
@@ -10,7 +8,6 @@ services.newIp = (req, res) => {
     let newIp2 = Number(split[1]);
     let newIp3 = Number(split[2]);
     let newIp4 = Number(split[3]);
-
     if(mask<=7){
         if(newIp1===254 && newIp2===254 && newIp3===254 && newIp4===254){
             newIp1=1;
@@ -38,7 +35,6 @@ services.newIp = (req, res) => {
             newIp3+=1;
         }
     }
-    
     if(newIp4===254){
         newIp4 = 1;
     }
@@ -46,12 +42,9 @@ services.newIp = (req, res) => {
 
     ip= newIp1+"."+newIp2+"."+newIp3+"."+newIp4;
     res.send({"ip":`${ip}`});
-
 }
 
 services.newMac = (req,res) => {
-
-
     let mac = req.body.mac;
     let split = mac.split(":");
     let newMac1 = "";
@@ -75,9 +68,7 @@ services.newMac = (req,res) => {
             exit = true;
         }
         split[i] = ""+newMac1+newMac2;
-
         }
-    //mac = temp.substring(1);
     mac = split.toString();
     res.send({"mac":`${mac.replaceAll(",",":", "")}`})
 }
