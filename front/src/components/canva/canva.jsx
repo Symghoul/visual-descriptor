@@ -242,7 +242,7 @@ function Canva() {
               indicator: uuid.v1(),
               name: "Controller",
               symbol: `c${state.getControllerSymbol()}`,
-              ip: `192.161.0.${state.getIpAddress()}`,
+              ip: `192.168.0.${state.getIpAddress()}`,
               port: `300${state.getPortNumber()}`,
               remote: false,
               type: "controller",

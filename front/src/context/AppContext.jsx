@@ -109,10 +109,14 @@ export const AppContextWrapper = (props) => {
             `/api/controllers/${prevSelDevice.indicator}`
           );
           if (response.status === 200) {
-            response = await axios.put(
-              `/api/controllers/${prevSelDevice.indicator}`,
-              getDevice(prevSelDevice)
-            );
+            try {
+              response = await axios.put(
+                `/api/controllers/${prevSelDevice.indicator}`,
+                getDevice(prevSelDevice)
+              );
+            } catch (error) {
+              console.log(error, "error");
+            }
           }
         };
         updateController();
