@@ -98,29 +98,6 @@ export const AppContextWrapper = (props) => {
     }
   };
 
-  /**
-   * This effect update the changes made in a device
-   */
-  useEffect(() => {
-    if (prevSelDevice) {
-      if (prevSelDevice.type === "link") {
-        const updateLink = async () => {
-          let response = await axios.get(
-            `/api/links/${prevSelDevice.indicator}`
-          );
-          if (response.status === 200) {
-            response = await axios.put(
-              `/api/links/${prevSelDevice.indicator}`,
-              getDevice(prevSelDevice)
-            );
-          }
-        };
-        updateLink();
-      }
-    }
-    console.log(selectedDevice);
-  }, [selectedDevice]);
-
   const deleteDevice = async () => {
     const device = getDevice(selectedDevice);
 

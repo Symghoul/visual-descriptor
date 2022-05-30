@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import AppContext from "../../../context/AppContext";
+import axios from "../../../config/axios";
 import { InitDelay, InitLoss, InitBandwidth } from "./initialDeviceValues";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme, CssTextField } from "../../../config/theme";
@@ -19,12 +20,14 @@ const LinkConfig = () => {
     bandwidth: InitBandwidth(),
   };
 
-  const handleSubmit = (data) => {
+  const handleSubmit = async (data) => {
     let oldLink = state.getDevice(state.selectedDevice);
     let delay = data.delay;
     let loss = data.loss;
     let bandwidth = data.bandwidth;
     let update = { ...oldLink, delay, loss, bandwidth, color };
+
+    await axios.put(`/api/links/${update.indicator}`, update);
 
     const arr = state.links.map((link) => {
       if (link.indicator === oldLink.indicator) {
@@ -34,6 +37,7 @@ const LinkConfig = () => {
     });
 
     state.setLinks(arr);
+    state.setSelectedDevice(null);
     state.setSelectedLink(null);
   };
 

@@ -283,7 +283,7 @@ function topocustom(topology, nameArchive) {
     if (element === undefined || element.symbol === undefined) {
       console.log("Los switches no estan definidos");
     } else {
-      writeFileSync += ` ${element.symbol} = net.addSwitch( '${element.symbol}', procotols='${element.protocol}', listenPort=${element.listenPort}, mac='${element.mac}')\n`;
+      writeFileSync += ` ${element.symbol} = net.addSwitch( '${element.symbol}', procotols='${element.protocol}', port=${element.port}, mac='${element.mac}')\n`;
     }
   });
 
