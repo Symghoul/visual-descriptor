@@ -102,7 +102,7 @@ const LinkConfig = () => {
 
               <Button
                 className="field2"
-                color="primary"
+                color="success"
                 variant="contained"
                 size="small"
                 type="submit"
