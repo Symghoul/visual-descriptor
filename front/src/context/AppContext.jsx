@@ -51,8 +51,6 @@ export const AppContextWrapper = (props) => {
   };
 
   const getMacAddress = () => {
-    //macAddress.current = macAddress.current + 1;
-    //"00:00:00:00:00:00"
     let address = macAddress.current;
     console.log(address);
     macAddress.current = mac(address);
@@ -172,7 +170,7 @@ export const AppContextWrapper = (props) => {
     switchSymbol.current = 1;
     hostSymbol.current = 1;
     ipAddress.current = 0;
-    macAddress.current = 0;
+    macAddress.current = "00:00:00:00:00:00";
     portNumber.current = 0;
   };
 
