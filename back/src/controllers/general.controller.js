@@ -258,6 +258,7 @@ async function importDb() {
 
 function topocustom(topology, nameArchive) {
   let writeFileSync =
+//    `#!/usr/bin/python`
     `from mininet.topo import Topo \n` +
     `from mininet.net import Mininet \n` +
     `from mininet.log import info, setLogLevel \n` +
@@ -303,22 +304,27 @@ function topocustom(topology, nameArchive) {
       console.log("Los links no estan definidos");
     } else {
       writeFileSync += ` net.addLink(${element.source}, ${element.destination} `;
+      if (element.bandwith !== undefined) {
+        if(element.bandwith === 0){
+          writeFileSync += `, bw= 1`;
+        }
+        else{
+        writeFileSync += `, bw= ${element.bandwith}`;
+        }
+      }
       if (element.delay !== undefined) {
-        writeFileSync += `, delay= ${element.delay}`;
+        writeFileSync += `, delay= '${element.delay}ms'`;
       }
       if (element.loss !== undefined) {
         writeFileSync += `, loss= ${element.loss}`;
       }
-      if (element.bandwith !== undefined) {
-        writeFileSync += `, bw= ${element.bandwith}`;
-      }
+
     }
     writeFileSync += `) \n`;
   });
   writeFileSync +=
     `\n` +
     ` info("*** Starting network")\n` +
-    ` net.configureWifiNodes()\n` +
     `\n` +
     ` net.build()\n`;
   topology.controllers.forEach((element) => {
@@ -348,12 +354,12 @@ function topocustom(topology, nameArchive) {
 
   // Aqui va el comando para crear el script createScript();
 
-  fs.writeFileSync(`./src/data/${nameArchive}.sh`, writeFileSync);
+  fs.writeFileSync(`./src/data/${nameArchive}.py`, writeFileSync);
 }
 
 function exectMininet(nameArchive) {
   exec(
-    `echo mininet | sudo -S mn --custom=./src/data/${nameArchive}.sh`,
+    `xterm -e sudo ./src/data/${nameArchive}.py`,
     (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
