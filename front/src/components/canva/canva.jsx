@@ -8,6 +8,7 @@ import * as uuid from "uuid";
 import Border from "./border";
 import axios from "../../config/axios";
 import ToolsPanel from "../tools/toolsPanel";
+import mac from "../../config/macService";
 
 const style = {
   position: "absolute",
@@ -312,7 +313,8 @@ function Canva() {
               symbol: `s${state.getSwitchSymbol()}`,
               protocol: "OVS",
               port: `300${state.getPortNumber()}`,
-              mac: `00:00:00:00:00:0${state.getMacAddress()}`,
+              //mac: `00:00:00:00:00:0${state.getMacAddress()}`,
+              mac: `${state.getMacAddress()}`,
               controller: "notLinkedYet",
               type: "switch",
               x: e.target.x(),

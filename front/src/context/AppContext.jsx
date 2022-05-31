@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import axios from "../config/axios";
+import mac from "../config/macService";
 
 const AppContext = React.createContext();
 
@@ -26,7 +27,7 @@ export const AppContextWrapper = (props) => {
   const switchSymbol = useRef(0);
   const hostSymbol = useRef(0);
   const ipAddress = useRef(0);
-  const macAddress = useRef(0);
+  const macAddress = useRef("00:00:00:00:00:00");
   const portNumber = useRef(0);
 
   const getControllerSymbol = () => {
@@ -50,7 +51,11 @@ export const AppContextWrapper = (props) => {
   };
 
   const getMacAddress = () => {
-    macAddress.current = macAddress.current + 1;
+    //macAddress.current = macAddress.current + 1;
+    //"00:00:00:00:00:00"
+    let address = macAddress.current;
+    console.log(address);
+    macAddress.current = mac(address);
     return macAddress.current;
   };
 
