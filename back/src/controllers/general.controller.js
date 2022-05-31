@@ -353,7 +353,7 @@ function topocustom(topology, nameArchive) {
 
 function exectMininet(nameArchive) {
   exec(
-    `echo mininet | sudo -S mn --custom=./src/data/${nameArchive}.sh`,
+    `xterm -e sudo -S mn --custom=./src/data/${nameArchive}.sh`,
     (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);

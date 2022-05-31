@@ -170,6 +170,10 @@ const Preferences = () => {
               <Typography id="modal-modal-title" variant="h6" component="h2">
                 Export Succesful!
               </Typography>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                In the backend of this project you can find the file. The route
+                is back/src/data
+              </Typography>
             </Box>
           </Modal>
         </div>
