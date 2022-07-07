@@ -18,12 +18,13 @@ let newlink;
 generalController.getScript = async (req, res) => {
   try {
     await switch2Controller();
+    
 
     const controllers = await controller.find();
     const hosts = await host.find();
     const switches = await switche.find();
     const links = await link.find();
-
+    
     var topology = {
       controllers,
       hosts,
@@ -106,16 +107,16 @@ async function switch2Controller() {
   let linksS;
   let linksD;
   let changer;
-
   for (let i = 0; i < c.length; i++) {
     linksS = await link.find({ source: `${c[i].symbol}` });
     linksD = await link.find({ destination: `${c[i].symbol}` });
     changer;
-
+    
     for (let j = 0; j < linksS.length; j++) {
       let adder = i + 1;
-      changer = linksS[j].to;
-
+      changer = linksS[j].destination;
+      
+      
       await switche.updateOne(
         { indicator: `${changer.indicator}` },
         { controller: `c${adder}` }
@@ -124,7 +125,7 @@ async function switch2Controller() {
 
     for (let j = 0; j < linksD.length; j++) {
       let adder = i + 1;
-      changer = linksD[j].from;
+      changer = linksD[j].source;
 
       await switche.updateOne(
         { indicator: `${changer.indicator}` },
@@ -257,38 +258,42 @@ async function importDb() {
 }
 
 function topocustom(topology, nameArchive) {
+  
   let writeFileSync =
-//    `#!/usr/bin/python`
-    `from mininet.topo import Topo \n` +
+    //`#!/usr/bin/python`
+    
     `from mininet.net import Mininet \n` +
     `from mininet.log import info, setLogLevel \n` +
     `from mininet.cli import CLI \n` +
     `from mininet.node import Controller, RemoteController \n` +
+    `from mininet.link import TCLink\n` +
     `\n` +
     `def topology(): \n` +
     ` "Create a network."\n` +
-    ` net = Mininet( controller=Controller )\n` +
+    ` net = Mininet( controller=Controller, waitConnected=True, link=TCLink )\n` +
     `\n` +
-    ` info("*** Creating nodes")\n`;
+    ` info("*** Adding controller")\n`;
   topology.controllers.forEach((element) => {
     if (element === undefined) {
       console.log("Los controladores no estan definidos");
     } else if (element.remote) {
-      writeFileSync += ` ${element.symbol} = net.RemoteController( '${element.symbol}', ip='${element.ip}', port=${element.port})\n`;
+      writeFileSync += ` net.RemoteController( '${element.symbol}', ip='${element.ip}', port=${element.port})\n`;
     } else {
-      writeFileSync += ` ${element.symbol} = net.addController( '${element.symbol}', ip='${element.ip}', port=${element.port})\n`;
+      writeFileSync += ` net.addController( '${element.symbol}', ip='${element.ip}', port=${element.port})\n`;
     }
   });
-
+  
   topology.switches.forEach((element) => {
+    writeFileSync += ` info("*** Adding switches")\n`;
     if (element === undefined || element.symbol === undefined) {
       console.log("Los switches no estan definidos");
     } else {
       writeFileSync += ` ${element.symbol} = net.addSwitch( '${element.symbol}', procotols='${element.protocol}', port=${element.port}, mac='${element.mac}')\n`;
     }
   });
-
+  
   topology.hosts.forEach((element) => {
+    writeFileSync += ` info("*** Adding nodes")\n`;
     if (element === undefined || element.symbol === undefined) {
       console.log("Los hosts no estan definidos");
     } else if (element.mac === undefined)
@@ -304,19 +309,19 @@ function topocustom(topology, nameArchive) {
       console.log("Los links no estan definidos");
     } else {
       writeFileSync += ` net.addLink(${element.source}, ${element.destination} `;
-      if (element.bandwith !== undefined) {
-        if(element.bandwith === 0){
-          writeFileSync += `, bw= 1`;
+      if (element.bandwidth !== undefined) {
+        if(element.bandwidth === 0){
+          writeFileSync += `, bw=1`;
         }
         else{
-        writeFileSync += `, bw= ${element.bandwith}`;
+        writeFileSync += `, bw=${element.bandwidth}`;
         }
       }
       if (element.delay !== undefined) {
-        writeFileSync += `, delay= '${element.delay}ms'`;
+        writeFileSync += `, delay='${element.delay}ms'`;
       }
       if (element.loss !== undefined) {
-        writeFileSync += `, loss= ${element.loss}`;
+        writeFileSync += `, loss=${element.loss}`;
       }
 
     }
@@ -326,21 +331,21 @@ function topocustom(topology, nameArchive) {
     `\n` +
     ` info("*** Starting network")\n` +
     `\n` +
-    ` net.build()\n`;
-  topology.controllers.forEach((element) => {
-    if (element === undefined) {
-      console.log("Los controladores no estan definidos");
-    } else {
-      writeFileSync += ` ${element.symbol}.start()\n`;
-    }
-  });
-  topology.switches.forEach((element) => {
-    if (element === undefined || element.symbol === undefined) {
-      console.log("Los switches no estan definidos");
-    } else {
-      writeFileSync += ` ${element.symbol}.start( [${element.controller}] )\n`;
-    }
-  });
+    ` net.start()\n`;
+  //topology.controllers.forEach((element) => {
+  //  if (element === undefined) {
+  //    console.log("Los controladores no estan definidos");
+  //  } else {
+  //    writeFileSync += ` ${element.symbol}.start()\n`;
+  //  }
+  //});
+  //topology.switches.forEach((element) => {
+  //  if (element === undefined || element.symbol === undefined) {
+  //    console.log("Los switches no estan definidos");
+  //  } else {
+  //    writeFileSync += ` ${element.symbol}.start( [${element.controller}] )\n`;
+  //  }
+  //});
 
   writeFileSync +=
     `\n` +

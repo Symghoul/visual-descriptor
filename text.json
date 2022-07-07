@@ -4,7 +4,7 @@
         {
           "indicator": "242f18f0-df8a-11ec-bfb4-8bb365288f6c",
           "name": "Controller",
-          "symbol": "c1",
+          "symbol": "c0",
           "ip": "192.161.0.1",
           "port": 3001,
           "remote": false,
@@ -15,7 +15,7 @@
         {
           "indicator": "242f18f0-df8a-11ec-bfb4-489352twif6c",
           "name": "Controller",
-          "symbol": "c2",
+          "symbol": "c1",
           "ip": "192.161.0.2",
           "port": 3001,
           "remote": false,
@@ -29,7 +29,7 @@
         {
           "indicator": "30f4b1a0-dd44-11ec-a737-5d89d5a5eaf7",
           "name": "Switch",
-          "symbol": "s1",
+          "symbol": "s2",
           "protocol": "OVS",
           "port": 3002,
           "mac": "00:00:00:00:00:01",
@@ -43,7 +43,7 @@
           
           "indicator": "30f4b1a0-h3o3-4612-4444-5d89d595eaf7",
           "name": "Switch",
-          "symbol": "s2",
+          "symbol": "s3",
           "protocol": "OVS",
           "port": 3002,
           "mac": "00:00:00:00:00:02",
@@ -57,7 +57,8 @@
       ,
       "hosts": [
         {
-          "symbol": "h1",
+          "indicator": "30f4b1a0-h3o3-4612-4444-9231d595eaf7",
+          "symbol": "h4",
           "object": "host",
           "name": "pc1",
           "ip": "192.168.4.50",
@@ -70,24 +71,48 @@
       ,
       "links": [
         {
-          "symbol": "l1",
+          "indicator": "30f4b1a0-h3o3-4612-4444-9231d54hqaf7",
+          "symbol": "l5",
           "object": "ethernet",
           "name": "ethernet1",
-          "source": "h1",
-          "destination": "s1",
+          "source": "h4",
+          "destination": "s2",
           "delay": "15",
           "loss": "5",
-          "bandwith": "1"
+          "bandwidth": "1"
         },
         {
-          "symbol": "l2",
+          "indicator": "30f4b1a0-h3o3-4612-2244-9231d54hqaf7",
+          "symbol": "l6",
           "object": "fiber",
           "name": "fiber1",
-          "source": "s1",
+          "source": "s2",
+          "destination": "c0",
+          "delay": "2",
+          "loss": "1",
+          "bandwidth": "10"
+        },
+        {
+          "indicator": "30f4b1a0-h3o3-4612-2244-9231dkasaf7",
+          "symbol": "l6",
+          "object": "fiber",
+          "name": "fiber1",
+          "source": "s3",
+          "destination": "h4",
+          "delay": "2",
+          "loss": "1",
+          "bandwidth": "10"
+        },
+        {
+          "indicator": "30f4b1a0-h3o3-4612-rg44-9231dkasaf7",
+          "symbol": "l6",
+          "object": "fiber",
+          "name": "fiber1",
+          "source": "s3",
           "destination": "c1",
           "delay": "2",
           "loss": "1",
-          "bandwith": "10"
+          "bandwidth": "10"
         }
         ]
     },
