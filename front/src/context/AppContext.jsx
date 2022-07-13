@@ -52,7 +52,6 @@ export const AppContextWrapper = (props) => {
 
   const getMacAddress = () => {
     let address = macAddress.current;
-    console.log(address);
     macAddress.current = mac(address);
     return macAddress.current;
   };

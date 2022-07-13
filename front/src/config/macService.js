@@ -54,7 +54,7 @@ const mac = (takenMAC) => {
     } else {
       // a does not have to change, add in b
       a = hexDuo.charAt(0);
-      b = nextHex.charAt(1);
+      b = nextHex(hexDuo.charAt(1));
       exit = true;
     }
     tempTakenMACarr[i] = "" + a + b;

@@ -8,7 +8,6 @@ import * as uuid from "uuid";
 import Border from "./border";
 import axios from "../../config/axios";
 import ToolsPanel from "../tools/toolsPanel";
-import mac from "../../config/macService";
 
 const style = {
   position: "absolute",

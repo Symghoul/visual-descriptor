@@ -86,7 +86,7 @@ const SwitchConfig = () => {
   };
 
   // format to validate MAC address
-  const regex = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$";
+  const regex = "^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$";
 
   /**
    * This Schema has the validations for the information put in the form
