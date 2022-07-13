@@ -1,6 +1,10 @@
 import { useContext } from "react";
 import AppContext from "../../../context/AppContext";
 
+/**
+ * This Collection of functions take the information from the current device.
+ */
+
 const InitialDeviceValues = () => {};
 
 const InitName = () => {

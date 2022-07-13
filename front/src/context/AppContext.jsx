@@ -1,21 +1,21 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import axios from "../config/axios";
 import mac from "../config/macService";
 
 const AppContext = React.createContext();
 
-const usePreviousSelectedDevice = (prevSelDevice) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = prevSelDevice;
-  }, [prevSelDevice]);
-  return ref.current;
-};
+//const usePreviousSelectedDevice = (prevSelDevice) => {
+//  const ref = useRef();
+//  useEffect(() => {
+//    ref.current = prevSelDevice;
+//  }, [prevSelDevice]);
+//  return ref.current;
+//};
 
 export const AppContextWrapper = (props) => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [selectedLink, setSelectedLink] = useState(null);
-  const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
+  //const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
   const [error, setError] = useState("");
 
   const [controllers, setControllers] = useState([]);

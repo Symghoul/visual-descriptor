@@ -3,8 +3,15 @@ import { Line } from "react-konva";
 import Anchor from "./anchor";
 import { SIZE } from "./config";
 
+// Size is the distance from the center of the the device to the outside
 const points = [0, 0, SIZE, 0, SIZE, SIZE, 0, SIZE, 0, 0];
 
+/**
+ * Creates an array with the positions of the anchors
+ * @param {*} x relative position of the clicked device
+ * @param {*} y relative position of the clicked device
+ * @returns an array that indicates where the anchors are going to be
+ */
 function getAnchorPoints(x, y) {
   const halfSize = SIZE / 2;
   return [
@@ -27,6 +34,11 @@ function getAnchorPoints(x, y) {
   ];
 }
 
+/**
+ * It's an invisible frame where the anchors are located
+ * @param {*} properties are the props of the Border
+ * @returns The border component
+ */
 function Border({
   device,
   indicator,
@@ -34,9 +46,10 @@ function Border({
   onAnchorDragMove,
   onAnchorDragEnd,
 }) {
+  //if the device clicked exists
   if (device) {
     const { x, y } = device;
-    const anchorPoints = getAnchorPoints(x, y);
+    const anchorPoints = getAnchorPoints(x, y); // this array contains 4 anchors
     const anchors = anchorPoints.map((position, index) => (
       <Anchor
         key={`anchor-${index}`}

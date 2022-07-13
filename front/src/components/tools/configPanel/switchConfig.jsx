@@ -14,6 +14,7 @@ import { Field, Form, Formik } from "formik";
 import { number, object, string } from "yup";
 import "./switchConfig.css";
 
+//Style of the fields
 const style = {
   position: "absolute",
   gap: 2,
@@ -27,8 +28,19 @@ const style = {
   p: 4,
 };
 
+/**
+ * This is the form used to update and display the information of a switch
+ * @returns The switch form component
+ */
 const SwitchConfig = () => {
   const state = useContext(AppContext);
+
+  const initialValues = {
+    name: InitName(),
+    mac: InitMac(),
+    port: InitPort(),
+    protocol: InitProtocol(),
+  };
 
   const [errorUpdate, setErrorUpdate] = useState(false);
   const errorMessage = useRef("");
@@ -38,13 +50,6 @@ const SwitchConfig = () => {
     setErrorUpdate(true);
   };
   const handleCloseError = () => setErrorUpdate(false);
-
-  const initialValues = {
-    name: InitName(),
-    mac: InitMac(),
-    port: InitPort(),
-    protocol: InitProtocol(),
-  };
 
   const handleSubmit = async (data) => {
     let oldSwitch = state.getDevice(state.selectedDevice);
@@ -80,8 +85,12 @@ const SwitchConfig = () => {
     }
   };
 
+  // format to validate MAC address
   const regex = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$";
 
+  /**
+   * This Schema has the validations for the information put in the form
+   */
   const schema = object({
     name: string().required("Cannot be empty"),
     mac: string().required("Cannot be empty").matches(regex, {

@@ -6,6 +6,9 @@ import { Button, Modal, Typography, Box } from "@mui/material";
 import { theme, CssTextField } from "../../../config/theme";
 import "./preferences.css";
 
+/**
+ * Preference's buttons style
+ */
 const style = {
   position: "absolute",
   gap: 2,
@@ -19,6 +22,10 @@ const style = {
   p: 4,
 };
 
+/**
+ * Component that displays the preferences of the application
+ * @returns The preferences component
+ */
 const Preferences = () => {
   const state = useContext(AppContext);
 
@@ -54,10 +61,11 @@ const Preferences = () => {
     setFieldFileName("");
     setOpenExport(false);
   };
-
   const handleCloseSuccess = () => setSuccess(false);
+
   const handleOpenHelp = () => setOpenHelp(true);
   const handleCloseHelp = () => setOpenHelp(false);
+
   const handleOpenStartOver = () => {
     state.setSelectedDevice(null);
     setStartOver(true);
@@ -73,6 +81,7 @@ const Preferences = () => {
     state.setSelectedDevice(null);
     setLoadFile(true);
   };
+
   const handleOpenError = () => setOpenError(true);
   const handleCloseError = () => setOpenError(false);
 
@@ -96,6 +105,9 @@ const Preferences = () => {
     await axios.get(`/api/general/export/${fileName}`);
   };
 
+  /**
+   * Updates the file name given by the user
+   */
   useEffect(() => {
     if (fileName !== "" && fileName !== null) {
       exportFileAxios(fileName);
