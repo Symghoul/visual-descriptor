@@ -319,7 +319,7 @@ const Canva = () => {
             let controller = {
               indicator: uuid.v1(),
               name: "Controller",
-              symbol: `c${state.getControllerSymbol()}`,
+              symbol: `c${state.getSymbol()}`,
               ip: `192.168.0.${state.getIpAddress()}`,
               port: `300${state.getPortNumber()}`,
               remote: false,
@@ -395,7 +395,7 @@ const Canva = () => {
             let switche = {
               indicator: uuid.v1(),
               name: "Switch",
-              symbol: `s${state.getSwitchSymbol()}`,
+              symbol: `s${state.getSymbol()}`,
               protocol: "OVS",
               port: `300${state.getPortNumber()}`,
               mac: `${state.getMacAddress()}`,
@@ -465,7 +465,7 @@ const Canva = () => {
             const host = {
               indicator: uuid.v1(),
               name: "Host",
-              symbol: `h${state.getHostSymbol()}`,
+              symbol: `h${state.getSymbol()}`,
               ip: `192.168.0.${state.getIpAddress()}`,
               mask: "255.255.255.0",
               mac: `${state.getMacAddress()}`,
