@@ -1,15 +1,21 @@
 const {Router} = require('express');
 const router = Router();
 
-const {gethosts, createhosts, gethostById, updatehost, deletehost} = require('../controllers/hosts.controller');
+const {
+    gethosts, 
+    createhosts, 
+    gethostById, 
+    updatehost, 
+    deletehost
+} = require('../controllers/hosts.controller');
 
 router.route('/')
     .get(gethosts)
-    .post(createhosts)
+    .post(createhosts);
 
 router.route('/:indicator')
     .get(gethostById)
     .put(updatehost)
-    .delete(deletehost)
+    .delete(deletehost);
 
 module.exports = router;
