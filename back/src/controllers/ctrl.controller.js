@@ -7,6 +7,11 @@ const host = require("../model/hosts");
 
 let ipErr = "ip repeated with a host"
 
+/**
+ * Get method to get all the controllers in the database
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 controllerCtrl.getControllers = async (req, res) => {
   try {
     const controllers = await controller.find();
@@ -16,6 +21,11 @@ controllerCtrl.getControllers = async (req, res) => {
   }
 };
 
+/**
+ * Post method to create a new controller
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 controllerCtrl.createControllers = async (req, res) => {
   const { indicator, name, symbol, ip, port, remote, type, x, y, color } =
     req.body;
@@ -42,6 +52,11 @@ controllerCtrl.createControllers = async (req, res) => {
   }
 };
 
+/**
+ * Get method to get an controller by an id
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 controllerCtrl.getControllerById = async (req, res) => {
   try {
     const c = await controller.find({ indicator: req.params.indicator });
@@ -52,6 +67,11 @@ controllerCtrl.getControllerById = async (req, res) => {
   }
 };
 
+/**
+ * Put method to update a controller by an id
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 controllerCtrl.updateController = async (req, res) => {
   try {
     const { name, symbol, ip, port, remote, type, x, y, color } = req.body;
@@ -89,6 +109,11 @@ controllerCtrl.updateController = async (req, res) => {
   }
 };
 
+/**
+ * Delete method to delete a controller by an id
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 controllerCtrl.deleteController = async (req, res) => {
   try {
     const action = await controller.deleteOne({
@@ -104,6 +129,12 @@ controllerCtrl.deleteController = async (req, res) => {
   }
 };
 
+/**
+ * It takes an IP address as a parameter, searches the database for that IP address, and if it finds
+ * it, it throws an error.
+ * @param ip - the ip address to be validated
+ * @returns Nothing.
+ */
 async function validateIp(ip){
   
   const objOnDB = await host.find({ip:`${ip}`}).exec();
