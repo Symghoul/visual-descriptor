@@ -89,7 +89,6 @@ generalController.load = async (req, res) => {
     var oldPath = `${file.tempFilePath}`;
     var newPath = "./src/load/alfa.json";
 
-    console.log(`Renombrando ${file.tempFilePath}`);
     fs.renameSync(oldPath, newPath);
 
     try {
@@ -152,7 +151,6 @@ async function exportDb(name) {
     temp = "Salió todo perfectamente";
     return temp;
   } catch (error) {
-    console.log(error);
     return error;
   }
 }
@@ -164,13 +162,6 @@ async function importDb() {
     const { hosts } = await fs.readJSON("./src/load/alfa.json");
     const { links } = await fs.readJSON("./src/load/alfa.json");
 
-    console.log("---->");
-    console.log(controllers);
-    console.log(switches);
-    console.log(hosts);
-    console.log(links);
-
-    console.log(`Listing Controlllers ${controllers.length}`);
     for (let i = 0; i < controllers.length; i++) {
       newController = new controller({
         indicator: controllers[i].indicator,
@@ -185,14 +176,9 @@ async function importDb() {
         color: controllers[i].color,
       });
 
-      console.log(newController);
       let result = await newController.save();
-      console.log(result);
-      console.log(`Controller ${i} subido`);
     }
-    console.log("end listing controllers");
 
-    console.log(`Listing Switches${switches.length}`);
     for (let i = 0; i < switches.length; i++) {
       newSwitche = new switche({
         indicator: switches[i].indicator,
@@ -208,10 +194,8 @@ async function importDb() {
         color: switches[i].color,
       });
       await newSwitche.save();
-      console.log(`Switch ${i} subido`);
     }
 
-    console.log(`Listing Host${hosts.length}`);
     for (let i = 0; i < hosts.length; i++) {
       newHost = new host({
         indicator: hosts[i].indicator,
@@ -227,10 +211,8 @@ async function importDb() {
         color: hosts[i].color,
       });
       await newHost.save();
-      console.log(`Host ${i} subido`);
     }
 
-    console.log(`Listing Links: ${hosts.length}`);
     for (let i = 0; i < links.length; i++) {
       newlink = new link({
         indicator: links[i].indicator,
@@ -245,14 +227,11 @@ async function importDb() {
         color: links[i].color,
       });
       await newlink.save();
-      console.log(`Link ${i} subido`);
     }
 
     temp = "Salió todo perfectamente";
     return temp;
   } catch (error) {
-    console.log("error");
-    console.log(error);
     return error;
   }
 }
