@@ -2,6 +2,11 @@ const linksCtrl = {};
 
 const link = require("../model/link");
 
+/**
+ * Get method to get all the links in the database
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 linksCtrl.getLinks = async (req, res) => {
   try {
     const links = await link.find();
@@ -11,6 +16,11 @@ linksCtrl.getLinks = async (req, res) => {
   }
 };
 
+/**
+ * Post method to create a new link
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 linksCtrl.createLink = async (req, res) => {
   const {
     indicator,
@@ -44,6 +54,11 @@ linksCtrl.createLink = async (req, res) => {
   }
 };
 
+/**
+ * Get method to get an link by an id
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 linksCtrl.getLinkById = async (req, res) => {
   try {
     const l = await link.find({ indicator: req.params.indicator });
@@ -53,6 +68,11 @@ linksCtrl.getLinkById = async (req, res) => {
   }
 };
 
+/**
+ * Put method to update a link by an id
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 linksCtrl.updateLink = async (req, res) => {
   const {
     id,
@@ -90,6 +110,11 @@ linksCtrl.updateLink = async (req, res) => {
   }
 };
 
+/**
+ * Delete method to delete a host by an id
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 linksCtrl.deleteLink = async (req, res) => {
   try {
     const action = await link.deleteOne({ indicator: req.params.indicator });

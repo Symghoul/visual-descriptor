@@ -133,8 +133,8 @@ hostsCtrl.updatehost = async (req, res) => {
 
 /**
  * Delete method to delete a host by an id
- * @param {*} req 
- * @param {*} res 
+ * @param {*} req Query param
+ * @param {*} res Query param
  */
 hostsCtrl.deletehost = async (req, res) => {
   try {
