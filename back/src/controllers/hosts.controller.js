@@ -2,7 +2,7 @@ const hostsCtrl = {};
 
 const host = require("../model/hosts");
 const ipErr = "ip repeated with a Controller";
-const macErr = "Mac repeated with a Controller";
+const macErr = "Mac repeated with a Switch";
 
 //Variables required to access to the databases to validate
 const controller = require("../model/controller");
