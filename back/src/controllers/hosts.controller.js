@@ -15,8 +15,12 @@ const switche = require("../model/switch");
  * @param {*} res Query param
  */
 hostsCtrl.gethosts = async (req, res) => {
+  try {
   const hosts = await host.find();
   res.json(hosts);
+  } catch (error) {
+  res.status(500).send(error.message);
+  }
 };
 
 /**
@@ -64,7 +68,7 @@ hostsCtrl.createhosts = async (req, res) => {
 };
 
 /**
- * Get method to get an controller by an id
+ * Get method to get a host by an id
  * @param {*} req Query param
  * @param {*} res Query param
  */
