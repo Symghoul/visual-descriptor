@@ -45,9 +45,12 @@ controllerCtrl.createControllers = async (req, res) => {
     await newcontroller.save();
     res.send({ message: "Controller saved" });
   } catch (error) {
-    if (error.keyValue.ip) res.status(401).send(error);
+    if (error.keyValue.ip) res.status(401).send(error);   //Error if the IP already exists with other controller
     else {
-      res.send(error);
+      if(error.message === ipErr){
+        res.status(403).send(error);            //Error if the IP already exists with a host
+      }else{
+      res.status(500).send(error.message);}     //Error if one of the attributes doesn't exist
     }
   }
 };
@@ -99,7 +102,7 @@ controllerCtrl.updateController = async (req, res) => {
     }
   } catch (error) {
     if(error.keyValue){
-      res.status(401).send(error.message);}
+      res.status(401).send(error.message);}     //Error if the IP already exists with other controller
     else{
       if(error.message === ipErr){
         res.status(403).send(error);
