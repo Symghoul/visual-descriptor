@@ -137,10 +137,10 @@ controllerCtrl.deleteController = async (req, res) => {
  */
 async function validateIp(ip){
   
-  const objOnDB = await host.find({ip:`${ip}`}).exec();
+  const objOnDB = await host.find({ip:`${ip}`}).exec();     //An array with hosts whos have the same IP (that's bad)
 
   if(objOnDB.length > 0){
-      throw new Error(ipErr);
+      throw new Error(ipErr);     //Throws an error because there cannot be an IP address repeated
   }
   return;
 }

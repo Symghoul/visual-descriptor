@@ -15,6 +15,11 @@ let newSwitche;
 let newHost;
 let newlink;
 
+/**
+ * A function that is called when the user clicks on the button "Export" in the frontend.
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 generalController.getScript = async (req, res) => {
   try {
     await switch2Controller();
@@ -37,18 +42,21 @@ generalController.getScript = async (req, res) => {
       res.status(501).send(err.message);
     }
 
-    //comando para escribir el script
     topocustom(topology, req.params.nameArchive);
 
-    //Comando para ejecutar el script junto a mininet
     //exectMininet(req.params.nameArchive);
 
-    res.status(200).json({ message: "El script está corriendo" });
+    res.status(200).json({ message: "Script running" });
   } catch (error) {
     res.status(500).send(error.message);
   }
 };
 
+/**
+ * A function that is called when the user clicks on the button "Strat again?" in the frontend.
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 generalController.eraseDB = async (req, res) => {
   try {
     await controller.collection.drop();
@@ -74,11 +82,17 @@ generalController.eraseDB = async (req, res) => {
   res.send({ message: "DB dropped succesfully" });
 };
 
+/**
+ * A function that is called when the user clicks on the button "Load" in the frontend.
+ * @param {*} req 
+ * @param {*} res 
+ * @returns Nothing
+ */
 generalController.load = async (req, res) => {
-  if (req.files.file) {
-    var split = req.files.file.name.split(".");
-    //Hallo
-    if (split[split.length - 1] !== "json") {
+  if (req.files.file) {   //in the param req, there is a attribute called files who has the name od the file at the request's body
+    var fileNameAndExt = req.files.file.name.split("."); //First, we separate the file's name and the extention
+    
+    if (fileNameAndExt[fileNameAndExt.length - 1] !== "json") {   //It verifies if the file is json and sends a warning to the frontend
       res.status(400).send({
         message: "El archivo debe ser el .json generado por el descriptor",
       });
@@ -89,7 +103,7 @@ generalController.load = async (req, res) => {
     var oldPath = `${file.tempFilePath}`;
     var newPath = "./src/load/alfa.json";
 
-    fs.renameSync(oldPath, newPath);
+    fs.renameSync(oldPath, newPath);    //Fs renames the file with the name that the client wants to give to the file, because the file was saved with a temporal an unreadible name for humans
 
     try {
       await importDb();
@@ -100,31 +114,36 @@ generalController.load = async (req, res) => {
   }
 };
 
+/**
+ * It takes the symbol of a controller, finds all the links that have that symbol as a source or
+ * destination, and then updates the controller field of the switches that are connected to those
+ * links.
+ */
 async function switch2Controller() {
   const c = await controller.find();
   let adder = 0;
   let linksS;
   let linksD;
   let changer;
-  for (let i = 0; i < c.length; i++) {
+  for (let i = 0; i < c.length; i++) {    //It gets the links whose have the controller i in source or destination attribute
     linksS = await link.find({ source: `${c[i].symbol}` });
     linksD = await link.find({ destination: `${c[i].symbol}` });
     changer;
     
-    for (let j = 0; j < linksS.length; j++) {
+    for (let j = 0; j < linksS.length; j++) {   //search in the source's list of an i controller the switch connected to him and update it.
       let adder = i + 1;
-      changer = linksS[j].destination;
+      changer = linksS[j].destination;    //Because it is searching on the source attribute, the switch is in the destination attribute
       
       
       await switche.updateOne(
         { indicator: `${changer.indicator}` },
-        { controller: `c${adder}` }
+        { controller: `${c[i].symbol}` }
       );
     }
 
-    for (let j = 0; j < linksD.length; j++) {
+    for (let j = 0; j < linksD.length; j++) {  //search in the destination's list of an i controller the switch connected to him and update it.
       let adder = i + 1;
-      changer = linksD[j].source;
+      changer = linksD[j].source;     //Because it is searching on the destination attribute, the switch is in the source attribute
 
       await switche.updateOne(
         { indicator: `${changer.indicator}` },
@@ -134,6 +153,13 @@ async function switch2Controller() {
   }
 }
 
+/**
+ * It takes a name (the client's file name) as a parameter, then it finds all the data from the database, then it creates a JSON
+ * file with the name given as a parameter and then it writes the data found in the database to the
+ * JSON file.
+ * @param name - name of the file to be saved 
+ * @returns a promise. (A variable to take action in the method whose is called, that is, getScript())
+ */
 async function exportDb(name) {
   try {
     const controllers = await controller.find();
@@ -155,6 +181,11 @@ async function exportDb(name) {
   }
 }
 
+/**
+ * It reads a JSON file, then it creates a new object for each of the four arrays in the JSON file, and
+ * then it saves each object in the database.
+ * @returns a promise. (A variable to take action in the method whose is called, that is, load())
+ */
 async function importDb() {
   try {
     const { controllers } = await fs.readJSON("./src/load/alfa.json");
@@ -236,6 +267,12 @@ async function importDb() {
   }
 }
 
+/**
+ * It takes a topology object and a name for the file to be created, and then it creates a python
+ * script with the topology information.
+ * @param topology - the object that contains the topology data
+ * @param nameArchive - The name of the file to be created.
+ */
 function topocustom(topology, nameArchive) {
   
   let writeFileSync =
@@ -341,6 +378,10 @@ function topocustom(topology, nameArchive) {
   fs.writeFileSync(`./src/data/${nameArchive}.py`, writeFileSync);
 }
 
+/**
+ * It executes a python script in a new xterm window.
+ * @param nameArchive - name of the file to be executed
+ */
 function exectMininet(nameArchive) {
   exec(
     `xterm -e sudo ./src/data/${nameArchive}.py`,
