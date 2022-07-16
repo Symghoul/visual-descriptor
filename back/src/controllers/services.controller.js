@@ -4,53 +4,67 @@ const controller = require("../model/controller");
 const switche = require("../model/switch");
 const host = require("../model/hosts");
 
+
+/**
+ * Checking if the IP address is already in use. If it is, it generates a new one as a DCHP service.
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 services.dhcp = async (req, res) => {
 
-    //No es probable pero aún falta el caso de, qué pasa si se acaban las Ips disponibles?
+    //Unlikely but still missing the case of, what happens if the available ips run out?
     let exit = false;
     let mask = req.body.mask;
-    let dhcp = req.body.ip;
+    let ipDevice = req.body.ip;
     let repeated = false;
-    const objCtrls = await controller.find().exec();
-    const objhosts = await host.find().exec();
+
+    const ctrlsCollection = await controller.find().exec();       
+    const hostsCollection = await host.find().exec();
+
     while(!exit){
-      for(let i=0; i<objCtrls.length; i++){
-        if(dhcp !== objCtrls[i].ip){
+      for(let i=0; i<ctrlsCollection.length; i++){      //Search if a controller has that IP
+        if(ipDevice !== ctrlsCollection[i].ip){
           exit=true;
         }else{
             repeated = true;
         }
       }
-      for(let i=0; i<objhosts.length; i++){
-        if(dhcp !== objhosts[i].ip){
+      for(let i=0; i<hostsCollection.length; i++){      //Search if a hosts has that IP
+        if(ipDevice !== hostsCollection[i].ip){
         exit=true;
         }else{
             repeated = true;
         }
       }
       if(repeated){
-        dhcp = newIp(dhcp,mask);}
+        ipDevice = newIp(ipDevice,mask);}
     }
-    res.send({"dhcp":`${dhcp}`});
+    res.send({"dhcp":`${ipDevice}`});
   }
+
+/**
+ * Checking if the mac address is already in use. If it is, it generates a new one.
+ * @param {*} req Query param
+ * @param {*} res Query param
+ */
 services.macAllowed = async(req, res) => {
       
-      //No es probable (practicamente imposible) pero aún falta el caso de, qué pasa si se acaban las mac disponibles?
+      //Unlikely but still missing the case of, what happens if the available macs run out?
       let exit = false;
       let mac = req.body.mac;
       let repeated = false;
-      const objswit = await switche.find().exec();
-      const objhosts = await host.find().exec();
+      const switchCollection = await switche.find().exec();
+      const hostsCollection = await host.find().exec();
       while(!exit){
-      for(let i=0; i<objswit.length; i++){
-        if(mac !== objswit[i].mac){
+      for(let i=0; i<switchCollection.length; i++){         //Search if a switch has that mac
+        if(mac !== switchCollection[i].mac){
           exit=true;
         }else{
             repeated = true;
         }
     }
-      for(let i=0; i<objhosts.length; i++){
-        if(mac !== objhosts[i].mac){
+      for(let i=0; i<hostsCollection.length; i++){          //Search if a hosts has that mac
+        if(mac !== hostsCollection[i].mac){
         exit=true;
     }else{
         repeated = true;
@@ -62,11 +76,18 @@ services.macAllowed = async(req, res) => {
     res.send({"mac":`${mac}`});
 }
 
+
+/**
+ * Give the next Ip address like a +1 at the ip, but keeping in mind the mask of the net
+ * @param ipv4 - 192.168.1.1
+ * @param mask1 - 24
+ * @returns
+ */
 function newIp(ipv4, mask1){
     let ip = ipv4;
     let mask = mask1;
     let split = ip.split(".")
-    let newIp1 = Number(split[0]);
+    let newIp1 = Number(split[0]);      //Every IP's bytes 
     let newIp2 = Number(split[1]);
     let newIp3 = Number(split[2]);
     let newIp4 = Number(split[3]);
@@ -104,62 +125,69 @@ function newIp(ipv4, mask1){
     else {newIp4 = newIp4+1;}
 
     ip= newIp1+"."+newIp2+"."+newIp3+"."+newIp4;
-    res.send({"ip":`${ip}`});
+    return ip;
 }
 
-function newMac(mac1){
-    let mac = mac1;
-    let split = mac.split(":");
-    let newMac1 = "";
-    let newMac2 = "";
-    let temp = "";
-    let exit = false;
-    //
-    for(let i=(split.length-1) ;i>=0 && !exit;i--){
-        let six = split[i];
-        console.log()
-        if(six=="FF"){
-            newMac1="0";
-            newMac2="0";
-        }else if(six.substring(1)=="F"){
-            newMac1 = convert2Hex(six.substring(0,1));
-            newMac2 = "0"
-            exit = true;
-        }else{
-            newMac1 = six.substring(0,1);
-            newMac2 = convert2Hex(six.substring(1,2));
-            exit = true;
-        }
-        split[i] = ""+newMac1+newMac2;
-        }
-    mac = split.toString();
-    res.send({"mac":`${mac.replaceAll(",",":", "")}`})
-}
-
-function convert2Hex(n){
-
-    
-    if(n=="9")
-        n="A";
-    else if(n=="A")
-        n="B";
-    else if(n==="B")
-        n="C";
-    else if(n=="C")
-        n="D";
-    else if(n=="D")
-        n="E";
-    else if(n=="E")
-        n="F";
-    else if(n=="F")
-        n="0";
-    else{
-        
-        temp = Number(n);
-        temp +=1;
-        n= ""+temp;
+/**
+ * This function gives a MAC that is not being used
+ * @param {} takenMAC MAC address that is already in use
+ * @returns A MAC Address that is not being used
+ */
+ function newMac(takenMAC){
+    let tempTakenMAC = takenMAC;
+    let tempTakenMACarr = tempTakenMAC.split(":");
+  
+    //this two variables are the digits of each pair in the MAC address
+    // "a" is the first digit from left to right, "b" is the second digit.
+    //  5F
+    //  ab
+    let a = "";
+    let b = "";
+  
+    let exit = false; //control
+  
+    // The for would stop once ...
+    for (let i = tempTakenMACarr.length - 1; i >= 0 && !exit; i--) {
+      let six = tempTakenMACarr[i];
+      console.log();
+      if (six === "FF") {
+        a = "0";
+        b = "0";
+      } else if (six.substring(1) === "F") {
+        a = nextHex(six.substring(0, 1));
+        b = "0";
+        exit = true;
+      } else {
+        a = six.substring(0, 1);
+        b = nextHex(six.substring(1, 2));
+        exit = true;
+      }
+      tempTakenMACarr[i] = "" + a + b;
+    }
+    tempTakenMAC = tempTakenMACarr.toString();
+    return tempTakenMAC.replaceAll(",", ":", "");
+  };
+  
+  /**
+   * +1 to an n keeping in mind the hexadecimal format
+   * @param {*} n A number (or letter)
+   * @returns the n+1
+   */
+  function nextHex(n) {
+    if (n === "9") n = "A";
+    else if (n === "A") n = "B";
+    else if (n === "B") n = "C";
+    else if (n === "C") n = "D";
+    else if (n === "D") n = "E";
+    else if (n === "E") n = "F";
+    else if (n === "F") n = "0";
+    else {
+      let temp = Number(n);
+      temp += 1;
+      n = "" + temp;
     }
     return n;
-}
+  }
+  
 
 module.exports = services
