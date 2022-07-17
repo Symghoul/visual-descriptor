@@ -292,9 +292,10 @@ function topocustom(topology, nameArchive) {
     if (element === undefined) {
       console.log("Los controladores no estan definidos");
     } else if (element.remote) {
-      writeFileSync += ` net.RemoteController( '${element.symbol}', ip='${element.ip}', port=${element.port})\n`;
+      writeFileSync += ` ${element.symbol} = RemoteController( '${element.symbol}', ip='${element.ip}', port=${element.port})\n`+
+      ` net.addController(${element.symbol})\n`;
     } else {
-      writeFileSync += ` net.addController( '${element.symbol}', ip='${element.ip}', port=${element.port})\n`;
+      writeFileSync += ` net.addController( '${element.symbol}', port=${element.port})\n`;
     }
   });
   
