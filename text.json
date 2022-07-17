@@ -10,7 +10,8 @@
           "remote": false,
           "type": "controller",
           "x": 357,
-          "y": 170
+          "y": 170,
+          "color": "blue"
         },
         {
           "indicator": "242f18f0-df8a-11ec-bfb4-489352twif6c",
@@ -21,7 +22,8 @@
           "remote": false,
           "type": "controller",
           "x": 305,
-          "y": 200
+          "y": 200,
+          "color": "blue"
         }
         ]
       ,
@@ -36,7 +38,8 @@
           "controller": "NotLinkedYet",
           "type": "switch",
           "x": "407",
-          "y": "284"
+          "y": "284",
+          "color": "blue"
         
       },
         {
@@ -50,7 +53,8 @@
           "controller": "NotLinkedYet",
           "type": "switch",
           "x": "444",
-          "y": "284"
+          "y": "284",
+          "color": "blue"
           
         }
       ]
@@ -64,8 +68,11 @@
           "ip": "192.168.4.50",
           "mask": "255.255.255.0",
           "mac": "00::02",
-          "active": "true"
-          
+          "active": "true",
+          "type":"host",
+          "x": "50",
+          "y": "700",
+          "color": "blue"
         }
         ]
       ,
@@ -79,7 +86,9 @@
           "destination": "s2",
           "delay": "15",
           "loss": "5",
-          "bandwidth": "1"
+          "bandwidth": "1",
+          "type":"link",
+          "color": "red"
         },
         {
           "indicator": "30f4b1a0-h3o3-4612-2244-9231d54hqaf7",
@@ -90,7 +99,9 @@
           "destination": "c0",
           "delay": "2",
           "loss": "1",
-          "bandwidth": "10"
+          "bandwidth": "10",
+          "type":"link",
+          "color": "red"
         },
         {
           "indicator": "30f4b1a0-h3o3-4612-2244-9231dkasaf7",
@@ -101,7 +112,9 @@
           "destination": "h4",
           "delay": "2",
           "loss": "1",
-          "bandwidth": "10"
+          "bandwidth": "10",
+          "type":"link",
+          "color": "red"
         },
         {
           "indicator": "30f4b1a0-h3o3-4612-rg44-9231dkasaf7",
@@ -112,7 +125,9 @@
           "destination": "c1",
           "delay": "2",
           "loss": "1",
-          "bandwidth": "10"
+          "bandwidth": "10",
+          "type":"link",
+          "color": "red"
         }
         ]
     },

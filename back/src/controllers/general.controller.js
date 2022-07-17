@@ -274,9 +274,8 @@ async function importDb() {
  * @param nameArchive - The name of the file to be created.
  */
 function topocustom(topology, nameArchive) {
-  
   let writeFileSync =
-    //`#!/usr/bin/python`
+    "#!/usr/bin/python \n\n"+
     
     `from mininet.net import Mininet \n` +
     `from mininet.log import info, setLogLevel \n` +

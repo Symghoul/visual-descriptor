@@ -1,3 +1,4 @@
+#!/usr/bin/python 
 from mininet.net import Mininet 
 from mininet.log import info, setLogLevel 
 from mininet.cli import CLI 
@@ -12,9 +13,9 @@ def topology():
  net.addController( 'c0', ip='192.161.0.1', port=3001)
  net.addController( 'c1', ip='192.161.0.2', port=3001)
  info("*** Adding switches")
- s2 = net.addSwitch( 's2', procotols='OVS', port=3002, mac='00:00:00:00:00:01')
+ s2 = net.addSwitch( 's2', protocols='OVS', port=3002, mac='00:00:00:00:00:01')
  info("*** Adding switches")
- s3 = net.addSwitch( 's3', procotols='OVS', port=3002, mac='00:00:00:00:00:02')
+ s3 = net.addSwitch( 's3', protocols='OVS', port=3002, mac='00:00:00:00:00:02')
  info("*** Adding nodes")
  h4 = net.addHost( 'h4', mac='00::02', ip='192.168.4.50/255.255.255.0') 
 
