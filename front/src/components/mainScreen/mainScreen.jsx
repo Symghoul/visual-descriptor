@@ -3,6 +3,8 @@ import "./mainScreen.css";
 
 import Canva from "../canva/canva";
 
+// Main Frame of the application
+// It just have the canva
 function MainScreen() {
   return (
     <div className="row">

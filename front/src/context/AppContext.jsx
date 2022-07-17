@@ -1,48 +1,45 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import axios from "../config/axios";
 import mac from "../config/macService";
 
 const AppContext = React.createContext();
 
-const usePreviousSelectedDevice = (prevSelDevice) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = prevSelDevice;
-  }, [prevSelDevice]);
-  return ref.current;
-};
+//const usePreviousSelectedDevice = (prevSelDevice) => {
+//  const ref = useRef();
+//  useEffect(() => {
+//    ref.current = prevSelDevice;
+//  }, [prevSelDevice]);
+//  return ref.current;
+//};
 
 export const AppContextWrapper = (props) => {
+  /**
+   * States to control the behavior of the application
+   */
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [selectedLink, setSelectedLink] = useState(null);
-  const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
+  //const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
   const [error, setError] = useState("");
 
+  /**
+   * States to collect all the devices created by the user
+   */
   const [controllers, setControllers] = useState([]);
   const [switches, setSwitches] = useState([]);
   const [hosts, setHosts] = useState([]);
   const [links, setLinks] = useState([]);
 
-  const controllerSymbol = useRef(0);
-  const switchSymbol = useRef(0);
-  const hostSymbol = useRef(0);
+  /**
+   * States to handle default information and data the user cannot touch
+   */
+  const symbol = useRef(0);
   const ipAddress = useRef(0);
   const macAddress = useRef("00:00:00:00:00:00");
   const portNumber = useRef(0);
 
-  const getControllerSymbol = () => {
-    controllerSymbol.current = controllerSymbol.current + 1;
-    return controllerSymbol.current;
-  };
-
-  const getSwitchSymbol = () => {
-    switchSymbol.current = switchSymbol.current + 1;
-    return switchSymbol.current;
-  };
-
-  const getHostSymbol = () => {
-    hostSymbol.current = hostSymbol.current + 1;
-    return hostSymbol.current;
+  const getSymbol = () => {
+    symbol.current = symbol.current + 1;
+    return symbol.current;
   };
 
   const getIpAddress = () => {
@@ -52,7 +49,6 @@ export const AppContextWrapper = (props) => {
 
   const getMacAddress = () => {
     let address = macAddress.current;
-    console.log(address);
     macAddress.current = mac(address);
     return macAddress.current;
   };
@@ -62,7 +58,12 @@ export const AppContextWrapper = (props) => {
     return portNumber.current;
   };
 
-  function getDevice(device) {
+  /**
+   * Method that returns a device from the states
+   * @param {*} device to look at
+   * @returns a device
+   */
+  const getDevice = (device) => {
     let foundDevice = null;
     if (device.type === "controller") {
       foundDevice = controllers.find(
@@ -87,8 +88,12 @@ export const AppContextWrapper = (props) => {
     } else {
       return foundDevice;
     }
-  }
+  };
 
+  /**
+   * Saves a device on db
+   * @param {*} device
+   */
   const saveDevice = async (device) => {
     if (device.type === "controller") {
       await axios.post("/api/controllers", device);
@@ -101,14 +106,20 @@ export const AppContextWrapper = (props) => {
     }
   };
 
+  /**
+   * Deletes a device from the state and the db
+   */
   const deleteDevice = async () => {
     const device = getDevice(selectedDevice);
 
+    // check what kind of device it is
     if (device.type === "controller") {
-      deleteLinks(device);
+      deleteLinks(device); // deletes the links it had
+      //delete on state
       const arr = controllers.filter(
         (controller) => controller.indicator !== device.indicator
       );
+      //delete on bd
       await axios.delete(`/api/controllers/${device.indicator}`);
       setControllers(arr);
     } else if (device.type === "switch") {
@@ -132,6 +143,10 @@ export const AppContextWrapper = (props) => {
     setSelectedDevice(null);
   };
 
+  /**
+   * This method looks for all the connection the device had and delet them
+   * @param {*} device to get deleted its links
+   */
   const deleteLinks = async (device) => {
     const delArr = links.filter(
       (link) => link.to.indicator === device.indicator
@@ -156,6 +171,9 @@ export const AppContextWrapper = (props) => {
     }
   };
 
+  /**
+   * Erase everything in states and db, also reset default values
+   */
   const startOver = () => {
     axios.get("/api/general/erase");
     setSelectedDevice(null);
@@ -166,14 +184,16 @@ export const AppContextWrapper = (props) => {
     setSwitches([]);
     setLinks([]);
 
-    controllerSymbol.current = 1;
-    switchSymbol.current = 1;
-    hostSymbol.current = 1;
+    symbol.current = 1;
     ipAddress.current = 0;
     macAddress.current = "00:00:00:00:00:00";
     portNumber.current = 0;
   };
 
+  /**
+   * Loads from db to the states the information of a design
+   * @param {*} formData
+   */
   const loadFromDB = async (formData) => {
     await axios.get("/api/general/erase");
     await axios.post(`/api/general/load/`, formData);
@@ -201,9 +221,7 @@ export const AppContextWrapper = (props) => {
     saveDevice,
     deleteDevice,
 
-    getControllerSymbol,
-    getSwitchSymbol,
-    getHostSymbol,
+    getSymbol,
     getIpAddress,
     getMacAddress,
     getPortNumber,

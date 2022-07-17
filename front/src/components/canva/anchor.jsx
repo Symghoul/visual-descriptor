@@ -1,6 +1,11 @@
 import React, { useRef } from "react";
 import { Circle } from "react-konva";
 
+/**
+ * Used to track where the anchor is dropped
+ * @param {*} ref of the current anchor
+ * @returns absoluto position of the anchor
+ */
 function dragBounds(ref) {
   if (ref.current !== null) {
     return ref.current.getAbsolutePosition();
@@ -11,7 +16,12 @@ function dragBounds(ref) {
   };
 }
 
-function Anchor({ x, y, indicator, onDragMove, onDragEnd, onDragStart }) {
+/**
+ * Anchor component
+ * @param {*} properties are the props of the component. Props are obtained after a device is clicked.
+ * @returns The Anchor Component
+ */
+const Anchor = ({ x, y, indicator, onDragMove, onDragEnd, onDragStart }) => {
   const anchor = useRef(null);
   return (
     <Circle
@@ -28,6 +38,6 @@ function Anchor({ x, y, indicator, onDragMove, onDragEnd, onDragStart }) {
       ref={anchor}
     />
   );
-}
+};
 
 export default Anchor;
