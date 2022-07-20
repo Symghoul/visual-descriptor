@@ -44,7 +44,7 @@ generalController.getScript = async (req, res) => {
 
     topocustom(topology, req.params.nameArchive);
 
-    //exectMininet(req.params.nameArchive);
+    exectMininet(req.params.nameArchive);
 
     res.status(200).json({ message: "Script running" });
   } catch (error) {
@@ -324,24 +324,25 @@ function topocustom(topology, nameArchive) {
     if (element === undefined) {
       console.log("Los links no estan definidos");
     } else {
-      writeFileSync += ` net.addLink(${element.source}, ${element.destination} `;
-      if (element.bandwidth !== undefined) {
-        if(element.bandwidth === 0){
-          writeFileSync += `, bw=1`;
+      if(element.from.type !== "controller" && element.to.type !== "controller"){
+        writeFileSync += ` net.addLink(${element.source}, ${element.destination} `;
+        if (element.bandwidth !== undefined) {
+          if(element.bandwidth === 0){
+            writeFileSync += `, bw=1`;
+          }
+          else{
+          writeFileSync += `, bw=${element.bandwidth}`;
+          }
         }
-        else{
-        writeFileSync += `, bw=${element.bandwidth}`;
+        if (element.delay !== undefined) {
+          writeFileSync += `, delay='${element.delay}ms'`;
         }
+        if (element.loss !== undefined) {
+          writeFileSync += `, loss=${element.loss}`;
+        }
+        writeFileSync += `) \n`;
       }
-      if (element.delay !== undefined) {
-        writeFileSync += `, delay='${element.delay}ms'`;
-      }
-      if (element.loss !== undefined) {
-        writeFileSync += `, loss=${element.loss}`;
-      }
-
     }
-    writeFileSync += `) \n`;
   });
   writeFileSync +=
     `\n` +

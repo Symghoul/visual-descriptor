@@ -1,0 +1,239 @@
+{
+  "custom": {
+    "controllers": [
+      {
+        "indicator": "242f18f0-df8a-11ec-bfb4-8bb365288f6c",
+        "name": "Controller",
+        "symbol": "c0",
+        "ip": "192.161.0.1",
+        "port": 3001,
+        "remote": false,
+        "type": "controller",
+        "x": 357,
+        "y": 170,
+        "color": "blue"
+      },
+      {
+        "indicator": "242f18f0-df8a-11ec-bfb4-489352twif6c",
+        "name": "Controller",
+        "symbol": "c1",
+        "ip": "192.161.0.2",
+        "port": 3001,
+        "remote": false,
+        "type": "controller",
+        "x": 305,
+        "y": 200,
+        "color": "blue"
+      }
+      ]
+    ,
+    "switches": [
+      {
+        "indicator": "30f4b1a0-dd44-11ec-a737-5d89d5a5eaf7",
+        "name": "Switch",
+        "symbol": "s2",
+        "protocol": "OVS",
+        "port": 3002,
+        "mac": "00:00:00:00:00:01",
+        "controller": "NotLinkedYet",
+        "type": "switch",
+        "x": "407",
+        "y": "284",
+        "color": "blue"
+      
+    },
+      {
+        
+        "indicator": "30f4b1a0-h3o3-4612-4444-5d89d595eaf7",
+        "name": "Switch",
+        "symbol": "s3",
+        "protocol": "OVS",
+        "port": 3002,
+        "mac": "00:00:00:00:00:02",
+        "controller": "NotLinkedYet",
+        "type": "switch",
+        "x": "444",
+        "y": "284",
+        "color": "blue"
+        
+      }
+    ]
+    ,
+    "hosts": [
+      {
+        "indicator": "30f4b1a0-h3o3-4612-4444-9231d595eaf7",
+        "symbol": "h4",
+        "object": "host",
+        "name": "pc1",
+        "ip": "192.168.4.50",
+        "mask": "255.255.255.0",
+        "mac": "00::02",
+        "active": "true",
+        "type":"host",
+        "x": "50",
+        "y": "700",
+        "color": "blue"
+      }
+      ]
+    ,
+    "links": [
+      {
+        "indicator": "30f4b1a0-h3o3-4612-4444-9231d54hqaf7",
+        "symbol": "l5",
+        "object": "ethernet",
+        "name": "ethernet1",
+        "from": {
+          "indicator": "30f4b1a0-h3o3-4612-4444-9231d595eaf7",
+          "symbol": "h4",
+          "object": "host",
+          "name": "pc1",
+          "ip": "192.168.4.50",
+          "mask": "255.255.255.0",
+          "mac": "00::02",
+          "active": "true",
+          "type":"host",
+          "x": "50",
+          "y": "700",
+          "color": "blue"
+        },
+        "to": {
+          "indicator": "30f4b1a0-dd44-11ec-a737-5d89d5a5eaf7",
+          "name": "Switch",
+          "symbol": "s2",
+          "protocol": "OVS",
+          "port": 3002,
+          "mac": "00:00:00:00:00:01",
+          "controller": "NotLinkedYet",
+          "type": "switch",
+          "x": "407",
+          "y": "284",
+          "color": "blue"
+        },
+        "source": "h4",
+        "destination": "s2",
+        "delay": "15",
+        "loss": "5",
+        "bandwidth": "1",
+        "type":"link",
+        "color": "red"
+      },
+      {
+        "indicator": "30f4b1a0-h3o3-4612-2244-9231d54hqaf7",
+        "symbol": "l6",
+        "object": "fiber",
+        "name": "fiber1",
+        "from": {
+          "indicator": "30f4b1a0-dd44-11ec-a737-5d89d5a5eaf7",
+          "name": "Switch",
+          "symbol": "s2",
+          "protocol": "OVS",
+          "port": 3002,
+          "mac": "00:00:00:00:00:01",
+          "controller": "NotLinkedYet",
+          "type": "switch",
+          "x": "407",
+          "y": "284",
+          "color": "blue"
+        },
+        "to": {
+          "indicator": "242f18f0-df8a-11ec-bfb4-8bb365288f6c",
+          "name": "Controller",
+          "symbol": "c0",
+          "ip": "192.161.0.1",
+          "port": 3001,
+          "remote": false,
+          "type": "controller",
+          "x": 357,
+          "y": 170,
+          "color": "blue"
+        },
+        "source": "s2",
+        "destination": "c0",
+        "delay": "2",
+        "loss": "1",
+        "bandwidth": "10",
+        "type":"link",
+        "color": "red"
+      },
+      {
+        "indicator": "30f4b1a0-h3o3-4612-2244-9231dkasaf7",
+        "symbol": "l6",
+        "object": "fiber",
+        "name": "fiber1",
+        "from": {
+          "indicator": "30f4b1a0-h3o3-4612-4444-5d89d595eaf7",
+          "name": "Switch",
+          "symbol": "s3",
+          "protocol": "OVS",
+          "port": 3002,
+          "mac": "00:00:00:00:00:02",
+          "controller": "NotLinkedYet",
+          "type": "switch",
+          "x": "444",
+          "y": "284",
+          "color": "blue"
+        },
+        "to": {
+          "indicator": "30f4b1a0-h3o3-4612-4444-9231d595eaf7",
+          "symbol": "h4",
+          "object": "host",
+          "name": "pc1",
+          "ip": "192.168.4.50",
+          "mask": "255.255.255.0",
+          "mac": "00::02",
+          "active": "true",
+          "type":"host",
+          "x": "50",
+          "y": "700",
+          "color": "blue"
+        },
+        "source": "s3",
+        "destination": "h4",
+        "delay": "2",
+        "loss": "1",
+        "bandwidth": "10",
+        "type":"link",
+        "color": "red"
+      },
+      {
+        "indicator": "30f4b1a0-h3o3-4612-rg44-9231dkasaf7",
+        "symbol": "l6",
+        "object": "fiber",
+        "name": "fiber1",
+        "from": {     
+
+          "indicator": "30f4b1a0-h3o3-4612-4444-5d89d595eaf7",
+          "name": "Switch",
+          "symbol": "s3",
+          "protocol": "OVS",
+          "port": 3002,
+          "mac": "00:00:00:00:00:02",
+          "controller": "NotLinkedYet",
+          "type": "switch",
+          "x": "444",
+          "y": "284",
+          "color": "blue"           
+        },
+        "to": {
+          "indicator": "242f18f0-df8a-11ec-bfb4-489352twif6c",
+          "name": "Controller",
+          "symbol": "c1",
+          "ip": "192.161.0.2",
+          "port": 3001,
+          "remote": false,
+          "type": "controller",
+          "x": 305,
+          "y": 200,
+          "color": "blue"
+        },
+        "source": "s3",
+        "destination": "c1",
+        "delay": "2",
+        "loss": "1",
+        "bandwidth": "10",
+        "type":"link",
+        "color": "red"
+      }
+    ]
+  }
+}
