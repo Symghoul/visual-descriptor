@@ -313,9 +313,9 @@ function topocustom(topology, nameArchive) {
     if (element === undefined || element.symbol === undefined) {
       console.log("Los hosts no estan definidos");
     } else if (element.mac === undefined)
-      writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', ip='${element.ip}/${element.mask}') \n`;
+      writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', ip='${element.ip}') \n`;
     else {
-      writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', mac='${element.mac}', ip='${element.ip}/${element.mask}') \n`;
+      writeFileSync += ` ${element.symbol} = net.addHost( '${element.symbol}', mac='${element.mac}', ip='${element.ip}') \n`;
     }
   });
 
