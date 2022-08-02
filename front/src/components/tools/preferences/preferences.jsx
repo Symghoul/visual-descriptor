@@ -2,12 +2,12 @@ import React, { useContext, useState, useEffect } from "react";
 import axios from "../../../config/axios";
 import AppContext from "../../../context/AppContext";
 import { ThemeProvider } from "@mui/material/styles";
-import { Button, Modal, Typography, Box } from "@mui/material";
+import { Button, Modal, Typography, Box, Menu, MenuItem } from "@mui/material";
 import { theme, CssTextField } from "../../../config/theme";
 import "./preferences.css";
 
 /**
- * Preference's buttons style
+ * Preference's modal style
  */
 const style = {
   position: "absolute",
@@ -32,17 +32,27 @@ const Preferences = () => {
   const [fileName, setFileName] = useState(null);
   const [fieldFileName, setFieldFileName] = useState("");
 
+  const [menuOpen, setMenuOpen] = useState(false);
+  const handleFileMenuOpen = () => {
+    setMenuOpen(true);
+  };
+
+  const handleFileMenuClose = () => {
+    setMenuOpen(false);
+  };
+
   const [loadedFile, setLoadedFile] = useState(null);
+  const handleCloseLoadFile = () => setLoadFile(false);
+  const handleOpenLoadFile = () => {
+    state.setSelectedDevice(null);
+    setLoadFile(true);
+  };
+  const handleOpenError = () => setOpenError(true);
+  const handleCloseError = () => setOpenError(false);
 
+  //state
   const [openExport, setOpenExport] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [openHelp, setOpenHelp] = useState(false);
-  const [startOver, setStartOver] = useState(false);
-  const [loadFile, setLoadFile] = useState(false);
-  const [openError, setOpenError] = useState(false);
-
-  const [bigError, setBigError] = useState(false);
-
+  //handlers
   const handleOpenExport = () => {
     state.setSelectedDevice(null);
     setOpenExport(true);
@@ -61,11 +71,19 @@ const Preferences = () => {
     setFieldFileName("");
     setOpenExport(false);
   };
+
+  //state
+  const [success, setSuccess] = useState(false);
+  //handlers
   const handleCloseSuccess = () => setSuccess(false);
 
+  //state
+  const [openHelp, setOpenHelp] = useState(false);
+  //handlers
   const handleOpenHelp = () => setOpenHelp(true);
   const handleCloseHelp = () => setOpenHelp(false);
 
+  const [startOver, setStartOver] = useState(false);
   const handleOpenStartOver = () => {
     state.setSelectedDevice(null);
     setStartOver(true);
@@ -76,14 +94,10 @@ const Preferences = () => {
   };
   const handleCloseStartOver2 = () => setStartOver(false);
 
-  const handleCloseLoadFile = () => setLoadFile(false);
-  const handleOpenLoadFile = () => {
-    state.setSelectedDevice(null);
-    setLoadFile(true);
-  };
+  const [loadFile, setLoadFile] = useState(false);
+  const [openError, setOpenError] = useState(false);
 
-  const handleOpenError = () => setOpenError(true);
-  const handleCloseError = () => setOpenError(false);
+  const [bigError, setBigError] = useState(false);
 
   const handleFile = (e) => {
     setLoadedFile(e.target.files[0]);
@@ -119,18 +133,51 @@ const Preferences = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className="prefContainer">
-        <div className="prefItems">
-          <Button
-            id="btnFile"
-            size="small"
-            variant="contained"
-            color="primary"
-            onClick={handleOpenExport}
-          >
-            Export
+        <div>
+          <div>
+            <Button id="btn-file" onClick={handleFileMenuOpen}>
+              File
+            </Button>
+          </div>
+          <div>
+            <Menu
+              anchorEl={menuOpen}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              open={Boolean(menuOpen)}
+              onClose={handleFileMenuClose}
+            >
+              <MenuItem onClick={handleFileMenuClose}>
+                <Button id="btn-new" onClick={handleOpenStartOver}>
+                  new
+                </Button>
+              </MenuItem>
+              <MenuItem onClick={handleFileMenuClose}>
+                <Button id="btn-open" onClick={handleOpenLoadFile}>
+                  open
+                </Button>
+              </MenuItem>
+              <MenuItem onClick={handleFileMenuClose}>
+                <Button id="btn-export" onClick={handleOpenExport}>
+                  Export
+                </Button>
+              </MenuItem>
+            </Menu>
+          </div>
+        </div>
+        <div>
+          <Button id="btn-help" onClick={handleOpenHelp}>
+            Help
           </Button>
         </div>
 
+        {/**Modals */}
         <div>
           <Modal
             open={openExport}
@@ -189,19 +236,6 @@ const Preferences = () => {
             </Box>
           </Modal>
         </div>
-
-        <div className="prefItems">
-          <Button
-            id="btnOptions"
-            size="small"
-            variant="contained"
-            color="primary"
-            onClick={handleOpenLoadFile}
-          >
-            Load
-          </Button>
-        </div>
-
         <div>
           <Modal
             open={loadFile}
@@ -246,18 +280,6 @@ const Preferences = () => {
             </Box>
           </Modal>
         </div>
-
-        <div className="prefItems">
-          <Button
-            size="small"
-            variant="contained"
-            color="primary"
-            onClick={handleOpenHelp}
-          >
-            Help
-          </Button>
-        </div>
-
         <div>
           <Modal
             open={openHelp}
@@ -293,18 +315,6 @@ const Preferences = () => {
             </Box>
           </Modal>
         </div>
-
-        <div className="prefItems">
-          <Button
-            size="small"
-            variant="contained"
-            color="primary"
-            onClick={handleOpenStartOver}
-          >
-            Start Again?
-          </Button>
-        </div>
-
         <div>
           <Modal
             open={startOver}

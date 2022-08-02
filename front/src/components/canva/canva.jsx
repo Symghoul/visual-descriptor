@@ -7,7 +7,7 @@ import { SIZE } from "./config";
 import * as uuid from "uuid";
 import Border from "./border";
 import axios from "../../config/axios";
-import ToolsPanel from "../tools/toolsPanel";
+import "./canva.css";
 
 const style = {
   position: "absolute",
@@ -306,37 +306,41 @@ const Canva = () => {
     let xp = 10;
     let yp = 1;
     return (
-      <div>
-        <Image
-          image={controllerImage}
-          x={xp}
-          y={yp}
-          width={SIZE}
-          height={SIZE}
-          draggable
-          //new controller
-          onDragEnd={(e) => {
-            let controller = {
-              indicator: uuid.v1(),
-              name: "Controller",
-              symbol: `c${state.getSymbol()}`,
-              ip: `192.168.0.${state.getIpAddress()}`,
-              port: `300${state.getPortNumber()}`,
-              remote: false,
-              type: "controller",
-              x: e.target.x(),
-              y: e.target.y(),
-            };
-            //save on state
-            state.setControllers((prevControllers) => [
-              ...prevControllers,
-              controller,
-            ]);
-            //save on db
-            state.saveDevice(controller);
-          }}
-        />
-        <Text text="Controller" x={xp} y={yp + 52} />
+      <div className="canva_device">
+        <div className="canva_device_picture">
+          <Image
+            image={controllerImage}
+            x={xp}
+            y={yp}
+            width={SIZE}
+            height={SIZE}
+            draggable
+            //new controller
+            onDragEnd={(e) => {
+              let controller = {
+                indicator: uuid.v1(),
+                name: "Controller",
+                symbol: `c${state.getSymbol()}`,
+                ip: `192.168.0.${state.getIpAddress()}`,
+                port: `300${state.getPortNumber()}`,
+                remote: false,
+                type: "controller",
+                x: e.target.x(),
+                y: e.target.y(),
+              };
+              //save on state
+              state.setControllers((prevControllers) => [
+                ...prevControllers,
+                controller,
+              ]);
+              //save on db
+              state.saveDevice(controller);
+            }}
+          />
+        </div>
+        <div>
+          <Text text="Controller" x={xp} y={yp + 52} />
+        </div>
       </div>
     );
   };
@@ -561,8 +565,7 @@ const Canva = () => {
    * Renders everything on the canva
    */
   return (
-    <div>
-      <ToolsPanel />
+    <div className="canva_container">
       <div>
         <Stage width={window.innerWidth} height={window.innerHeight}>
           <Layer>
@@ -578,7 +581,9 @@ const Canva = () => {
           </Layer>
         </Stage>
       </div>
-      <ModalError />
+      <div>
+        <ModalError />
+      </div>
     </div>
   );
 };

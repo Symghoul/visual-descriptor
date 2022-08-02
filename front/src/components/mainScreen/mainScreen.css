@@ -1,8 +1,3 @@
-.row{
-    display: flex;    
-    flex-direction: row;
-}
-
-.panel{
-    display: flex;
+#mainscreen{
+    position: relative;
 }

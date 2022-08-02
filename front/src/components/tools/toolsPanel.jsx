@@ -43,9 +43,11 @@ function ToolsPanel() {
   };
 
   return (
-    <div className="toolsPanel">
-      <Preferences />
-      <div className="configPanesl">{showView()}</div>
+    <div className="toolsPanel_container">
+      <div>
+        <Preferences />
+      </div>
+      <div className="configPanel">{showView()}</div>
     </div>
   );
 }

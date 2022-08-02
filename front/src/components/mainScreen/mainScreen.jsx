@@ -1,14 +1,16 @@
 import React from "react";
 import "./mainScreen.css";
-
+import ToolsPanel from "../tools/toolsPanel";
 import Canva from "../canva/canva";
 
 // Main Frame of the application
-// It just have the canva
 function MainScreen() {
   return (
-    <div className="row">
-      <div className="panel">
+    <div id="mainscreen">
+      <div>
+        <ToolsPanel />
+      </div>
+      <div>
         <Canva />
       </div>
     </div>
