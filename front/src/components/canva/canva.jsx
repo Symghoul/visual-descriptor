@@ -273,28 +273,74 @@ const Canva = () => {
     const connectionTo = detectConnection(mousePos, device);
 
     // validate if the connection is allowed
-    if (device.type === "controller" && connectionTo.type === "host") {
+    if (device.type === "host" && connectionTo.type === "host") {
+      //not a valid connection
       handleModalOpen();
     } else if (device.type === "host" && connectionTo.type === "controller") {
+      //not a valid connection
       handleModalOpen();
+    } else if (device.type === "switch" && connectionTo.type === "controller") {
+      //There must be only one connection from a switch to a controller
+      //beforehand are there even links?
+      if (state.links.length !== 0) {
+        console.log("entro if");
+        const checkConnection = state.links.map((eachLink) => {
+          //first check if the switch already has connections
+          if (eachLink.source === device.symbol) {
+            //now check if there is a connection to the destiny controller
+            if (eachLink.destination === connectionTo.symbol) {
+              //there is already a connection
+              return true;
+            } else {
+              //there are no connections
+              return false;
+            }
+          } else {
+            //there are no connections
+            return false;
+          }
+        });
+        if (checkConnection) {
+          //more connections are not valid
+          handleModalOpen();
+        } else {
+          createConectionTo(device, connectionTo);
+        }
+      } else {
+        //there are no links, we proceed
+        console.log("entro else");
+        createConectionTo(device, connectionTo);
+      }
+    } else if (device.type === "switch" && connectionTo.type === "host") {
+      // change connection direction, from switch to host TO from host to switch
+      createConectionTo(connectionTo, device);
     } else {
       // valid connection then create a new link
-      if (connectionTo !== null) {
-        const link = {
-          indicator: uuid.v1(),
-          delay: 0,
-          loss: 0,
-          bandwidth: 0,
-          from: device,
-          to: connectionTo,
-          source: device.symbol,
-          destination: connectionTo.symbol,
-          type: "link",
-          color: linkColor,
-        };
-        state.setLinks([...state.links, link]);
-        state.saveDevice(link);
-      }
+      createConectionTo(device, connectionTo);
+    }
+  };
+
+  /**
+   * createsa link between devices save it on state and DB
+   * @param {*} device origin
+   * @param {*} connectionTo destiny
+   */
+  const createConectionTo = (device, connectionTo) => {
+    if (connectionTo !== null) {
+      const link = {
+        indicator: uuid.v1(),
+        delay: 0,
+        loss: 0,
+        bandwidth: 0,
+        from: device,
+        to: connectionTo,
+        source: device.symbol,
+        destination: connectionTo.symbol,
+        type: "link",
+        color: linkColor,
+      };
+      state.setLinks([...state.links, link]);
+      state.saveDevice(link);
     }
   };
 
@@ -548,10 +594,15 @@ const Canva = () => {
   });
 
   /**
-   * render borders of the selected device
+   * Render borders of the selected device.
+   * However if the device selected is a controller the anchors
+   * are not going to be rendered
    */
   const borders =
-    state.selectedDevice !== null && state.selectedDevice.type !== "link" ? (
+    state.selectedDevice !== null &&
+    state.selectedDevice.type !== "link" &&
+    state.selectedDevice.type !== "controller" &&
+    state.selectedDevice.type !== "host" ? (
       <Border
         indicator={state.selectedDevice.indicator}
         device={state.getDevice(state.selectedDevice)}

@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Circle } from "react-konva";
+import "./anchor.css";
 
 /**
  * Used to track where the anchor is dropped

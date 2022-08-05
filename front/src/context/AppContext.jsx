@@ -33,7 +33,7 @@ export const AppContextWrapper = (props) => {
    * States to handle default information and data the user cannot touch
    */
   const symbol = useRef(0);
-  const ipAddress = useRef(0);
+  const ipAddress = useRef(1);
   const macAddress = useRef("00:00:00:00:00:00");
   const portNumber = useRef(0);
 
