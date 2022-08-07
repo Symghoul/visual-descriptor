@@ -271,71 +271,72 @@ const Canva = () => {
 
     // detects if there is a connection between devices
     const connectionTo = detectConnection(mousePos, device);
+    console.log("connection to", connectionTo);
 
-    // validate if the connection is allowed
-    if (device.type === "host" && connectionTo.type === "host") {
-      //not a valid connection
-      handleModalOpen();
-    } else if (device.type === "host" && connectionTo.type === "controller") {
-      //not a valid connection
-      handleModalOpen();
-    } else if (device.type === "switch" && connectionTo.type === "controller") {
-      //There must be only one connection from a switch to a controller
+    //if there is any connection
+    if (connectionTo !== null) {
       //beforehand are there even links?
       if (state.links.length !== 0) {
-        console.log("entro if");
-        const checkConnection = state.links.map((eachLink) => {
-          //first check if the switch already has connections
-          if (eachLink.source === device.symbol) {
-            //now check if there is a connection to the destiny controller
-            if (eachLink.destination === connectionTo.symbol) {
-              //there is already a connection
-              return true;
-            } else {
-              //there are no connections
-              return false;
-            }
+        //check that the new connection is not going to repeat
+        const repeated = state.links.filter((link) => {
+          if (
+            link.source === device.symbol &&
+            link.destination === connectionTo.symbol
+          ) {
+            return link;
           } else {
-            //there are no connections
-            return false;
+            //there are no repeated connections
+            return null;
           }
         });
-        if (checkConnection) {
-          //more connections are not valid
+
+        //check that a switch is not going to connect to more than one controller
+        const isThereAcontroller = state.links.filter((link) => {
+          if (link.source === device.symbol && link.to.type === "controller") {
+            return link;
+          }
+        });
+
+        // check if I'am connecting to a controller
+        let connectController =
+          connectionTo.type === "controller" ? true : false;
+
+        console.log("controllers", isThereAcontroller);
+        console.log("connectController", connectController);
+
+        if (isThereAcontroller.length > 0 && connectController === true) {
+          //launch error
+          handleModalOpen();
+        } else if (repeated.length !== 0) {
+          //launch error
           handleModalOpen();
         } else {
+          // the new connection is not repeated
           createConectionTo(device, connectionTo);
         }
       } else {
-        //there are no links, we proceed
-        console.log("entro else");
+        //there are no links, we proceed with np
         createConectionTo(device, connectionTo);
       }
-    } else if (device.type === "switch" && connectionTo.type === "host") {
-      // change connection direction, from switch to host TO from host to switch
-      createConectionTo(connectionTo, device);
-    } else {
-      // valid connection then create a new link
-      createConectionTo(device, connectionTo);
     }
   };
 
   /**
    * createsa link between devices save it on state and DB
-   * @param {*} device origin
-   * @param {*} connectionTo destiny
+   * @param {*} origin origin device
+   * @param {*} destiny destiny device
    */
-  const createConectionTo = (device, connectionTo) => {
-    if (connectionTo !== null) {
+  const createConectionTo = (origin, destiny) => {
+    if (destiny !== null) {
       const link = {
         indicator: uuid.v1(),
         delay: 0,
         loss: 0,
         bandwidth: 0,
-        from: device,
-        to: connectionTo,
-        source: device.symbol,
-        destination: connectionTo.symbol,
+        from: origin,
+        to: destiny,
+        source: origin.symbol,
+        destination: destiny.symbol,
         type: "link",
         color: linkColor,
       };
