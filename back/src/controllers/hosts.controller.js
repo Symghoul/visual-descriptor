@@ -8,7 +8,6 @@ const macErr = "Mac repeated with a Switch";
 const controller = require("../model/controller");
 const switche = require("../model/switch");
 
-
 /**
  * Get method to get all the hosts in the database
  * @param {*} req Query param
@@ -16,10 +15,10 @@ const switche = require("../model/switch");
  */
 hostsCtrl.gethosts = async (req, res) => {
   try {
-  const hosts = await host.find();
-  res.json(hosts);
+    const hosts = await host.find();
+    res.json(hosts);
   } catch (error) {
-  res.status(500).send(error.message);
+    res.status(500).send(error.message);
   }
 };
 
@@ -29,15 +28,15 @@ hostsCtrl.gethosts = async (req, res) => {
  * @param {*} res Query param
  */
 hostsCtrl.createhosts = async (req, res) => {
-
-  const { indicator, name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
+  const { indicator, name, symbol, ip, mask, mac, active, type, x, y, color } =
+    req.body;
   const simpleMask = sMask(mask);
   const newHost = new host({
     indicator,
     name,
     symbol,
     ip,
-    mask ,
+    mask,
     mask2script: simpleMask,
     mac,
     active,
@@ -50,18 +49,21 @@ hostsCtrl.createhosts = async (req, res) => {
     await newHost.save();
     res.send({ message: "host saved" });
   } catch (error) {
-    if(error.keyValue){
-      if (error.keyValue.ip) res.status(401).send(error);   //Error if the IP already exists with other host
-      else if (error.keyValue.mac) res.status(402).send(error);}    //Error if the mac already exists with other host
-    else{
-      if(error.message === ipErr){        //Error if the IP already exists with a controller
+    if (error.keyValue) {
+      if (error.keyValue.ip) res.status(401).send(error);
+      //Error if the IP already exists with other host
+      else if (error.keyValue.mac) res.status(402).send(error);
+    } //Error if the mac already exists with other host
+    else {
+      if (error.message === ipErr) {
+        //Error if the IP already exists with a controller
         res.status(403).send(error);
-      }else if(error.message === macErr){  //Error if the mac already exists with a switch
+      } else if (error.message === macErr) {
+        //Error if the mac already exists with a switch
         res.status(405).send(error);
-      }
-      else{
+      } else {
         console.log(error);
-        res.status(500).send(error)     //Error if one of the attributes doesn't exist
+        res.status(500).send(error); //Error if one of the attributes doesn't exist
       }
     }
   }
@@ -78,7 +80,7 @@ hostsCtrl.gethostById = async (req, res) => {
     res.send(h);
   } catch (error) {
     res.status(500).send(error.message);
-  }     
+  }
 };
 
 /**
@@ -89,11 +91,11 @@ hostsCtrl.gethostById = async (req, res) => {
 hostsCtrl.updatehost = async (req, res) => {
   try {
     const { name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
-    
+
+    console.log("voy a validar");
     await validateIp(ip);
 
     await validateMac(mac);
-
 
     const simpleMask = sMask(mask);
     const action = await host.updateOne(
@@ -103,7 +105,7 @@ hostsCtrl.updatehost = async (req, res) => {
         symbol,
         ip,
         mask,
-        mask2script:simpleMask,
+        mask2script: simpleMask,
         mac,
         active,
         type,
@@ -112,27 +114,29 @@ hostsCtrl.updatehost = async (req, res) => {
         color,
       }
     );
-    
+    console.log(action);
     if (action.matchedCount === 1) res.send({ message: "host modified" });
-    
     else {
       res.send({ message: "host does not modified" });
     }
   } catch (error) {
-      if(error.keyValue){
-        if (error.keyValue.ip) res.status(401).send(error);     //Error if the IP already exists with other host
-        else if (error.keyValue.mac) res.status(402).send(error);}    //Error if the mac already exists with other host
-      else{ 
-        if(error.message === ipErr){              //Error if the IP already exists with a controller
-          res.status(403).send(error);
-        }else if(error.message === macErr){       //Error if the mac already exists with a switch
-          res.status(405).send(error);
-        }
-        else{
-          res.status(500).send(error.message)      //Error if one of the attributes doesn't exist
-        }
+    if (error.keyValue) {
+      if (error.keyValue.ip) res.status(401).send(error);
+      //Error if the IP already exists with other host
+      else if (error.keyValue.mac) res.status(402).send(error);
+    } //Error if the mac already exists with other host
+    else {
+      if (error.message === ipErr) {
+        //Error if the IP already exists with a controller
+        res.status(403).send(error);
+      } else if (error.message === macErr) {
+        //Error if the mac already exists with a switch
+        res.status(405).send(error);
+      } else {
+        res.status(500).send(error.message); //Error if one of the attributes doesn't exist
       }
     }
+  }
 };
 
 /**
@@ -152,7 +156,6 @@ hostsCtrl.deletehost = async (req, res) => {
   }
 };
 
-
 /**
  * It takes a mask in the form of a string, splits it into an array, multiplies each element, and then
  * takes the log base 2 of the product, that means, parses a 4 bytes mask to a "/#" with # between 1-32.
@@ -164,7 +167,8 @@ function sMask(mask) {
   let split = bits.split(".");
   let count = 1;
   let exit = false;
-  for (let i = 0; i < split.length && !exit; i++) {   //Sums all the bytes at the mask, for example: 255.255.255.0, the for block multiplies 255*255*255 
+  for (let i = 0; i < split.length && !exit; i++) {
+    //Sums all the bytes at the mask, for example: 255.255.255.0, the for block multiplies 255*255*255
     if (Number(split[i]) === 0) {
       exit = true;
     } else {
@@ -172,8 +176,8 @@ function sMask(mask) {
     }
   }
 
-  bits = Math.log(count) / Math.log(2);       //takes the log base 2 of the bits
-  bits = Math.round(bits);                    //There is the number # who is after the "/" in a mask
+  bits = Math.log(count) / Math.log(2); //takes the log base 2 of the bits
+  bits = Math.round(bits); //There is the number # who is after the "/" in a mask
   return bits;
 }
 
@@ -183,12 +187,11 @@ function sMask(mask) {
  * @param ip - the ip address to be validated
  * @returns Nothing.
  */
-async function validateIp(ip){
-  
-  const objOnDB = await controller.find({ip:`${ip}`}).exec();
+async function validateIp(ip) {
+  const objOnDB = await controller.find({ ip: `${ip}` }).exec();
 
-  if(objOnDB.length > 0){
-      throw new Error(ipErr);
+  if (objOnDB.length > 0) {
+    throw new Error(ipErr);
   }
   return;
 }
@@ -199,11 +202,11 @@ async function validateIp(ip){
  * @param mac - The mac address of the switch
  * @returns Nothing.
  */
-async function validateMac(mac){
+async function validateMac(mac) {
   const objOnDB = await switche.find({ mac: `${mac}` });
 
-  if(objOnDB.length > 0){
-      throw new Error(macErr);
+  if (objOnDB.length > 0) {
+    throw new Error(macErr);
   }
   return;
 }

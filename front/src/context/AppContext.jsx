@@ -185,7 +185,7 @@ export const AppContextWrapper = (props) => {
     setLinks([]);
 
     symbol.current = 1;
-    ipAddress.current = 0;
+    ipAddress.current = 1;
     macAddress.current = "00:00:00:00:00:00";
     portNumber.current = 0;
   };

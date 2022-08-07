@@ -23,13 +23,12 @@ let newlink;
 generalController.getScript = async (req, res) => {
   try {
     await switch2Controller();
-    
 
     const controllers = await controller.find();
     const hosts = await host.find();
     const switches = await switche.find();
     const links = await link.find();
-    
+
     var topology = {
       controllers,
       hosts,
@@ -84,15 +83,17 @@ generalController.eraseDB = async (req, res) => {
 
 /**
  * A function that is called when the user clicks on the button "Load" in the frontend.
- * @param {*} req 
- * @param {*} res 
+ * @param {*} req
+ * @param {*} res
  * @returns Nothing
  */
 generalController.load = async (req, res) => {
-  if (req.files.file) {   //in the param req, there is a attribute called files who has the name od the file at the request's body
+  if (req.files.file) {
+    //in the param req, there is a attribute called files who has the name od the file at the request's body
     var fileNameAndExt = req.files.file.name.split("."); //First, we separate the file's name and the extention
-    
-    if (fileNameAndExt[fileNameAndExt.length - 1] !== "json") {   //It verifies if the file is json and sends a warning to the frontend
+
+    if (fileNameAndExt[fileNameAndExt.length - 1] !== "json") {
+      //It verifies if the file is json and sends a warning to the frontend
       res.status(400).send({
         message: "El archivo debe ser el .json generado por el descriptor",
       });
@@ -103,7 +104,7 @@ generalController.load = async (req, res) => {
     var oldPath = `${file.tempFilePath}`;
     var newPath = "./src/load/alfa.json";
 
-    fs.renameSync(oldPath, newPath);    //Fs renames the file with the name that the client wants to give to the file, because the file was saved with a temporal an unreadible name for humans
+    fs.renameSync(oldPath, newPath); //Fs renames the file with the name that the client wants to give to the file, because the file was saved with a temporal an unreadible name for humans
 
     try {
       await importDb();
@@ -125,25 +126,27 @@ async function switch2Controller() {
   let linksS;
   let linksD;
   let changer;
-  for (let i = 0; i < c.length; i++) {    //It gets the links whose have the controller i in source or destination attribute
-    linksS = await link.find({ source: `${c[i].symbol}` });
+  for (let i = 0; i < c.length; i++) {
+    //It gets the links whose have the controller i in source or destination attribute
+    // linksS = await link.find({ source: `${c[i].symbol}` }); //delete this line
     linksD = await link.find({ destination: `${c[i].symbol}` });
     changer;
-    
-    for (let j = 0; j < linksS.length; j++) {   //search in the source's list of an i controller the switch connected to him and update it.
-      let adder = i + 1;
-      changer = linksS[j].destination;    //Because it is searching on the source attribute, the switch is in the destination attribute
-      
-      
-      await switche.updateOne(
-        { indicator: `${changer.indicator}` },
-        { controller: `${c[i].symbol}` }
-      );
-    }
 
-    for (let j = 0; j < linksD.length; j++) {  //search in the destination's list of an i controller the switch connected to him and update it.
+    // for (let j = 0; j < linksS.length; j++) {
+    //   //search in the source's list of an i controller the switch connected to him and update it.
+    //   let adder = i + 1;
+    //   changer = linksS[j].destination; //Because it is searching on the source attribute, the switch is in the destination attribute
+
+    //   await switche.updateOne(
+    //     { indicator: `${changer.indicator}` },
+    //     { controller: `${c[i].symbol}` }
+    //   );
+    // }
+
+    for (let j = 0; j < linksD.length; j++) {
+      //search in the destination's list of an i controller the switch connected to him and update it.
       let adder = i + 1;
-      changer = linksD[j].source;     //Because it is searching on the destination attribute, the switch is in the source attribute
+      changer = linksD[j].source; //Because it is searching on the destination attribute, the switch is in the source attribute
 
       await switche.updateOne(
         { indicator: `${changer.indicator}` },
@@ -157,7 +160,7 @@ async function switch2Controller() {
  * It takes a name (the client's file name) as a parameter, then it finds all the data from the database, then it creates a JSON
  * file with the name given as a parameter and then it writes the data found in the database to the
  * JSON file.
- * @param name - name of the file to be saved 
+ * @param name - name of the file to be saved
  * @returns a promise. (A variable to take action in the method whose is called, that is, getScript())
  */
 async function exportDb(name) {
@@ -275,8 +278,7 @@ async function importDb() {
  */
 function topocustom(topology, nameArchive) {
   let writeFileSync =
-    "#!/usr/bin/python \n\n"+
-    
+    "#!/usr/bin/python \n\n" +
     `from mininet.net import Mininet \n` +
     `from mininet.log import info, setLogLevel \n` +
     `from mininet.cli import CLI \n` +
@@ -292,13 +294,14 @@ function topocustom(topology, nameArchive) {
     if (element === undefined) {
       console.log("Los controladores no estan definidos");
     } else if (element.remote) {
-      writeFileSync += ` ${element.symbol} = RemoteController( '${element.symbol}', ip='${element.ip}', port=${element.port})\n`+
-      ` net.addController(${element.symbol})\n`;
+      writeFileSync +=
+        ` ${element.symbol} = RemoteController( '${element.symbol}', ip='${element.ip}', port=${element.port})\n` +
+        ` net.addController(${element.symbol})\n`;
     } else {
       writeFileSync += ` net.addController( '${element.symbol}', port=${element.port})\n`;
     }
   });
-  
+
   topology.switches.forEach((element) => {
     writeFileSync += ` info("*** Adding switches")\n`;
     if (element === undefined || element.symbol === undefined) {
@@ -307,7 +310,7 @@ function topocustom(topology, nameArchive) {
       writeFileSync += ` ${element.symbol} = net.addSwitch( '${element.symbol}', protocols='${element.protocol}', port=${element.port}, mac='${element.mac}')\n`;
     }
   });
-  
+
   topology.hosts.forEach((element) => {
     writeFileSync += ` info("*** Adding nodes")\n`;
     if (element === undefined || element.symbol === undefined) {
@@ -324,14 +327,16 @@ function topocustom(topology, nameArchive) {
     if (element === undefined) {
       console.log("Los links no estan definidos");
     } else {
-      if(element.from.type !== "controller" && element.to.type !== "controller"){
+      if (
+        element.from.type !== "controller" &&
+        element.to.type !== "controller"
+      ) {
         writeFileSync += ` net.addLink(${element.source}, ${element.destination} `;
         if (element.bandwidth !== undefined) {
-          if(element.bandwidth === 0){
+          if (element.bandwidth === 0) {
             writeFileSync += `, bw=1`;
-          }
-          else{
-          writeFileSync += `, bw=${element.bandwidth}`;
+          } else {
+            writeFileSync += `, bw=${element.bandwidth}`;
           }
         }
         if (element.delay !== undefined) {
@@ -345,10 +350,7 @@ function topocustom(topology, nameArchive) {
     }
   });
   writeFileSync +=
-    `\n` +
-    ` info("*** Starting network")\n` +
-    `\n` +
-    ` net.start()\n`;
+    `\n` + ` info("*** Starting network")\n` + `\n` + ` net.start()\n`;
   //topology.controllers.forEach((element) => {
   //  if (element === undefined) {
   //    console.log("Los controladores no estan definidos");
