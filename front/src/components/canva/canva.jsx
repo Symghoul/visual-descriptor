@@ -271,8 +271,6 @@ const Canva = () => {
 
     // detects if there is a connection between devices
     const connectionTo = detectConnection(mousePos, device);
-    console.log("connection to", connectionTo);
-
     //if there is any connection
     if (connectionTo !== null) {
       //beforehand are there even links?
@@ -301,9 +299,6 @@ const Canva = () => {
         let connectController =
           connectionTo.type === "controller" ? true : false;
 
-        console.log("controllers", isThereAcontroller);
-        console.log("connectController", connectController);
-
         if (isThereAcontroller.length > 0 && connectController === true) {
           //launch error
           handleModalOpen();
@@ -327,6 +322,23 @@ const Canva = () => {
    * @param {*} destiny destiny device
    */
   const createConectionTo = (origin, destiny) => {
+    //update switch assignated controller
+    if (destiny.type === "controller") {
+      const arr = state.switches.map((eachSwitch) => {
+        if (eachSwitch.symbol === origin.symbol) {
+          //update eachSwitch.controller
+          let controller = destiny.symbol;
+          return {
+            ...eachSwitch,
+            controller,
+          };
+        } else {
+          return eachSwitch;
+        }
+      });
+      state.setSwitches(arr);
+    }
+
     if (destiny !== null) {
       const link = {
         indicator: uuid.v1(),
