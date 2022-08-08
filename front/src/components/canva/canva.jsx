@@ -99,10 +99,16 @@ const Canva = () => {
    * @param {*} device
    */
   const handleSelection = (device) => {
-    if (state.selectedDevice === null) {
-      state.setSelectedDevice(null);
+    //nothing selected
+    if (
+      //nothing selected
+      state.selectedDevice === null
+    ) {
       state.setSelectedDevice(device);
-    } else if (state.selectedDevice.indicator !== device.indicator) {
+    } else if (
+      // a previous device is selectedm but there was another device connected
+      state.selectedDevice.indicator !== device.indicator
+    ) {
       if (state.selectedLink !== null) {
         changeLinkColor(state.getDevice(state.selectedLink), linkColor);
         state.setSelectedLink(null);
@@ -143,6 +149,7 @@ const Canva = () => {
       state.setSelectedDevice(state.getDevice(link));
     } else {
       // if previously there was a link selected and now there a new link selected then change the color of the two links
+      console.log("selected null");
       if (state.selectedDevice.indicator !== link.indicator) {
         if (state.selectedLink !== null) {
           changeLinkColor(state.selectedLink, linkColor);

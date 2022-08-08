@@ -136,8 +136,8 @@ export const AppContextWrapper = (props) => {
       setHosts(arr);
     } else if (device.type === "link") {
       const arr = links.filter((link) => link.indicator !== device.indicator);
-      setLinks(arr);
       await axios.delete(`/api/links/${device.indicator}`);
+      setLinks(arr);
       setSelectedLink(null);
     }
     setSelectedDevice(null);
