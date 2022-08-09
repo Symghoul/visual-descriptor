@@ -1,6 +1,7 @@
 const controllerCtrl = {};
 
 const controller = require("../model/controller");
+const hosts = require("../model/hosts");
 
 //Es requerido para acceder a su base de datos netamente para validar
 const host = require("../model/hosts");
@@ -27,6 +28,11 @@ controllerCtrl.getControllers = async (req, res) => {
  * @param {*} res Query param
  */
 controllerCtrl.createControllers = async (req, res) => {
+  try {
+    const errorIP = await validateIp(req.body.ip);
+    if(errorIP == ipErr)
+      throw new Error(ipErr);
+
   const { indicator, name, symbol, ip, port, remote, type, x, y, color } =
     req.body;
   const newcontroller = new controller({
@@ -41,15 +47,14 @@ controllerCtrl.createControllers = async (req, res) => {
     y,
     color,
   });
-  try {
     await newcontroller.save();
     res.send({ message: "Controller saved" });
   } catch (error) {
-    if (error.keyValue.ip) res.status(401).send(error);   //Error if the IP already exists with other controller
+    if(error.message === ipErr){
+      res.status(403).send(error.message);  }          //Error if the IP already exists with a host
     else {
-      if(error.message === ipErr){
-        res.status(403).send(error);            //Error if the IP already exists with a host
-      }else{
+      if (error.keyValue.ip) res.status(401).send(error);   //Error if the IP already exists with other controller
+      else{
       res.status(500).send(error.message);}     //Error if one of the attributes doesn't exist
     }
   }
@@ -78,7 +83,9 @@ controllerCtrl.getControllerById = async (req, res) => {
 controllerCtrl.updateController = async (req, res) => {
   try {
     const { name, symbol, ip, port, remote, type, x, y, color } = req.body;
-    await validateIp(ip);
+    const errorIP = await validateIp(req.body.ip);
+    if(errorIP == ipErr)
+    throw new Error(ipErr);
 
     const action = await controller.updateOne(
       { indicator: req.params.indicator },
@@ -139,11 +146,11 @@ controllerCtrl.deleteController = async (req, res) => {
  * @returns Nothing.
  */
 async function validateIp(ip){
-  
-  const objOnDB = await host.find({ip:`${ip}`}).exec();     //An array with hosts whos have the same IP (that's bad)
 
-  if(objOnDB.length > 0){
-      throw new Error(ipErr);     //Throws an error because there cannot be an IP address repeated
+  const objOnDB = await hosts.find({ip: `${ip}`}).exec();
+  
+  if (objOnDB.length > 0) {
+    return ipErr;
   }
   return;
 }
