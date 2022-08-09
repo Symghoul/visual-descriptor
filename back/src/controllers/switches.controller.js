@@ -27,6 +27,12 @@ switchesCtrl.getSwitches = async (req, res) => {
  * @param {*} res Query param
  */
 switchesCtrl.createSwitch = async (req, res) => {
+  try {
+
+  const errorMAC = await validateMac(req.body.mac); 
+  if(errorMAC == macErr)
+    throw new Error(macErr);
+
   const {
     indicator,
     name,
@@ -53,22 +59,18 @@ switchesCtrl.createSwitch = async (req, res) => {
     y,
     color,
   });
-  try {
     await newSwitch.save();
     res.send({ message: "switch saved" });
   } catch (error) {
-    if(error.keyValue){
-      if (error.keyValue.mac) res.status(402).send(error);}    //Error if the mac already exists with other switch
-    else{
-      if(error.message === macErr){  //Error if the mac already exists with a host
-        res.status(405).send(error);
-      }
-      else{
-        console.log(error);
+    if(error.message === macErr){  //Error if the mac already exists with a host
+      res.status(405).send(error.message);
+    }
+    else if(error.keyValue){
+      if (error.keyValue.mac) res.status(402).send(error);    //Error if the mac already exists with other switch
+    }else{
         res.status(500).send(error)     //Error if one of the attributes doesn't exist
-      }
-    } 
-  }
+    }
+  } 
 };
 
 /**
@@ -94,7 +96,9 @@ switchesCtrl.getSwitchById = async (req, res) => {
 switchesCtrl.updateSwitch = async (req, res) => {
   try {
     const { name, symbol, protocol, port, mac, controller, type, x, y, color } = req.body;
-    await validateMac(mac);
+    const errorMAC = await validateMac(req.body.mac); 
+    if(errorMAC == macErr)
+      throw new Error(macErr);
     const action = await switche.updateOne(
       { indicator: req.params.indicator },
       {
@@ -151,13 +155,12 @@ switchesCtrl.deleteSwitch = async (req, res) => {
  * @param mac - The mac address of the switch
  * @returns Nothing.
  */
-async function validateMac(mac){
+ async function validateMac(mac) {
   const objOnDB = await host.find({ mac: `${mac}` });
+  if (objOnDB.length > 0) {
 
-  if(objOnDB.length > 0){
-      throw new Error(macErr);
+    return macErr;
   }
   return;
 }
-
 module.exports = switchesCtrl;

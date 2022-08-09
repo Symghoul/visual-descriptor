@@ -85,7 +85,7 @@ controllerCtrl.updateController = async (req, res) => {
     const { name, symbol, ip, port, remote, type, x, y, color } = req.body;
     const errorIP = await validateIp(req.body.ip);
     if(errorIP == ipErr)
-    throw new Error(ipErr);
+      throw new Error(ipErr);
 
     const action = await controller.updateOne(
       { indicator: req.params.indicator },
