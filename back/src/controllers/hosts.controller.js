@@ -28,6 +28,16 @@ hostsCtrl.gethosts = async (req, res) => {
  * @param {*} res Query param
  */
 hostsCtrl.createhosts = async (req, res) => {
+  try {
+
+  const errorIP = await validateIp(req.body.ip);
+  if(errorIP == ipErr)
+    throw new Error(ipErr);
+    
+  const errorMAC = await validateMac(req.body.mac); 
+  if(errorMAC == macErr)
+    throw new Error(macErr);
+
   const { indicator, name, symbol, ip, mask, mac, active, type, x, y, color } =
     req.body;
   const simpleMask = sMask(mask);
@@ -45,7 +55,6 @@ hostsCtrl.createhosts = async (req, res) => {
     y,
     color,
   });
-  try {
     await newHost.save();
     res.send({ message: "host saved" });
   } catch (error) {
@@ -92,10 +101,13 @@ hostsCtrl.updatehost = async (req, res) => {
   try {
     const { name, symbol, ip, mask, mac, active, type, x, y, color } = req.body;
 
-    console.log("voy a validar");
-    await validateIp(ip);
-
-    await validateMac(mac);
+    const errorIP = await validateIp(req.body.ip);
+    if(errorIP == ipErr)
+      throw new Error(ipErr);
+      
+    const errorMAC = await validateMac(req.body.mac); 
+    if(errorMAC == macErr)
+      throw new Error(macErr);
 
     const simpleMask = sMask(mask);
     const action = await host.updateOne(
@@ -114,17 +126,19 @@ hostsCtrl.updatehost = async (req, res) => {
         color,
       }
     );
-    console.log(action);
+    
     if (action.matchedCount === 1) res.send({ message: "host modified" });
     else {
       res.send({ message: "host does not modified" });
     }
   } catch (error) {
+
     if (error.keyValue) {
-      if (error.keyValue.ip) res.status(401).send(error);
       //Error if the IP already exists with other host
+      if (error.keyValue.ip) res.status(401).send(error);
+      //Error if the mac already exists with other host
       else if (error.keyValue.mac) res.status(402).send(error);
-    } //Error if the mac already exists with other host
+    } 
     else {
       if (error.message === ipErr) {
         //Error if the IP already exists with a controller
@@ -187,11 +201,12 @@ function sMask(mask) {
  * @param ip - the ip address to be validated
  * @returns Nothing.
  */
-async function validateIp(ip) {
-  const objOnDB = await controller.find({ ip: `${ip}` }).exec();
+async function validateIp(ip){
 
+  const objOnDB = await controller.find({ip: `${ip}`}).exec();
+  
   if (objOnDB.length > 0) {
-    throw new Error(ipErr);
+    return ipErr;
   }
   return;
 }
@@ -204,9 +219,9 @@ async function validateIp(ip) {
  */
 async function validateMac(mac) {
   const objOnDB = await switche.find({ mac: `${mac}` });
-
   if (objOnDB.length > 0) {
-    throw new Error(macErr);
+
+    return macErr;
   }
   return;
 }
