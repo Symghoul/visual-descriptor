@@ -149,7 +149,6 @@ const Canva = () => {
       state.setSelectedDevice(state.getDevice(link));
     } else {
       // if previously there was a link selected and now there a new link selected then change the color of the two links
-      console.log("selected null");
       if (state.selectedDevice.indicator !== link.indicator) {
         if (state.selectedLink !== null) {
           changeLinkColor(state.selectedLink, linkColor);
@@ -271,7 +270,7 @@ const Canva = () => {
    * @param {*} e drag event
    * @param {*} device device where the drag ended
    */
-  const handleAnchorDragEnd = (e, device) => {
+  const handleAnchorDragEnd = async (e, device) => {
     setConnectionPreview(null);
     const stage = e.target.getStage();
     const mousePos = stage.getPointerPosition();
@@ -314,11 +313,11 @@ const Canva = () => {
           handleModalOpen();
         } else {
           // the new connection is not repeated
-          createConectionTo(device, connectionTo);
+          await createConectionTo(device, connectionTo);
         }
       } else {
         //there are no links, we proceed with np
-        createConectionTo(device, connectionTo);
+        await createConectionTo(device, connectionTo);
       }
     }
   };
@@ -328,7 +327,7 @@ const Canva = () => {
    * @param {*} origin origin device
    * @param {*} destiny destiny device
    */
-  const createConectionTo = (origin, destiny) => {
+  const createConectionTo = async (origin, destiny) => {
     //update switch assignated controller
     if (destiny.type === "controller") {
       const arr = state.switches.map((eachSwitch) => {
@@ -344,6 +343,20 @@ const Canva = () => {
         }
       });
       state.setSwitches(arr);
+      //update on db the switch
+      console.log("arreglo", arr);
+      const update = arr.filter((switche) => {
+        if (switche.symbol === origin.symbol) {
+          return switche;
+        }
+      });
+      console.log("update", update);
+      try {
+        await axios.put(`/api/switches/${update[0].indicator}`, update[0]);
+        console.log("hizo put");
+      } catch (err) {
+        console.log("error mongo", err);
+      }
     }
 
     if (destiny !== null) {
@@ -389,7 +402,7 @@ const Canva = () => {
                 symbol: `c${state.getSymbol()}`,
                 ip: `192.168.0.${state.getIpAddress()}`,
                 port: `300${state.getPortNumber()}`,
-                remote: false,
+                remote: true,
                 type: "controller",
                 x: e.target.x(),
                 y: e.target.y(),
@@ -626,7 +639,9 @@ const Canva = () => {
       <Border
         indicator={state.selectedDevice.indicator}
         device={state.getDevice(state.selectedDevice)}
-        onAnchorDragEnd={(e) => handleAnchorDragEnd(e, state.selectedDevice)}
+        onAnchorDragEnd={async (e) =>
+          await handleAnchorDragEnd(e, state.selectedDevice)
+        }
         onAnchorDragMove={handleAnchorDragMove}
         onAnchorDragStart={handleAnchorDragStart}
       />

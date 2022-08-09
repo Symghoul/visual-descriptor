@@ -164,6 +164,8 @@ const ControllerConfig = () => {
                   type="text"
                   as={CssTextField}
                   label={"IP Adress"}
+                  // disabled={remoteController}
+                  disabled={!remote}
                   error={Boolean(errors.ip) && Boolean(touched.ip)}
                   helperText={Boolean(touched.ip) && errors.ip}
                 />
