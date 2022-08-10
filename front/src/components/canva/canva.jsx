@@ -344,18 +344,15 @@ const Canva = () => {
       });
       state.setSwitches(arr);
       //update on db the switch
-      console.log("arreglo", arr);
       const update = arr.filter((switche) => {
         if (switche.symbol === origin.symbol) {
           return switche;
         }
       });
-      console.log("update", update);
       try {
         await axios.put(`/api/switches/${update[0].indicator}`, update[0]);
-        console.log("hizo put");
       } catch (err) {
-        console.log("error mongo", err);
+        // console.log("error mongo", err);
       }
     }
 
