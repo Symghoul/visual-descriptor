@@ -1,48 +1,45 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import axios from "../config/axios";
 import mac from "../config/macService";
 
 const AppContext = React.createContext();
 
-const usePreviousSelectedDevice = (prevSelDevice) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = prevSelDevice;
-  }, [prevSelDevice]);
-  return ref.current;
-};
+//const usePreviousSelectedDevice = (prevSelDevice) => {
+//  const ref = useRef();
+//  useEffect(() => {
+//    ref.current = prevSelDevice;
+//  }, [prevSelDevice]);
+//  return ref.current;
+//};
 
 export const AppContextWrapper = (props) => {
+  /**
+   * States to control the behavior of the application
+   */
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [selectedLink, setSelectedLink] = useState(null);
-  const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
+  //const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
   const [error, setError] = useState("");
 
+  /**
+   * States to collect all the devices created by the user
+   */
   const [controllers, setControllers] = useState([]);
   const [switches, setSwitches] = useState([]);
   const [hosts, setHosts] = useState([]);
   const [links, setLinks] = useState([]);
 
-  const controllerSymbol = useRef(0);
-  const switchSymbol = useRef(0);
-  const hostSymbol = useRef(0);
-  const ipAddress = useRef(0);
+  /**
+   * States to handle default information and data the user cannot touch
+   */
+  const symbol = useRef(0);
+  const ipAddress = useRef(1);
   const macAddress = useRef("00:00:00:00:00:00");
   const portNumber = useRef(0);
 
-  const getControllerSymbol = () => {
-    controllerSymbol.current = controllerSymbol.current + 1;
-    return controllerSymbol.current;
-  };
-
-  const getSwitchSymbol = () => {
-    switchSymbol.current = switchSymbol.current + 1;
-    return switchSymbol.current;
-  };
-
-  const getHostSymbol = () => {
-    hostSymbol.current = hostSymbol.current + 1;
-    return hostSymbol.current;
+  const getSymbol = () => {
+    symbol.current = symbol.current + 1;
+    return symbol.current;
   };
 
   const getIpAddress = () => {
@@ -52,7 +49,6 @@ export const AppContextWrapper = (props) => {
 
   const getMacAddress = () => {
     let address = macAddress.current;
-    console.log(address);
     macAddress.current = mac(address);
     return macAddress.current;
   };
@@ -62,7 +58,12 @@ export const AppContextWrapper = (props) => {
     return portNumber.current;
   };
 
-  function getDevice(device) {
+  /**
+   * Method that returns a device from the states
+   * @param {*} device to look at
+   * @returns a device
+   */
+  const getDevice = (device) => {
     let foundDevice = null;
     if (device.type === "controller") {
       foundDevice = controllers.find(
@@ -87,8 +88,12 @@ export const AppContextWrapper = (props) => {
     } else {
       return foundDevice;
     }
-  }
+  };
 
+  /**
+   * Saves a device on db
+   * @param {*} device
+   */
   const saveDevice = async (device) => {
     if (device.type === "controller") {
       await axios.post("/api/controllers", device);
@@ -101,61 +106,209 @@ export const AppContextWrapper = (props) => {
     }
   };
 
+  /**
+   * Deletes a device from the state and the db
+   */
   const deleteDevice = async () => {
     const device = getDevice(selectedDevice);
 
+    // check what kind of device it is
     if (device.type === "controller") {
-      deleteLinks(device);
+      deleteLinks(device); // deletes the links it had
+      //delete on state
       const arr = controllers.filter(
         (controller) => controller.indicator !== device.indicator
       );
-      await axios.delete(`/api/controllers/${device.indicator}`);
       setControllers(arr);
+      //delete on bd
+      await axios.delete(`/api/controllers/${device.indicator}`);
+      updateSwitchesFromController(arr);
     } else if (device.type === "switch") {
-      deleteLinks(device);
+      await deleteLinks(device);
       const arr = switches.filter(
         (switche) => switche.indicator !== device.indicator
       );
       await axios.delete(`/api/switches/${device.indicator}`);
       setSwitches(arr);
     } else if (device.type === "host") {
-      deleteLinks(device);
+      await deleteLinks(device);
       const arr = hosts.filter((host) => host.indicator !== device.indicator);
       await axios.delete(`/api/hosts/${device.indicator}`);
       setHosts(arr);
     } else if (device.type === "link") {
       const arr = links.filter((link) => link.indicator !== device.indicator);
-      setLinks(arr);
       await axios.delete(`/api/links/${device.indicator}`);
+      setLinks(arr);
       setSelectedLink(null);
+      updateSwitchesFromLinks(device.destination); //send the controller symbol
     }
     setSelectedDevice(null);
   };
 
+  /**
+   * This method looks for all the connection the device had and delet them
+   * @param {*} device to get deleted its links
+   */
   const deleteLinks = async (device) => {
-    const delArr = links.filter(
+    /**
+     * Delete links from the state
+     */
+    const linksWithoutTheDeviceAsDestinyToDelete = links.filter(
+      (link) => link.to.indicator !== device.indicator
+    );
+    const linksWithoutTheDeviceAsOriginAndAsDestinyToDelete =
+      linksWithoutTheDeviceAsDestinyToDelete.filter(
+        (link) => link.from.indicator !== device.indicator
+      );
+    setLinks(linksWithoutTheDeviceAsOriginAndAsDestinyToDelete);
+
+    /**
+     * Delete links from database
+     */
+    const linksWithDeviceAsDestinyToDeleteOnDB = links.filter(
       (link) => link.to.indicator === device.indicator
     );
-    const delArr2 = links.filter(
+    const linksWithDeviceAsOriginToDeleteOnDB = links.filter(
       (link) => link.from.indicator === device.indicator
     );
-    const arr = links.filter((link) => link.to.indicator !== device.indicator);
-    const arr2 = arr.filter((link) => link.from.indicator !== device.indicator);
-    setLinks(arr2);
 
-    //database cleaning
-    if (delArr.length !== 0) {
-      delArr.map((link) => {
+    if (linksWithDeviceAsDestinyToDeleteOnDB.length !== 0) {
+      await linksWithDeviceAsDestinyToDeleteOnDB.map((link) => {
         axios.delete(`/api/links/${link.indicator}`);
       });
     }
-    if (delArr2.length !== 0) {
-      delArr2.map((link) => {
+    if (linksWithDeviceAsOriginToDeleteOnDB.length !== 0) {
+      await linksWithDeviceAsOriginToDeleteOnDB.map((link) => {
         axios.delete(`/api/links/${link.indicator}`);
       });
     }
   };
 
+  /**
+   * check if the link had a connection from a switch to a controller
+   * if the connection exists, then set to notLinkedYet the controller attribute
+   * on the DB
+   */
+  const updateSwitchesFromController = (controllersList) => {
+    //if there are links
+    if (switches.length > 0) {
+      //check status of controllers
+      if (controllersList.length === 0) {
+        //there are not controllers, check if any switch has a controller
+        const switchesWithControllers = switches.filter(
+          (eachSwitch) => eachSwitch.controller !== "notLinkedYet"
+        );
+        if (switchesWithControllers.length > 0) {
+          //change controller
+          const updatedSwitches = switchesWithControllers.map(
+            (eachSwitchWithController) => {
+              return {
+                ...eachSwitchWithController,
+                controller: "notLinkedYet",
+              };
+            }
+          );
+          setSwitches(updatedSwitches);
+          updatedSwitches.forEach((updatedSwitch) => {
+            axios.put(
+              `/api/switches/${updatedSwitch.indicator}`,
+              updatedSwitch
+            );
+          });
+        }
+      } else {
+        /*check if any switch has a controller different than the ones that exists right now
+        for this I'll check links, if a link has a controller that no longer exist
+        an update to a swtich should be found
+        */
+        let deletedControllers = "";
+
+        switches.forEach((eachswitch) => {
+          const isTheControllerThere = controllersList.filter(
+            (eachController) => eachswitch.controller === eachController.symbol
+          );
+          // if the last filter returns [] I have found a Link which controller is not on controllers
+          if (isTheControllerThere.length === 0) {
+            deletedControllers +=
+              deletedControllers + "-" + eachswitch.controller;
+          }
+        });
+
+        //with all deleted controllers found now we can update switches
+        if (deletedControllers.length !== 0) {
+          const deletedControllersList = deletedControllers.split("-");
+
+          deletedControllersList.forEach((eachController) => {
+            if (eachController.length > 0) {
+              const switchesToUpdate = switches.filter(
+                (eachSwitch) => eachSwitch.controller === eachController
+              );
+
+              //now I now how many switches I have to update
+              if (switchesToUpdate.length > 0) {
+                //change controller
+                const updatedSwitches = switchesToUpdate.map(
+                  (eachSwitchWithController) => {
+                    return {
+                      ...eachSwitchWithController,
+                      controller: "notLinkedYet",
+                    };
+                  }
+                );
+
+                //merge updated switches with the other switches
+                const switchesWithoutTheUpdated = switches.filter(
+                  (oldSwitch) => oldSwitch.controller !== eachController
+                );
+                const mergedSwitches = [
+                  ...switchesWithoutTheUpdated,
+                  ...updatedSwitches,
+                ];
+
+                setSwitches(mergedSwitches);
+                //update on DB
+                updatedSwitches.forEach((updatedSwitch) => {
+                  axios.put(
+                    `/api/switches/${updatedSwitch.indicator}`,
+                    updatedSwitch
+                  );
+                });
+              }
+            }
+          });
+        }
+      }
+
+      //check status of links
+    }
+  };
+
+  /**
+   * updates the controller attribute on a switch
+   * @param {*} controllerSymbol symbol to search inside the switch
+   */
+  const updateSwitchesFromLinks = (controllerSymbol) => {
+    let switchId = "";
+    const updatedSwitch = switches.map((eachSwitch) => {
+      //find and change the intended switch
+      if (eachSwitch.controller === controllerSymbol) {
+        switchId = eachSwitch.symbol;
+        return { ...eachSwitch, controller: "notLinkedYet" };
+      } else {
+        return eachSwitch;
+      }
+    });
+    setSwitches(updatedSwitch);
+    //update on DB
+    const switchToUpdate = updatedSwitch.filter(
+      (eachSwitch) => eachSwitch.symbol === switchId
+    )[0];
+    axios.put(`/api/switches/${switchToUpdate.indicator}`, switchToUpdate);
+  };
+
+  /**
+   * Erase everything in states and db, also reset default values
+   */
   const startOver = () => {
     axios.get("/api/general/erase");
     setSelectedDevice(null);
@@ -166,14 +319,16 @@ export const AppContextWrapper = (props) => {
     setSwitches([]);
     setLinks([]);
 
-    controllerSymbol.current = 1;
-    switchSymbol.current = 1;
-    hostSymbol.current = 1;
-    ipAddress.current = 0;
+    symbol.current = 1;
+    ipAddress.current = 1;
     macAddress.current = "00:00:00:00:00:00";
     portNumber.current = 0;
   };
 
+  /**
+   * Loads from db to the states the information of a design
+   * @param {*} formData
+   */
   const loadFromDB = async (formData) => {
     await axios.get("/api/general/erase");
     await axios.post(`/api/general/load/`, formData);
@@ -201,9 +356,7 @@ export const AppContextWrapper = (props) => {
     saveDevice,
     deleteDevice,
 
-    getControllerSymbol,
-    getSwitchSymbol,
-    getHostSymbol,
+    getSymbol,
     getIpAddress,
     getMacAddress,
     getPortNumber,

@@ -9,8 +9,33 @@ import { Field, Form, Formik } from "formik";
 import { object, string } from "yup";
 import "./hostConfig.css";
 
+//Style of the fields
+const style = {
+  position: "absolute",
+  gap: 2,
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
+/**
+ * This is the form used to update and display the information of a host
+ * @returns The host form component
+ */
 const HostConfig = () => {
   const state = useContext(AppContext);
+
+  const initialValues = {
+    name: InitName(),
+    mac: InitMac(),
+    ip: InitIP(),
+    mask: InitMask(),
+  };
 
   const [errorUpdate, setErrorUpdate] = useState(false);
   const errorMessage = useRef("");
@@ -20,26 +45,6 @@ const HostConfig = () => {
     setErrorUpdate(true);
   };
   const handleCloseError = () => setErrorUpdate(false);
-
-  const initialValues = {
-    name: InitName(),
-    mac: InitMac(),
-    ip: InitIP(),
-    mask: InitMask(),
-  };
-
-  const style = {
-    position: "absolute",
-    gap: 2,
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-  };
 
   const handleSubmit = async (data) => {
     let oldHost = state.getDevice(state.selectedDevice);
@@ -82,8 +87,12 @@ const HostConfig = () => {
     }
   };
 
-  const regex = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$";
+  // format to validate MAC address
+  const regex = "^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$";
 
+  /**
+   * This Schema has the validations for the information put in the form
+   */
   const schema = object({
     name: string().required("Cannot be empty"),
     mac: string().required("Cannot be empty").matches(regex, {

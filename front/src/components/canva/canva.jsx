@@ -7,8 +7,7 @@ import { SIZE } from "./config";
 import * as uuid from "uuid";
 import Border from "./border";
 import axios from "../../config/axios";
-import ToolsPanel from "../tools/toolsPanel";
-import mac from "../../config/macService";
+import "./canva.css";
 
 const style = {
   position: "absolute",
@@ -23,25 +22,39 @@ const style = {
   p: 4,
 };
 
-function createConnectionPoints(source, destination) {
+const createConnectionPoints = (source, destination) => {
   return [source.x, source.y, destination.x, destination.y];
-}
+};
 
-function Canva() {
-  const state = useContext(AppContext);
+const Canva = () => {
   const bgColor = "#90caf9";
   const linkColor = "#6a6fea";
 
+  const state = useContext(AppContext);
+
+  /**
+   * This modal is used to alert that a connection is not allowed
+   */
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
+  /**
+   * pictures used for the devices
+   */
   const [controllerImage] = useImage("/images/controller.png");
   const [switchImage] = useImage("/images/switch.png");
   const [hostImage] = useImage("/images/host.png");
 
+  /**
+   * Allows to see the line that forms while we drag an anchor from a device to other device
+   */
   const [connectionPreview, setConnectionPreview] = useState(null);
 
+  /**
+   * This modal is used to alert that a connection is not allowed
+   * @returns An error Modal
+   */
   const ModalError = () => {
     return (
       <Modal
@@ -64,7 +77,12 @@ function Canva() {
     );
   };
 
-  function getMousePos(e) {
+  /**
+   * Get mouse position
+   * @param {*} e event
+   * @returns a json with x and y
+   */
+  const getMousePos = (e) => {
     const position = e.target.position();
     const stage = e.target.getStage();
     const pointerPosition = stage.getPointerPosition();
@@ -72,13 +90,25 @@ function Canva() {
       x: pointerPosition.x - position.x,
       y: pointerPosition.y - position.y,
     };
-  }
+  };
 
-  function handleSelection(device) {
-    if (state.selectedDevice === null) {
-      state.setSelectedDevice(null);
+  /**
+   * This method updates the selected device.
+   * This allows that a device shows its anchors to be connected to other devices.
+   * If the selected "device" was a link, then its color is updated to make it stand over the other links.
+   * @param {*} device
+   */
+  const handleSelection = (device) => {
+    //nothing selected
+    if (
+      //nothing selected
+      state.selectedDevice === null
+    ) {
       state.setSelectedDevice(device);
-    } else if (state.selectedDevice.indicator !== device.indicator) {
+    } else if (
+      // a previous device is selectedm but there was another device connected
+      state.selectedDevice.indicator !== device.indicator
+    ) {
       if (state.selectedLink !== null) {
         changeLinkColor(state.getDevice(state.selectedLink), linkColor);
         state.setSelectedLink(null);
@@ -88,8 +118,13 @@ function Canva() {
     } else {
       state.setSelectedDevice(null);
     }
-  }
+  };
 
+  /**
+   * This method is used to change a link's color.
+   * @param {*} link a link
+   * @param {*} color new color
+   */
   const changeLinkColor = (link, color) => {
     let prevLinks = [
       ...state.links.filter(
@@ -102,12 +137,18 @@ function Canva() {
     state.setLinks(prevLinks);
   };
 
-  function handleLinkSelection(link) {
+  /**
+   * This method handles what happens to a link when it is selected and when it stops being selected
+   * @param {*} link a link
+   */
+  const handleLinkSelection = (link) => {
+    // if the last device was a link and now there is nothing selected then the link's color would be turn back to normal
     if (state.selectedDevice === null) {
       changeLinkColor(link, "black");
       state.setSelectedLink(state.getDevice(link));
       state.setSelectedDevice(state.getDevice(link));
     } else {
+      // if previously there was a link selected and now there a new link selected then change the color of the two links
       if (state.selectedDevice.indicator !== link.indicator) {
         if (state.selectedLink !== null) {
           changeLinkColor(state.selectedLink, linkColor);
@@ -115,15 +156,22 @@ function Canva() {
         changeLinkColor(link, "black");
         state.setSelectedLink(state.getDevice(link));
         state.setSelectedDevice(state.getDevice(link));
+        // the previous device was not a link, now the selected device is a link, change color.
       } else if (state.selectedDevice.indicator === link.indicator) {
         changeLinkColor(state.getDevice(link), linkColor);
         state.setSelectedDevice(null);
         state.setSelectedLink(null);
       }
     }
-  }
+  };
 
-  function handleDeviceDrag(e, device, index) {
+  /**
+   * This method updates the position of a device
+   * @param {*} e event
+   * @param {*} device device being moved
+   * @param {*} index
+   */
+  const handleDeviceDrag = (e, device, index) => {
     const position = e.target.position();
     const deviceFound = state.getDevice(device);
 
@@ -143,9 +191,15 @@ function Canva() {
       devices[index].y = position.y;
       state.setSwitches(devices);
     }
-  }
+  };
 
-  function hasIntersection(position, device) {
+  /**
+   * When checking for a connection this method tell us if the mouse is inside the area of a device.
+   * @param {*} position x and y of the mouse
+   * @param {*} device device to check if there is an interception with it
+   * @returns
+   */
+  const hasIntersection = (position, device) => {
     const deviceFound = state.getDevice(device);
     return !(
       deviceFound.x > position.x ||
@@ -153,22 +207,34 @@ function Canva() {
       deviceFound.y > position.y ||
       deviceFound.y + SIZE < position.y
     );
-  }
+  };
 
-  function detectConnection(position, device) {
+  /**
+   * This method checks if when we are dragging an anchor, the mouse is over a device.
+   * @param {*} position x and y of the mouse
+   * @param {*} device device to check if there is an interception with it
+   * @returns
+   */
+  const detectConnection = (position, device) => {
     let intersectingDevice = null;
 
+    // all devices in the canva at the moment
     const devices = [...state.controllers, ...state.hosts, ...state.switches];
 
+    // check if the mouse if over any device
     intersectingDevice = devices.find(
       (dev) =>
         dev.indicator !== device.indicator && hasIntersection(position, dev)
     );
 
     return intersectingDevice ?? null;
-  }
+  };
 
-  function handleAnchorDragStart(e) {
+  /**
+   * Creates a line from the anchor to the position of the mouse
+   * @param {*} e drag event
+   */
+  const handleAnchorDragStart = (e) => {
     const position = e.target.position();
     setConnectionPreview(
       <Line
@@ -179,9 +245,13 @@ function Canva() {
         strokeWidth={2}
       />
     );
-  }
+  };
 
-  function handleAnchorDragMove(e) {
+  /**
+   * Updates the length of the line between the anchor and the mouse position
+   * @param {*} e drag event
+   */
+  const handleAnchorDragMove = (e) => {
     const position = e.target.position();
     const mousePos = getMousePos(e);
     setConnectionPreview(
@@ -193,77 +263,167 @@ function Canva() {
         strokeWidth={2}
       />
     );
-  }
+  };
 
-  function handleAnchorDragEnd(e, device) {
+  /**
+   * Method that handles what happen when we stop the anchor movement
+   * @param {*} e drag event
+   * @param {*} device device where the drag ended
+   */
+  const handleAnchorDragEnd = async (e, device) => {
     setConnectionPreview(null);
     const stage = e.target.getStage();
     const mousePos = stage.getPointerPosition();
 
+    // detects if there is a connection between devices
     const connectionTo = detectConnection(mousePos, device);
+    //if there is any connection
+    if (connectionTo !== null) {
+      //beforehand are there even links?
+      if (state.links.length !== 0) {
+        //check that the new connection is not going to repeat
+        const repeated = state.links.filter((link) => {
+          if (
+            link.source === device.symbol &&
+            link.destination === connectionTo.symbol
+          ) {
+            return link;
+          } else {
+            //there are no repeated connections
+            return null;
+          }
+        });
 
-    if (device.type === "controller" && connectionTo.type === "host") {
-      handleModalOpen();
-    } else if (device.type === "host" && connectionTo.type === "controller") {
-      handleModalOpen();
-    } else {
-      if (connectionTo !== null) {
-        const link = {
-          indicator: uuid.v1(),
-          delay: 0,
-          loss: 0,
-          bandwidth: 0,
-          from: device,
-          to: connectionTo,
-          source: device.symbol,
-          destination: connectionTo.symbol,
-          type: "link",
-          color: linkColor,
-        };
-        state.setLinks([...state.links, link]);
-        state.saveDevice(link);
+        //check that a switch is not going to connect to more than one controller
+        const isThereAcontroller = state.links.filter((link) => {
+          if (link.source === device.symbol && link.to.type === "controller") {
+            return link;
+          }
+        });
+
+        // check if I'am connecting to a controller
+        let connectController =
+          connectionTo.type === "controller" ? true : false;
+
+        if (isThereAcontroller.length > 0 && connectController === true) {
+          //launch error
+          handleModalOpen();
+        } else if (repeated.length !== 0) {
+          //launch error
+          handleModalOpen();
+        } else {
+          // the new connection is not repeated
+          await createConectionTo(device, connectionTo);
+        }
+      } else {
+        //there are no links, we proceed with np
+        await createConectionTo(device, connectionTo);
       }
     }
-  }
+  };
 
+  /**
+   * createsa link between devices save it on state and DB
+   * @param {*} origin origin device
+   * @param {*} destiny destiny device
+   */
+  const createConectionTo = async (origin, destiny) => {
+    //update switch assignated controller
+    if (destiny.type === "controller") {
+      const arr = state.switches.map((eachSwitch) => {
+        if (eachSwitch.symbol === origin.symbol) {
+          //update eachSwitch.controller
+          let controller = destiny.symbol;
+          return {
+            ...eachSwitch,
+            controller,
+          };
+        } else {
+          return eachSwitch;
+        }
+      });
+      state.setSwitches(arr);
+      //update on db the switch
+      const update = arr.filter((switche) => {
+        if (switche.symbol === origin.symbol) {
+          return switche;
+        }
+      });
+      try {
+        await axios.put(`/api/switches/${update[0].indicator}`, update[0]);
+      } catch (err) {
+        // console.log("error mongo", err);
+      }
+    }
+
+    if (destiny !== null) {
+      const link = {
+        indicator: uuid.v1(),
+        delay: 0,
+        loss: 0,
+        bandwidth: 0,
+        from: origin,
+        to: destiny,
+        source: origin.symbol,
+        destination: destiny.symbol,
+        type: "link",
+        color: linkColor,
+      };
+      state.setLinks([...state.links, link]);
+      state.saveDevice(link);
+    }
+  };
+
+  /**
+   * Controller component displayed on the canvas to be dragged and create new controllers
+   * @returns a new controller when dragged on the canvas
+   */
   const CanvaController = () => {
     let xp = 10;
     let yp = 1;
     return (
-      <div>
-        <Image
-          image={controllerImage}
-          x={xp}
-          y={yp}
-          width={SIZE}
-          height={SIZE}
-          draggable
-          onDragEnd={(e) => {
-            let controller = {
-              indicator: uuid.v1(),
-              name: "Controller",
-              symbol: `c${state.getControllerSymbol()}`,
-              ip: `192.168.0.${state.getIpAddress()}`,
-              port: `300${state.getPortNumber()}`,
-              remote: false,
-              type: "controller",
-              x: e.target.x(),
-              y: e.target.y(),
-            };
-            //save on state
-            state.setControllers((prevControllers) => [
-              ...prevControllers,
-              controller,
-            ]);
-            //save on db
-            state.saveDevice(controller);
-          }}
-        />
-        <Text text="Controller" x={xp} y={yp + 52} />
+      <div className="canva_device">
+        <div className="canva_device_picture">
+          <Image
+            image={controllerImage}
+            x={xp}
+            y={yp}
+            width={SIZE}
+            height={SIZE}
+            draggable
+            //new controller
+            onDragEnd={(e) => {
+              let controller = {
+                indicator: uuid.v1(),
+                name: "Controller",
+                symbol: `c${state.getSymbol()}`,
+                ip: `192.168.0.${state.getIpAddress()}`,
+                port: `300${state.getPortNumber()}`,
+                remote: true,
+                type: "controller",
+                x: e.target.x(),
+                y: e.target.y(),
+              };
+              //save on state
+              state.setControllers((prevControllers) => [
+                ...prevControllers,
+                controller,
+              ]);
+              //save on db
+              state.saveDevice(controller);
+            }}
+          />
+        </div>
+        <div>
+          <Text text="Controller" x={xp} y={yp + 52} />
+        </div>
       </div>
     );
   };
 
+  /**
+   * Displays all created controllers on canvas
+   */
   const allControllers = state.controllers.map((eachController, index) => {
     return (
       <div>
@@ -294,6 +454,10 @@ function Canva() {
     );
   });
 
+  /**
+   * Switch component displayed on the canvas to be dragged and create new switchs
+   * @returns a new switch when dragged on the canvas
+   */
   const CanvaSwitch = () => {
     let xp = 80;
     let yp = 1;
@@ -306,11 +470,12 @@ function Canva() {
           width={SIZE}
           height={SIZE}
           draggable
+          // new switch
           onDragEnd={(e) => {
             let switche = {
               indicator: uuid.v1(),
               name: "Switch",
-              symbol: `s${state.getSwitchSymbol()}`,
+              symbol: `s${state.getSymbol()}`,
               protocol: "OVS",
               port: `300${state.getPortNumber()}`,
               mac: `${state.getMacAddress()}`,
@@ -319,7 +484,9 @@ function Canva() {
               x: e.target.x(),
               y: e.target.y(),
             };
+            //save on state
             state.setSwitches((prevSwitches) => [...prevSwitches, switche]);
+            //save on db
             state.saveDevice(switche);
           }}
         />
@@ -328,6 +495,9 @@ function Canva() {
     );
   };
 
+  /**
+   * Displays all the created switches
+   */
   const allSwitches = state.switches.map((eachSwitch, index) => {
     return (
       <div>
@@ -354,6 +524,10 @@ function Canva() {
     );
   });
 
+  /**
+   * Host component displayed on the canvas to be dragged and create new hosts
+   * @returns a new host when dragged on the canvas
+   */
   const CanvaHost = () => {
     let xp = 150;
     let yp = 1;
@@ -366,11 +540,12 @@ function Canva() {
           width={SIZE}
           height={SIZE}
           draggable
+          //new host
           onDragEnd={(e) => {
             const host = {
               indicator: uuid.v1(),
               name: "Host",
-              symbol: `h${state.getHostSymbol()}`,
+              symbol: `h${state.getSymbol()}`,
               ip: `192.168.0.${state.getIpAddress()}`,
               mask: "255.255.255.0",
               mac: `${state.getMacAddress()}`,
@@ -379,7 +554,9 @@ function Canva() {
               x: e.target.x(),
               y: e.target.y(),
             };
+            //save on state
             state.setHosts((prevHosts) => [...prevHosts, host]);
+            //save on db
             state.saveDevice(host);
           }}
         />
@@ -388,6 +565,9 @@ function Canva() {
     );
   };
 
+  /**
+   * Displays all hosts created
+   */
   const allHosts = state.hosts.map((eachHost, index) => {
     return (
       <div>
@@ -414,7 +594,9 @@ function Canva() {
     );
   });
 
-  //renders all links between devices
+  /**
+   * Renders all links between devices
+   */
   const allLinks = state.links.map((connection) => {
     const fromDevice = state.getDevice(connection.from);
     const toDevice = state.getDevice(connection.to);
@@ -423,7 +605,9 @@ function Canva() {
       y: toDevice.y - fromDevice.y,
     };
 
-    //renders the points used to connect devices
+    /**
+     * Renders the points used to connect devices
+     */
     const points = createConnectionPoints({ x: 0, y: 0 }, lineEnd);
     return (
       <Line
@@ -439,22 +623,32 @@ function Canva() {
     );
   });
 
-  //render borders of the selected device
+  /**
+   * Render borders of the selected device.
+   * However if the device selected is a controller the anchors
+   * are not going to be rendered
+   */
   const borders =
-    state.selectedDevice !== null && state.selectedDevice.type !== "link" ? (
+    state.selectedDevice !== null &&
+    state.selectedDevice.type !== "link" &&
+    state.selectedDevice.type !== "controller" &&
+    state.selectedDevice.type !== "host" ? (
       <Border
         indicator={state.selectedDevice.indicator}
         device={state.getDevice(state.selectedDevice)}
-        onAnchorDragEnd={(e) => handleAnchorDragEnd(e, state.selectedDevice)}
+        onAnchorDragEnd={async (e) =>
+          await handleAnchorDragEnd(e, state.selectedDevice)
+        }
         onAnchorDragMove={handleAnchorDragMove}
         onAnchorDragStart={handleAnchorDragStart}
       />
     ) : null;
 
-  //return that renders everything on the canva
+  /**
+   * Renders everything on the canva
+   */
   return (
-    <div>
-      <ToolsPanel />
+    <div className="canva_container">
       <div>
         <Stage width={window.innerWidth} height={window.innerHeight}>
           <Layer>
@@ -470,9 +664,11 @@ function Canva() {
           </Layer>
         </Stage>
       </div>
-      <ModalError />
+      <div>
+        <ModalError />
+      </div>
     </div>
   );
-}
+};
 
 export default Canva;

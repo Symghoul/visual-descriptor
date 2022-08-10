@@ -1,6 +1,9 @@
 import { createTheme, styled } from "@mui/material/styles";
 import { TextField } from "@mui/material";
 
+/**
+ * Palette used for buttons and text fields
+ */
 const theme = createTheme({
   palette: {
     primary: {
@@ -18,6 +21,9 @@ const theme = createTheme({
   },
 });
 
+/**
+ * This is the text field used in the forms
+ */
 const CssTextField = styled(TextField)({
   "& label.Mui-focused": {
     color: "#001e86",

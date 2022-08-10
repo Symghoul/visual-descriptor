@@ -9,7 +9,9 @@ const {
   deleteController,
 } = require("../controllers/ctrl.controller");
 
-router.route("/").get(getControllers).post(createControllers);
+router.route("/")
+  .get(getControllers)
+  .post(createControllers);
 
 router
   .route("/:indicator")

@@ -1,15 +1,21 @@
 const {Router} = require('express');
 const router = Router();
 
-const {getSwitches, createSwitch, getSwitchById, updateSwitch, deleteSwitch} = require('../controllers/switches.controller')
+const {
+    getSwitches, 
+    createSwitch, 
+    getSwitchById, 
+    updateSwitch, 
+    deleteSwitch
+} = require('../controllers/switches.controller')
 
 router.route('/')
     .get(getSwitches)
-    .post(createSwitch)
+    .post(createSwitch);
 
 router.route('/:indicator')
     .get(getSwitchById)
     .put(updateSwitch)
-    .delete(deleteSwitch)
+    .delete(deleteSwitch);
 
 module.exports = router;

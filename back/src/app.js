@@ -24,11 +24,11 @@ app.use(fileUpload({
 app.get('/', (_req, res) => {
     res.send('Hello World!')
 })
-app.use('/api/controllers', require('./routes/controllers'))
-app.use('/api/switches', require('./routes/switches'))
-app.use('/api/hosts', require('./routes/hosts'))
-app.use('/api/links', require('./routes/links'))
-app.use('/api/general', require('./routes/general'))
-app.use('/api/services/', require('./routes/services'))    //Necesito que me mandes una dirección ip y una mascara {"ip":###, "mask":"####"}
+app.use('/api/controllers', require('./routes/controllers'))    //API Rest for the controllers
+app.use('/api/switches', require('./routes/switches'))          //API Rest for the switches
+app.use('/api/hosts', require('./routes/hosts'))                //API Rest for the hosts
+app.use('/api/links', require('./routes/links'))                //API Rest for the links
+app.use('/api/general', require('./routes/general'))            // Route for any resource who needs more than one Api Rest
+app.use('/api/services/', require('./routes/services'))         //Route for services as DHCP and MAC chooser
 
 module.exports = app;

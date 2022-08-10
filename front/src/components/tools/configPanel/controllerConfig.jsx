@@ -16,6 +16,7 @@ import { Field, Form, Formik } from "formik";
 import { number, object, string } from "yup";
 import "./controllerConfig.css";
 
+//Style of the fields
 const style = {
   position: "absolute",
   gap: 2,
@@ -29,8 +30,18 @@ const style = {
   p: 4,
 };
 
+/**
+ * This is the form used to update and display the information of a controller
+ * @returns The controller form component
+ */
 const ControllerConfig = () => {
   const state = useContext(AppContext);
+
+  const initialValues = {
+    name: InitName(),
+    ip: InitIP(),
+    port: InitPort(),
+  };
 
   const [remote, setRemote] = useState(InitRemote());
   const [errorUpdate, setErrorUpdate] = useState(false);
@@ -40,13 +51,8 @@ const ControllerConfig = () => {
     errorMessage.current = msg;
     setErrorUpdate(true);
   };
-  const handleCloseError = () => setErrorUpdate(false);
 
-  const initialValues = {
-    name: InitName(),
-    ip: InitIP(),
-    port: InitPort(),
-  };
+  const handleCloseError = () => setErrorUpdate(false);
 
   const handleSubmit = async (data) => {
     let oldController = state.getDevice(state.selectedDevice);
@@ -85,6 +91,9 @@ const ControllerConfig = () => {
     }
   };
 
+  /**
+   * This Schema has the validations for the information put in the form
+   */
   const schema = object({
     name: string().required("Cannot be empty"),
     ip: string()
@@ -155,6 +164,8 @@ const ControllerConfig = () => {
                   type="text"
                   as={CssTextField}
                   label={"IP Adress"}
+                  // disabled={remoteController}
+                  disabled={!remote}
                   error={Boolean(errors.ip) && Boolean(touched.ip)}
                   helperText={Boolean(touched.ip) && errors.ip}
                 />
