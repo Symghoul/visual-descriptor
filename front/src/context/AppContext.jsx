@@ -114,7 +114,7 @@ export const AppContextWrapper = (props) => {
 
     // check what kind of device it is
     if (device.type === "controller") {
-      const remainingLinks = await deleteLinks(device); // deletes the links it had
+      deleteLinks(device); // deletes the links it had
       //delete on state
       const arr = controllers.filter(
         (controller) => controller.indicator !== device.indicator
@@ -122,7 +122,7 @@ export const AppContextWrapper = (props) => {
       setControllers(arr);
       //delete on bd
       await axios.delete(`/api/controllers/${device.indicator}`);
-      updateSwitchesFromController(arr, remainingLinks);
+      updateSwitchesFromController(arr);
     } else if (device.type === "switch") {
       await deleteLinks(device);
       const arr = switches.filter(
@@ -140,7 +140,7 @@ export const AppContextWrapper = (props) => {
       await axios.delete(`/api/links/${device.indicator}`);
       setLinks(arr);
       setSelectedLink(null);
-      // updateSwitchesFromLinks(arr);
+      updateSwitchesFromLinks(device.destination); //send the controller symbol
     }
     setSelectedDevice(null);
   };
@@ -182,11 +182,6 @@ export const AppContextWrapper = (props) => {
         axios.delete(`/api/links/${link.indicator}`);
       });
     }
-
-    /**
-     * Return so I can update switches
-     */
-    return linksWithoutTheDeviceAsOriginAndAsDestinyToDelete;
   };
 
   /**
@@ -194,7 +189,7 @@ export const AppContextWrapper = (props) => {
    * if the connection exists, then set to notLinkedYet the controller attribute
    * on the DB
    */
-  const updateSwitchesFromController = (controllersList, remainingLinks) => {
+  const updateSwitchesFromController = (controllersList) => {
     //if there are links
     if (switches.length > 0) {
       //check status of controllers
@@ -242,14 +237,13 @@ export const AppContextWrapper = (props) => {
         //with all deleted controllers found now we can update switches
         if (deletedControllers.length !== 0) {
           const deletedControllersList = deletedControllers.split("-");
-          console.log("deletedControllersList", deletedControllersList);
 
           deletedControllersList.forEach((eachController) => {
             if (eachController.length > 0) {
               const switchesToUpdate = switches.filter(
                 (eachSwitch) => eachSwitch.controller === eachController
               );
-              console.log("switchesToUpdate", switchesToUpdate);
+
               //now I now how many switches I have to update
               if (switchesToUpdate.length > 0) {
                 //change controller
@@ -261,7 +255,7 @@ export const AppContextWrapper = (props) => {
                     };
                   }
                 );
-                console.log("updatedSwitches", updatedSwitches);
+
                 //merge updated switches with the other switches
                 const switchesWithoutTheUpdated = switches.filter(
                   (oldSwitch) => oldSwitch.controller !== eachController
@@ -271,17 +265,13 @@ export const AppContextWrapper = (props) => {
                   ...updatedSwitches,
                 ];
 
-                console.log("mergedSwitches", mergedSwitches);
                 setSwitches(mergedSwitches);
                 //update on DB
                 updatedSwitches.forEach((updatedSwitch) => {
-                  console.log("updatedSwitch", updatedSwitch);
-                  console.log("put next");
                   axios.put(
                     `/api/switches/${updatedSwitch.indicator}`,
                     updatedSwitch
                   );
-                  console.log("put done");
                 });
               }
             }
@@ -291,6 +281,29 @@ export const AppContextWrapper = (props) => {
 
       //check status of links
     }
+  };
+
+  /**
+   * updates the controller attribute on a switch
+   * @param {*} controllerSymbol symbol to search inside the switch
+   */
+  const updateSwitchesFromLinks = (controllerSymbol) => {
+    let switchId = "";
+    const updatedSwitch = switches.map((eachSwitch) => {
+      //find and change the intended switch
+      if (eachSwitch.controller === controllerSymbol) {
+        switchId = eachSwitch.symbol;
+        return { ...eachSwitch, controller: "notLinkedYet" };
+      } else {
+        return eachSwitch;
+      }
+    });
+    setSwitches(updatedSwitch);
+    //update on DB
+    const switchToUpdate = updatedSwitch.filter(
+      (eachSwitch) => eachSwitch.symbol === switchId
+    )[0];
+    axios.put(`/api/switches/${switchToUpdate.indicator}`, switchToUpdate);
   };
 
   /**
