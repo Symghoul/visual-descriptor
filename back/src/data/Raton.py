@@ -11,14 +11,18 @@ def topology():
  net = Mininet( controller=Controller, waitConnected=True, link=TCLink )
 
  info("*** Adding controller")
- net.addController( 'c0', port=3001)
- net.addController( 'c1', port=3001)
+ net.addController( 'c0')
+ net.addController( 'c1')
  info("*** Adding switches")
- s2 = net.addSwitch( 's2', protocols='OVS', port=3002, mac='00:00:00:00:00:01')
+ s2 = net.addSwitch( 's2', protocols='OVS', port=3002)
  info("*** Adding switches")
- s3 = net.addSwitch( 's3', protocols='OVS', port=3002, mac='00:00:00:00:00:02')
+ s3 = net.addSwitch( 's3', port=3002, mac='00:00:00:00:00:02')
+ info("*** Adding switches")
+ s3 = net.addSwitch( 's3', protocols='OVS', mac='00:00:00:00:00:22')
  info("*** Adding nodes")
- h4 = net.addHost( 'h4', mac='00::02', ip='192.168.4.50/255.255.255.0') 
+ h4 = net.addHost( 'h4', mac='00::02', ip='192.168.4.50') 
+ info("*** Adding nodes")
+ h4 = net.addHost( 'h4', mac='00:00:00:00:00:20', ip='192.161.0.10') 
 
 
  info("*** Creating links")

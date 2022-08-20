@@ -298,7 +298,7 @@ function topocustom(topology, nameArchive) {
         ` ${element.symbol} = RemoteController( '${element.symbol}', ip='${element.ip}', port=${element.port})\n` +
         ` net.addController(${element.symbol})\n`;
     } else {
-      writeFileSync += ` net.addController( '${element.symbol}', port=${element.port})\n`;
+      writeFileSync += ` net.addController( '${element.symbol}')\n`;
     }
   });
 
@@ -306,9 +306,18 @@ function topocustom(topology, nameArchive) {
     writeFileSync += ` info("*** Adding switches")\n`;
     if (element === undefined || element.symbol === undefined) {
       console.log("Los switches no estan definidos");
-    } else {
-      writeFileSync += ` ${element.symbol} = net.addSwitch( '${element.symbol}', protocols='${element.protocol}', port=${element.port}, mac='${element.mac}')\n`;
+      return;
     }
+    writeFileSync += ` ${element.symbol} = net.addSwitch( '${element.symbol}'`;
+    if(element.protocol !== undefined && element.protocol!=="")
+      writeFileSync += `, protocols='${element.protocol}'`;
+    if(element.port !== undefined && element.port!==0)
+      writeFileSync += `, port=${element.port}`;
+    if(element.mac !== undefined && element.mac !== "")
+      writeFileSync += `, mac='${element.mac}'`;
+    writeFileSync += `)\n`;
+
+    
   });
 
   topology.hosts.forEach((element) => {
@@ -351,20 +360,6 @@ function topocustom(topology, nameArchive) {
   });
   writeFileSync +=
     `\n` + ` info("*** Starting network")\n` + `\n` + ` net.start()\n`;
-  //topology.controllers.forEach((element) => {
-  //  if (element === undefined) {
-  //    console.log("Los controladores no estan definidos");
-  //  } else {
-  //    writeFileSync += ` ${element.symbol}.start()\n`;
-  //  }
-  //});
-  //topology.switches.forEach((element) => {
-  //  if (element === undefined || element.symbol === undefined) {
-  //    console.log("Los switches no estan definidos");
-  //  } else {
-  //    writeFileSync += ` ${element.symbol}.start( [${element.controller}] )\n`;
-  //  }
-  //});
 
   writeFileSync +=
     `\n` +
@@ -376,8 +371,6 @@ function topocustom(topology, nameArchive) {
     ` setLogLevel( 'info' )\n` +
     ` topology()\n`;
 
-  // Aqui va el comando para crear el script createScript();
-
   fs.writeFileSync(`./src/data/${nameArchive}.py`, writeFileSync);
 }
 
@@ -387,7 +380,7 @@ function topocustom(topology, nameArchive) {
  */
 function exectMininet(nameArchive) {
   exec(
-    `xterm -e sudo python3 ./src/data/${nameArchive}.py`,
+    `qterminal -e sudo python3 ./src/data/${nameArchive}.py`,
     (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
