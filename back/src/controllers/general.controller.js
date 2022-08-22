@@ -380,7 +380,7 @@ function topocustom(topology, nameArchive) {
  */
 function exectMininet(nameArchive) {
   exec(
-    `qterminal -e sudo python3 ./src/data/${nameArchive}.py`,
+    `qterminal -e sudo mn -c ; sudo python3 ./src/data/${nameArchive}.py`,
     (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
