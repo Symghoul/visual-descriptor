@@ -303,10 +303,9 @@ const Preferences = () => {
                 changes otherwise the changes will not be saved.
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                - To create links click once on the device you are starting
-                from, then hold and drag on one of the dots to the device you
-                want to connect. Remember that it is not possible to connect
-                controller to host directly!
+                - To create links click on a switch once then click and hold an
+                anchor and start moving your mouse to the device that you want
+                to connect.
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 - And Remember, you can drag the devices once they are on the
