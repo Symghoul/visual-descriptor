@@ -28,6 +28,10 @@ const style = {
   p: 4,
 };
 
+const styledbutton = {
+  top: 10,
+};
+
 /**
  * This is the form used to update and display the information of a switch
  * @returns The switch form component
@@ -44,6 +48,22 @@ const SwitchConfig = () => {
 
   const [errorUpdate, setErrorUpdate] = useState(false);
   const errorMessage = useRef("");
+
+  /**
+   * Advanced Settings
+   */
+  const [advancedSettings, setAdvancedSettings] = useState("hidden");
+  const unlock = () => {
+    if (advancedSettings === "hidden") {
+      setAdvancedSettings("text");
+    } else {
+      setAdvancedSettings("hidden");
+    }
+  };
+  const [advanceSettingMessage, setAdvanceSettingMessage] = useState(false);
+  const handleOpenAdvanceSettingMessage = () => setAdvanceSettingMessage(true);
+  const handleCloseAdvanceSettingMessage = () =>
+    setAdvanceSettingMessage(false);
 
   const handleOpenError = (msg) => {
     errorMessage.current = msg;
@@ -124,8 +144,35 @@ const SwitchConfig = () => {
           </Box>
         </Modal>
       </div>
+      <div>
+        <Modal
+          open={advanceSettingMessage}
+          onClose={handleCloseAdvanceSettingMessage}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={style}
+            display="flex"
+            flex-direction="column"
+            alignItems="center"
+          >
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              <p>
+                Please modify this values only if you are experienced with
+                Mininet
+              </p>
+              <br />
+              <p>
+                Right now the protocol is disabled. The switch would have OVS as
+                protocol by default
+              </p>
+            </Typography>
+          </Box>
+        </Modal>
+      </div>
       <ThemeProvider theme={theme}>
-        <div className="container">
+        <div>
           <Formik
             initialValues={initialValues}
             onSubmit={(values, formikHelpers) => {
@@ -156,20 +203,41 @@ const SwitchConfig = () => {
                 <Field
                   className="field2"
                   name="port"
-                  type="text"
+                  type={advancedSettings}
                   as={CssTextField}
                   label={"Port Number"}
                   error={Boolean(errors.port) && Boolean(touched.port)}
                   helperText={Boolean(touched.port) && errors.port}
+                  hidden={advancedSettings}
                 />
                 <Field
                   className="field2"
                   name="protocol"
-                  type="text"
+                  type={advancedSettings}
                   as={CssTextField}
-                  label={"Protocol"}
+                  placeholder="OVS (Default)"
                   disabled
+                  label={"Protocol"}
                 />
+                {/** unlocks advanced settings */}
+                <Button
+                  className="field3"
+                  color="primary"
+                  variant="contained"
+                  size="small"
+                  sx={styledbutton}
+                  onClick={() => {
+                    unlock();
+                    if (
+                      advancedSettings === "hidden" &&
+                      advanceSettingMessage === false
+                    ) {
+                      handleOpenAdvanceSettingMessage();
+                    }
+                  }}
+                >
+                  Advanced Settings
+                </Button>
 
                 <Box className="field2" />
 

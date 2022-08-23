@@ -4,10 +4,11 @@
 }
 
 .field{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  display: inline;
+  
+  justify-content: center;
+  min-width: 100%;
+  align-items: center;
   padding-top: 5px;
   padding-bottom: 5px;
 }
@@ -15,4 +16,9 @@
 .field2{
   margin: 2x;
   padding: 2px;
+}
+
+.field3{
+  margin: 2x;
+  padding: 10px;
 }

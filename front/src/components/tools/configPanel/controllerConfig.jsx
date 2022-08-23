@@ -163,8 +163,7 @@ const ControllerConfig = () => {
                   name="ip"
                   type="text"
                   as={CssTextField}
-                  label={"IP Adress"}
-                  // disabled={remoteController}
+                  label={"IP Address"}
                   disabled={!remote}
                   error={Boolean(errors.ip) && Boolean(touched.ip)}
                   helperText={Boolean(touched.ip) && errors.ip}
@@ -176,6 +175,7 @@ const ControllerConfig = () => {
                   type="text"
                   as={CssTextField}
                   label={"Port Number"}
+                  disabled={!remote}
                   error={Boolean(errors.port) && Boolean(touched.port)}
                   helperText={Boolean(touched.port) && errors.port}
                 />
