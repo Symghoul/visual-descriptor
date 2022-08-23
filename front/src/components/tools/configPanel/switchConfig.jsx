@@ -119,8 +119,7 @@ const SwitchConfig = () => {
     }),
     port: number()
       .integer("Must be a natural number")
-      .required("Cannot be empty")
-      .positive(),
+      .required("Cannot be empty"),
   });
 
   return (

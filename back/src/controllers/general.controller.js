@@ -309,15 +309,13 @@ function topocustom(topology, nameArchive) {
       return;
     }
     writeFileSync += ` ${element.symbol} = net.addSwitch( '${element.symbol}'`;
-    if(element.protocol !== undefined && element.protocol!=="")
+    if (element.protocol !== undefined && element.protocol !== "")
       writeFileSync += `, protocols='${element.protocol}'`;
-    if(element.port !== undefined && element.port!==0)
+    if (element.port !== undefined && element.port !== 0)
       writeFileSync += `, port=${element.port}`;
-    if(element.mac !== undefined && element.mac !== "")
+    if (element.mac !== undefined && element.mac !== "")
       writeFileSync += `, mac='${element.mac}'`;
     writeFileSync += `)\n`;
-
-    
   });
 
   topology.hosts.forEach((element) => {
@@ -380,7 +378,7 @@ function topocustom(topology, nameArchive) {
  */
 function exectMininet(nameArchive) {
   exec(
-    `qterminal -e sudo mn -c ; sudo python3 ./src/data/${nameArchive}.py`,
+    `qterminal -e sudo mn -c & sudo python3 ./src/data/${nameArchive}.py`,
     (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
