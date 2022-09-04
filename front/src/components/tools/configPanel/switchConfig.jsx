@@ -180,88 +180,95 @@ const SwitchConfig = () => {
             validationSchema={schema}
           >
             {({ errors, isValid, touched }) => (
-              <Form>
-                <Field
-                  className="field2"
-                  name="name"
-                  type="text"
-                  as={CssTextField}
-                  label="Host Name"
-                  error={Boolean(errors.name) && Boolean(touched.name)}
-                  helperText={Boolean(touched.name) && errors.name}
-                />
-                <Field
-                  className="field2"
-                  name="mac"
-                  type="text"
-                  as={CssTextField}
-                  label={"Mac Address"}
-                  error={Boolean(errors.mac) && Boolean(touched.mac)}
-                  helperText={Boolean(touched.mac) && errors.mac}
-                />
-                <Field
-                  className="field2"
-                  name="port"
-                  type={advancedSettings}
-                  as={CssTextField}
-                  label={"Port Number"}
-                  error={Boolean(errors.port) && Boolean(touched.port)}
-                  helperText={Boolean(touched.port) && errors.port}
-                  hidden={advancedSettings}
-                />
-                <Field
-                  className="field2"
-                  name="protocol"
-                  type={advancedSettings}
-                  as={CssTextField}
-                  placeholder="OVS (Default)"
-                  disabled
-                  label={"Protocol"}
-                />
-                {/** unlocks advanced settings */}
-                <Button
-                  className="field3"
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  sx={styledbutton}
-                  onClick={() => {
-                    unlock();
-                    if (
-                      advancedSettings === "hidden" &&
-                      advanceSettingMessage === false
-                    ) {
-                      handleOpenAdvanceSettingMessage();
-                    }
-                  }}
-                >
-                  Advanced Settings
-                </Button>
-
-                <Box className="field2" />
-
-                <Button
-                  className="field2"
-                  color="success"
-                  variant="contained"
-                  size="small"
-                  type="submit"
-                  disabled={!isValid}
-                >
-                  Save Changes
-                </Button>
-                <span> </span>
-                <Button
-                  className="field2"
-                  color="error"
-                  variant="contained"
-                  size="small"
-                  onClick={() => {
-                    state.deleteDevice();
-                  }}
-                >
-                  Delete Switch
-                </Button>
+              <Form className="form">
+                <div className="fields-container">
+                  <div className="field">
+                    <Field
+                      name="name"
+                      type="text"
+                      as={CssTextField}
+                      label="Host Name"
+                      error={Boolean(errors.name) && Boolean(touched.name)}
+                      helperText={Boolean(touched.name) && errors.name}
+                    />
+                  </div>
+                  <div className="field">
+                    <Field
+                      name="mac"
+                      type="text"
+                      as={CssTextField}
+                      label={"Mac Address"}
+                      error={Boolean(errors.mac) && Boolean(touched.mac)}
+                      helperText={Boolean(touched.mac) && errors.mac}
+                    />
+                  </div>
+                  <div className="field">
+                    <Field
+                      name="port"
+                      type={advancedSettings}
+                      as={CssTextField}
+                      label={"Port Number"}
+                      error={Boolean(errors.port) && Boolean(touched.port)}
+                      helperText={Boolean(touched.port) && errors.port}
+                      hidden={advancedSettings}
+                    />
+                  </div>
+                  <div className="field">
+                    <Field
+                      name="protocol"
+                      type={advancedSettings}
+                      as={CssTextField}
+                      placeholder="OVS (Default)"
+                      disabled
+                      label={"Protocol"}
+                    />
+                  </div>
+                  <div className="field">
+                    {/** unlocks advanced settings */}
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      size="small"
+                      sx={styledbutton}
+                      onClick={() => {
+                        unlock();
+                        if (
+                          advancedSettings === "hidden" &&
+                          advanceSettingMessage === false
+                        ) {
+                          handleOpenAdvanceSettingMessage();
+                        }
+                      }}
+                    >
+                      Advanced Settings
+                    </Button>
+                  </div>
+                </div>
+                <div className="buttons-container">
+                  <div className="field">
+                    <Button
+                      color="success"
+                      variant="contained"
+                      size="small"
+                      type="submit"
+                      disabled={!isValid}
+                    >
+                      Save Changes
+                    </Button>
+                  </div>
+                  <div className="field">
+                    <Button
+                      color="error"
+                      variant="contained"
+                      size="small"
+                      onClick={() => {
+                        state.deleteDevice();
+                      }}
+                    >
+                      Delete Switch
+                    </Button>
+                  </div>
+                </div>
               </Form>
             )}
           </Formik>

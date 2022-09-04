@@ -3,12 +3,3 @@
     /* background-color: #90caf9; */
     background-color: #6c889e;
 }
-
-.configPanel{
-    display: flex;
-    flex-flow: row wrap;
-    line-height: normal;
-    min-width: 200px;
-    justify-content: flex-start;
-    align-items: flex-start;
-}

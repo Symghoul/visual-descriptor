@@ -453,7 +453,7 @@ const Canva = () => {
         <Text
           text={`${eachController.symbol} - ${eachController.name}`}
           x={eachController.x}
-          y={eachController.y + SIZE}
+          y={eachController.y + SIZE + 3}
         />
       </div>
     );
@@ -601,7 +601,7 @@ const Canva = () => {
         <Text
           text={`${eachHost.symbol} - ${eachHost.name}`}
           x={eachHost.x}
-          y={eachHost.y + SIZE}
+          y={eachHost.y + SIZE + 3}
         />
       </div>
     );

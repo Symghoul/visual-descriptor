@@ -1,18 +1,19 @@
-.container {
-  margin: 5px;
-  padding: 5px;
+.form{
+  display: flex;
+  flex-flow: column wrap;
+  padding: 0.5rem;
+}
+
+.fields-container{
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.buttons-container{
+  display: flex;
+  flex-flow: row wrap;
 }
 
 .field{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
-
-.field2{
-  margin: 2x;
-  padding: 2px;
+ padding: 0.2rem;
 }
