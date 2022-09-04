@@ -47,7 +47,7 @@ function Border({
   onAnchorDragEnd,
 }) {
   //if the device clicked exists
-  if (device) {
+  if (device && device.type === "switch") {
     const { x, y } = device;
     const anchorPoints = getAnchorPoints(x, y); // this array contains 4 anchors
     const anchors = anchorPoints.map((position, index) => (
@@ -65,6 +65,19 @@ function Border({
       <>
         <Line x={x} y={y} points={points} perfectDrawEnabled={false} />
         {anchors}
+      </>
+    );
+  } else if (device) {
+    const { x, y } = device;
+    return (
+      <>
+        <Line
+          x={x}
+          y={y}
+          points={points}
+          perfectDrawEnabled={false}
+          stroke={"#000"}
+        />
       </>
     );
   }

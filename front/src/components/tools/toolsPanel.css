@@ -1,6 +1,7 @@
 .toolsPanel_container{
     position: sticky;
-    background-color: #90caf9;
+    /* background-color: #90caf9; */
+    background-color: #6c889e;
 }
 
 .configPanel{
@@ -10,5 +11,4 @@
     min-width: 200px;
     justify-content: flex-start;
     align-items: flex-start;
-    padding: 5px;
 }

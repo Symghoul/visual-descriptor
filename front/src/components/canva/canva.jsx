@@ -451,7 +451,7 @@ const Canva = () => {
           }}
         />
         <Text
-          text={eachController.name}
+          text={`${eachController.symbol} - ${eachController.name}`}
           x={eachController.x}
           y={eachController.y + SIZE}
         />
@@ -524,7 +524,11 @@ const Canva = () => {
             axios.put(`/api/switches/${switche.indicator}`, switche);
           }}
         />
-        <Text text={eachSwitch.name} x={eachSwitch.x} y={eachSwitch.y + SIZE} />
+        <Text
+          text={`${eachSwitch.symbol} - ${eachSwitch.name}`}
+          x={eachSwitch.x}
+          y={eachSwitch.y + SIZE}
+        />
       </div>
     );
   });
@@ -594,7 +598,11 @@ const Canva = () => {
             axios.put(`/api/hosts/${host.indicator}`, host);
           }}
         />
-        <Text text={eachHost.name} x={eachHost.x} y={eachHost.y + SIZE} />
+        <Text
+          text={`${eachHost.symbol} - ${eachHost.name}`}
+          x={eachHost.x}
+          y={eachHost.y + SIZE}
+        />
       </div>
     );
   });
@@ -634,10 +642,7 @@ const Canva = () => {
    * are not going to be rendered
    */
   const borders =
-    state.selectedDevice !== null &&
-    state.selectedDevice.type !== "link" &&
-    state.selectedDevice.type !== "controller" &&
-    state.selectedDevice.type !== "host" ? (
+    state.selectedDevice !== null && state.selectedDevice.type !== "link" ? (
       <Border
         indicator={state.selectedDevice.indicator}
         device={state.getDevice(state.selectedDevice)}
