@@ -36,6 +36,7 @@ const Canva = () => {
    * This modal is used to alert that a connection is not allowed
    */
   const [modalOpen, setModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
@@ -70,7 +71,7 @@ const Canva = () => {
           alignItems="center"
         >
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            You cannot do that!
+            {errorMessage}
           </Typography>
         </Box>
       </Modal>
@@ -306,10 +307,14 @@ const Canva = () => {
           connectionTo.type === "controller" ? true : false;
 
         if (isThereAcontroller.length > 0 && connectController === true) {
-          //launch error
+          //launch error for existing controller
+          setErrorMessage(
+            "You cannot connect a switch to more than one controller"
+          );
           handleModalOpen();
         } else if (repeated.length !== 0) {
-          //launch error
+          //launch error for repeated connection
+          setErrorMessage("There is a connection to this device already");
           handleModalOpen();
         } else {
           // the new connection is not repeated
