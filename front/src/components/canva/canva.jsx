@@ -36,6 +36,7 @@ const Canva = () => {
    * This modal is used to alert that a connection is not allowed
    */
   const [modalOpen, setModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
@@ -70,7 +71,7 @@ const Canva = () => {
           alignItems="center"
         >
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            You cannot do that!
+            {errorMessage}
           </Typography>
         </Box>
       </Modal>
@@ -306,10 +307,14 @@ const Canva = () => {
           connectionTo.type === "controller" ? true : false;
 
         if (isThereAcontroller.length > 0 && connectController === true) {
-          //launch error
+          //launch error for existing controller
+          setErrorMessage(
+            "You cannot connect a switch to more than one controller"
+          );
           handleModalOpen();
         } else if (repeated.length !== 0) {
-          //launch error
+          //launch error for repeated connection
+          setErrorMessage("There is a connection to this device already");
           handleModalOpen();
         } else {
           // the new connection is not repeated
@@ -399,7 +404,7 @@ const Canva = () => {
                 symbol: `c${state.getSymbol()}`,
                 ip: `192.168.0.${state.getIpAddress()}`,
                 port: `300${state.getPortNumber()}`,
-                remote: true,
+                remote: false,
                 type: "controller",
                 x: e.target.x(),
                 y: e.target.y(),
@@ -446,9 +451,9 @@ const Canva = () => {
           }}
         />
         <Text
-          text={eachController.name}
+          text={`${eachController.symbol} - ${eachController.name}`}
           x={eachController.x}
-          y={eachController.y + SIZE}
+          y={eachController.y + SIZE + 3}
         />
       </div>
     );
@@ -476,8 +481,8 @@ const Canva = () => {
               indicator: uuid.v1(),
               name: "Switch",
               symbol: `s${state.getSymbol()}`,
-              protocol: "OVS",
-              port: `300${state.getPortNumber()}`,
+              protocol: "",
+              port: 0, //`300${state.getPortNumber()}`,
               mac: `${state.getMacAddress()}`,
               controller: "notLinkedYet",
               type: "switch",
@@ -519,7 +524,11 @@ const Canva = () => {
             axios.put(`/api/switches/${switche.indicator}`, switche);
           }}
         />
-        <Text text={eachSwitch.name} x={eachSwitch.x} y={eachSwitch.y + SIZE} />
+        <Text
+          text={`${eachSwitch.symbol} - ${eachSwitch.name}`}
+          x={eachSwitch.x}
+          y={eachSwitch.y + SIZE}
+        />
       </div>
     );
   });
@@ -589,7 +598,11 @@ const Canva = () => {
             axios.put(`/api/hosts/${host.indicator}`, host);
           }}
         />
-        <Text text={eachHost.name} x={eachHost.x} y={eachHost.y + SIZE} />
+        <Text
+          text={`${eachHost.symbol} - ${eachHost.name}`}
+          x={eachHost.x}
+          y={eachHost.y + SIZE + 3}
+        />
       </div>
     );
   });
@@ -629,10 +642,7 @@ const Canva = () => {
    * are not going to be rendered
    */
   const borders =
-    state.selectedDevice !== null &&
-    state.selectedDevice.type !== "link" &&
-    state.selectedDevice.type !== "controller" &&
-    state.selectedDevice.type !== "host" ? (
+    state.selectedDevice !== null && state.selectedDevice.type !== "link" ? (
       <Border
         indicator={state.selectedDevice.indicator}
         device={state.getDevice(state.selectedDevice)}

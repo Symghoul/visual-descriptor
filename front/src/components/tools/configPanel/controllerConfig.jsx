@@ -138,7 +138,7 @@ const ControllerConfig = () => {
         </Modal>
       </div>
       <ThemeProvider theme={theme}>
-        <div className="container">
+        <div>
           <Formik
             initialValues={initialValues}
             onSubmit={(values, formikHelpers) => {
@@ -147,74 +147,78 @@ const ControllerConfig = () => {
             validationSchema={schema}
           >
             {({ errors, isValid, touched }) => (
-              <Form>
-                <Field
-                  className="field2"
-                  name="name"
-                  type="text"
-                  as={CssTextField}
-                  label={"Controller Name"}
-                  error={Boolean(errors.name) && Boolean(touched.name)}
-                  helperText={Boolean(touched.name) && errors.name}
-                />
-
-                <Field
-                  className="field2"
-                  name="ip"
-                  type="text"
-                  as={CssTextField}
-                  label={"IP Adress"}
-                  // disabled={remoteController}
-                  disabled={!remote}
-                  error={Boolean(errors.ip) && Boolean(touched.ip)}
-                  helperText={Boolean(touched.ip) && errors.ip}
-                />
-
-                <Field
-                  className="field2"
-                  name="port"
-                  type="text"
-                  as={CssTextField}
-                  label={"Port Number"}
-                  error={Boolean(errors.port) && Boolean(touched.port)}
-                  helperText={Boolean(touched.port) && errors.port}
-                />
-
-                <FormControlLabel
-                  className="field2"
-                  control={
-                    <Switch
-                      checked={remote}
-                      onChange={(event) => setRemote(event.target.checked)}
+              <Form className="form">
+                <div className="fields-container">
+                  <div className="field">
+                    <Field
+                      name="name"
+                      type="text"
+                      as={CssTextField}
+                      label={"Controller Name"}
+                      error={Boolean(errors.name) && Boolean(touched.name)}
+                      helperText={Boolean(touched.name) && errors.name}
                     />
-                  }
-                  label="Remote"
-                  labelPlacement="start"
-                />
-                <Box className="field2" />
-
-                <Button
-                  className="field2"
-                  color="success"
-                  variant="contained"
-                  size="small"
-                  type="submit"
-                  disabled={!isValid}
-                >
-                  Save Changes
-                </Button>
-                <span> </span>
-                <Button
-                  className="field2"
-                  color="error"
-                  variant="contained"
-                  size="small"
-                  onClick={() => {
-                    state.deleteDevice();
-                  }}
-                >
-                  Delete Controller
-                </Button>
+                  </div>
+                  <div className="field">
+                    <Field
+                      name="ip"
+                      type="text"
+                      as={CssTextField}
+                      label={"IP Address"}
+                      disabled={!remote}
+                      error={Boolean(errors.ip) && Boolean(touched.ip)}
+                      helperText={Boolean(touched.ip) && errors.ip}
+                    />
+                  </div>
+                  <div className="field">
+                    <Field
+                      name="port"
+                      type="text"
+                      as={CssTextField}
+                      label={"Port Number"}
+                      disabled={!remote}
+                      error={Boolean(errors.port) && Boolean(touched.port)}
+                      helperText={Boolean(touched.port) && errors.port}
+                    />
+                  </div>
+                  <div className="field">
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={remote}
+                          onChange={(event) => setRemote(event.target.checked)}
+                        />
+                      }
+                      label="Remote"
+                      labelPlacement="start"
+                    />
+                  </div>
+                </div>
+                <div className="buttons-container">
+                  <div className="field">
+                    <Button
+                      color="success"
+                      variant="contained"
+                      size="small"
+                      type="submit"
+                      disabled={!isValid}
+                    >
+                      Save Changes
+                    </Button>
+                  </div>
+                  <div className="field">
+                    <Button
+                      color="error"
+                      variant="contained"
+                      size="small"
+                      onClick={() => {
+                        state.deleteDevice();
+                      }}
+                    >
+                      Delete Controller
+                    </Button>
+                  </div>
+                </div>
               </Form>
             )}
           </Formik>

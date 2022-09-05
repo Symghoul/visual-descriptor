@@ -58,7 +58,7 @@ const LinkConfig = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="container">
+      <div>
         <Formik
           initialValues={initialValues}
           onSubmit={(values, formikHelpers) => {
@@ -67,61 +67,66 @@ const LinkConfig = () => {
           validationSchema={schema}
         >
           {({ errors, isValid, touched }) => (
-            <Form>
-              <Field
-                className="field2"
-                name="delay"
-                type="text"
-                as={CssTextField}
-                label={"Delay (ms)"}
-                error={Boolean(errors.delay) && Boolean(touched.delay)}
-                helperText={Boolean(touched.delay) && errors.delay}
-              />
-
-              <Field
-                className="field2"
-                name="loss"
-                type="text"
-                as={CssTextField}
-                label={"Loss (%)"}
-                error={Boolean(errors.loss) && Boolean(touched.loss)}
-                helperText={Boolean(touched.loss) && errors.loss}
-              />
-
-              <Field
-                className="field2"
-                name="bandwidth"
-                type="text"
-                as={CssTextField}
-                label={"Bandwidth"}
-                error={Boolean(errors.bandwidth) && Boolean(touched.bandwidth)}
-                helperText={Boolean(touched.bandwidth) && errors.bandwidth}
-              />
-
-              <Box className="field2" />
-
-              <Button
-                className="field2"
-                color="success"
-                variant="contained"
-                size="small"
-                type="submit"
-                disabled={!isValid}
-              >
-                Save Changes
-              </Button>
-              <span> </span>
-              <Button
-                className="field2"
-                color="error"
-                variant="contained"
-                size="small"
-                onClick={() => {
-                  state.deleteDevice();
-                }}
-              >
-                Delete Link
-              </Button>
+            <Form className="form">
+              <div className="fields-container">
+                <div className="field">
+                  <Field
+                    name="delay"
+                    type="text"
+                    as={CssTextField}
+                    label={"Delay (ms)"}
+                    error={Boolean(errors.delay) && Boolean(touched.delay)}
+                    helperText={Boolean(touched.delay) && errors.delay}
+                  />
+                </div>
+                <div className="field">
+                  <Field
+                    name="loss"
+                    type="text"
+                    as={CssTextField}
+                    label={"Loss (%)"}
+                    error={Boolean(errors.loss) && Boolean(touched.loss)}
+                    helperText={Boolean(touched.loss) && errors.loss}
+                  />
+                </div>
+                <div className="field">
+                  <Field
+                    name="bandwidth"
+                    type="text"
+                    as={CssTextField}
+                    label={"Bandwidth"}
+                    error={
+                      Boolean(errors.bandwidth) && Boolean(touched.bandwidth)
+                    }
+                    helperText={Boolean(touched.bandwidth) && errors.bandwidth}
+                  />
+                </div>
+              </div>
+              <div className="buttons-container">
+                <div className="field">
+                  <Button
+                    color="success"
+                    variant="contained"
+                    size="small"
+                    type="submit"
+                    disabled={!isValid}
+                  >
+                    Save Changes
+                  </Button>
+                </div>
+                <div className="field">
+                  <Button
+                    color="error"
+                    variant="contained"
+                    size="small"
+                    onClick={() => {
+                      state.deleteDevice();
+                    }}
+                  >
+                    Delete Link
+                  </Button>
+                </div>
+              </div>
             </Form>
           )}
         </Formik>

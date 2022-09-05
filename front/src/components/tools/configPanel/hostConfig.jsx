@@ -151,7 +151,7 @@ const HostConfig = () => {
         </Modal>
       </div>
       <ThemeProvider theme={theme}>
-        <div className="container">
+        <div>
           <Formik
             initialValues={initialValues}
             onSubmit={(values, formikHelpers) => {
@@ -160,68 +160,74 @@ const HostConfig = () => {
             validationSchema={schema}
           >
             {({ errors, isValid, touched }) => (
-              <Form>
-                <Field
-                  className="field2"
-                  name="name"
-                  type="text"
-                  as={CssTextField}
-                  label="Host Name"
-                  error={Boolean(errors.name) && Boolean(touched.name)}
-                  helperText={Boolean(touched.name) && errors.name}
-                />
-                <Field
-                  className="field2"
-                  name="mac"
-                  type="text"
-                  as={CssTextField}
-                  label={"Mac Address"}
-                  error={Boolean(errors.mac) && Boolean(touched.mac)}
-                  helperText={Boolean(touched.mac) && errors.mac}
-                />
-                <Field
-                  className="field2"
-                  name="ip"
-                  type="text"
-                  as={CssTextField}
-                  label={"IP Adress"}
-                  error={Boolean(errors.ip) && Boolean(touched.ip)}
-                  helperText={Boolean(touched.ip) && errors.ip}
-                />
-                <Field
-                  className="field2"
-                  name="mask"
-                  type="text"
-                  as={CssTextField}
-                  label={"Subnet Mask"}
-                  error={Boolean(errors.mask) && Boolean(touched.mask)}
-                  helperText={Boolean(touched.mask) && errors.mask}
-                />
-
-                <Box className="field2" />
-
-                <Button
-                  className="field2"
-                  color="success"
-                  variant="contained"
-                  size="small"
-                  type="submit"
-                  disabled={!isValid}
-                >
-                  Save Changes
-                </Button>
-                <span> </span>
-                <Button
-                  className="field2"
-                  color="error"
-                  variant="contained"
-                  size="small"
-                  onClick={() => {
-                    state.deleteDevice();
-                  }}
-                >
-                  Delete Host
-                </Button>
+              <Form className="form">
+                <div className="fields-container">
+                  <div className="field">
+                    <Field
+                      name="name"
+                      type="text"
+                      as={CssTextField}
+                      label="Host Name"
+                      error={Boolean(errors.name) && Boolean(touched.name)}
+                      helperText={Boolean(touched.name) && errors.name}
+                    />
+                  </div>
+                  <div className="field">
+                    <Field
+                      name="mac"
+                      type="text"
+                      as={CssTextField}
+                      label={"Mac Address"}
+                      error={Boolean(errors.mac) && Boolean(touched.mac)}
+                      helperText={Boolean(touched.mac) && errors.mac}
+                    />
+                  </div>
+                  <div className="field">
+                    <Field
+                      name="ip"
+                      type="text"
+                      as={CssTextField}
+                      label={"IP Adress"}
+                      error={Boolean(errors.ip) && Boolean(touched.ip)}
+                      helperText={Boolean(touched.ip) && errors.ip}
+                    />
+                  </div>
+                  <div className="field">
+                    <Field
+                      name="mask"
+                      type="text"
+                      as={CssTextField}
+                      label={"Subnet Mask"}
+                      error={Boolean(errors.mask) && Boolean(touched.mask)}
+                      helperText={Boolean(touched.mask) && errors.mask}
+                    />
+                  </div>
+                </div>
+                <div className="buttons-container">
+                  <div className="field">
+                    <Button
+                      color="success"
+                      variant="contained"
+                      size="small"
+                      type="submit"
+                      disabled={!isValid}
+                    >
+                      Save Changes
+                    </Button>
+                  </div>
+                  <div className="field">
+                    <Button
+                      color="error"
+                      variant="contained"
+                      size="small"
+                      onClick={() => {
+                        state.deleteDevice();
+                      }}
+                    >
+                      Delete Host
+                    </Button>
+                  </div>
+                </div>
               </Form>
             )}
           </Formik>
