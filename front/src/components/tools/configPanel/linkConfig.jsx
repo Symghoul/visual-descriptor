@@ -94,7 +94,7 @@ const LinkConfig = () => {
                     name="bandwidth"
                     type="text"
                     as={CssTextField}
-                    label={"Bandwidth"}
+                    label={"Bandwidth (Mb/s)"}
                     error={
                       Boolean(errors.bandwidth) && Boolean(touched.bandwidth)
                     }
