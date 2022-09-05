@@ -319,7 +319,7 @@ export const AppContextWrapper = (props) => {
     setSwitches([]);
     setLinks([]);
 
-    symbol.current = 1;
+    symbol.current = 0;
     ipAddress.current = 1;
     macAddress.current = "00:00:00:00:00:00";
     portNumber.current = 0;
