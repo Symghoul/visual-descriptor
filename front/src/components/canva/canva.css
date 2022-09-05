@@ -6,4 +6,5 @@
     display: flex;
     flex-flow: row nowrap;
     border: red solid 1px;
+    color: #00000098;
 }

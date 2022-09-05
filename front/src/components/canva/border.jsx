@@ -76,7 +76,7 @@ function Border({
           y={y}
           points={points}
           perfectDrawEnabled={false}
-          stroke={"#000"}
+          stroke={"#00000098"}
         />
       </>
     );

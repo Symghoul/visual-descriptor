@@ -15,7 +15,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 500,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -298,12 +298,17 @@ const Preferences = () => {
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 - To edit the device values, you must click the device you want
-                to configure, then you will see a panel with the device
-                configuration, when you finish making changes click on save
-                changes otherwise the changes will not be saved.
+                to configure, the menu will always appear down the toolbar. When
+                you finish making changes click on save changes otherwise the
+                changes will not be saved.
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                - To create links click on a switch once then click and hold an
+                - To close the configuration window without changing or saving
+                values you must click again on the same device or go ahead and
+                click another device to configure.
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                - To create links click on a switch once, then click and hold an
                 anchor and start moving your mouse to the device that you want
                 to connect.
               </Typography>

@@ -220,7 +220,7 @@ const SwitchConfig = () => {
                       as={CssTextField}
                       placeholder="OVS (Default)"
                       disabled
-                      label={"Protocol"}
+                      label={"Protocol (OVS)"}
                     />
                   </div>
                   <div className="field">
