@@ -4,7 +4,7 @@ import axios from "../../../config/axios";
 import { InitDelay, InitLoss, InitBandwidth } from "./initialDeviceValues";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme, CssTextField } from "../../../config/theme";
-import { Button, Box } from "@mui/material";
+import { Button } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { number, object } from "yup";
 import "./linkConfig.css";
