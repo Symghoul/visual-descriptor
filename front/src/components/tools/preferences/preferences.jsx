@@ -227,11 +227,13 @@ const Preferences = () => {
               alignItems="center"
             >
               <Typography id="modal-modal-title" variant="h6" component="h2">
-                Export Succesful!
+                Export Successful!
               </Typography>
               <Typography id="modal-modal-title" variant="h6" component="h2">
-                In the backend of this project you can find the file. The route
-                is back/src/data
+                You can find your files in:
+              </Typography>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Documents/VND
               </Typography>
             </Box>
           </Modal>

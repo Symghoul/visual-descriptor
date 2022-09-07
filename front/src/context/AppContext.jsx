@@ -33,7 +33,7 @@ export const AppContextWrapper = (props) => {
    * States to handle default information and data the user cannot touch
    */
   const symbol = useRef(0);
-  const ipAddress = useRef(1);
+  const ipAddress = useRef(0);
   const macAddress = useRef("00:00:00:00:00:00");
   const portNumber = useRef(0);
 
@@ -320,7 +320,7 @@ export const AppContextWrapper = (props) => {
     setLinks([]);
 
     symbol.current = 0;
-    ipAddress.current = 1;
+    ipAddress.current = 0;
     macAddress.current = "00:00:00:00:00:00";
     portNumber.current = 0;
   };
