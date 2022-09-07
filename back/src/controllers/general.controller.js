@@ -176,6 +176,7 @@ async function exportDb(name) {
       hosts
     )}, "links":${JSON.stringify(links)}}`;
 
+    fs.writeFileSync(`/home/mininet/Documents/VND/${name}.json`, db);
     fs.writeFileSync(`./src/data/${name}.json`, db);
     temp = "Salió todo perfectamente";
     return temp;
@@ -369,6 +370,7 @@ function topocustom(topology, nameArchive) {
     ` setLogLevel( 'info' )\n` +
     ` topology()\n`;
 
+  fs.writeFileSync(`/home/mininet/Documents/VND/${nameArchive}.py`, writeFileSync);
   fs.writeFileSync(`./src/data/${nameArchive}.py`, writeFileSync);
 }
 
