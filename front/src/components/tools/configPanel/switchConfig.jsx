@@ -28,6 +28,10 @@ const style = {
   p: 4,
 };
 
+const styledbutton = {
+  top: 10,
+};
+
 /**
  * This is the form used to update and display the information of a switch
  * @returns The switch form component
@@ -44,6 +48,22 @@ const SwitchConfig = () => {
 
   const [errorUpdate, setErrorUpdate] = useState(false);
   const errorMessage = useRef("");
+
+  /**
+   * Advanced Settings
+   */
+  const [advancedSettings, setAdvancedSettings] = useState("hidden");
+  const unlock = () => {
+    if (advancedSettings === "hidden") {
+      setAdvancedSettings("text");
+    } else {
+      setAdvancedSettings("hidden");
+    }
+  };
+  const [advanceSettingMessage, setAdvanceSettingMessage] = useState(false);
+  const handleOpenAdvanceSettingMessage = () => setAdvanceSettingMessage(true);
+  const handleCloseAdvanceSettingMessage = () =>
+    setAdvanceSettingMessage(false);
 
   const handleOpenError = (msg) => {
     errorMessage.current = msg;
@@ -99,8 +119,7 @@ const SwitchConfig = () => {
     }),
     port: number()
       .integer("Must be a natural number")
-      .required("Cannot be empty")
-      .positive(),
+      .required("Cannot be empty"),
   });
 
   return (
@@ -124,8 +143,35 @@ const SwitchConfig = () => {
           </Box>
         </Modal>
       </div>
+      <div>
+        <Modal
+          open={advanceSettingMessage}
+          onClose={handleCloseAdvanceSettingMessage}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={style}
+            display="flex"
+            flex-direction="column"
+            alignItems="center"
+          >
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              <p>
+                Please modify this values only if you are experienced with
+                Mininet
+              </p>
+              <br />
+              <p>
+                Right now the protocol is disabled. The switch would have OVS as
+                protocol by default
+              </p>
+            </Typography>
+          </Box>
+        </Modal>
+      </div>
       <ThemeProvider theme={theme}>
-        <div className="container">
+        <div>
           <Formik
             initialValues={initialValues}
             onSubmit={(values, formikHelpers) => {
@@ -134,67 +180,95 @@ const SwitchConfig = () => {
             validationSchema={schema}
           >
             {({ errors, isValid, touched }) => (
-              <Form>
-                <Field
-                  className="field2"
-                  name="name"
-                  type="text"
-                  as={CssTextField}
-                  label="Host Name"
-                  error={Boolean(errors.name) && Boolean(touched.name)}
-                  helperText={Boolean(touched.name) && errors.name}
-                />
-                <Field
-                  className="field2"
-                  name="mac"
-                  type="text"
-                  as={CssTextField}
-                  label={"Mac Address"}
-                  error={Boolean(errors.mac) && Boolean(touched.mac)}
-                  helperText={Boolean(touched.mac) && errors.mac}
-                />
-                <Field
-                  className="field2"
-                  name="port"
-                  type="text"
-                  as={CssTextField}
-                  label={"Port Number"}
-                  error={Boolean(errors.port) && Boolean(touched.port)}
-                  helperText={Boolean(touched.port) && errors.port}
-                />
-                <Field
-                  className="field2"
-                  name="protocol"
-                  type="text"
-                  as={CssTextField}
-                  label={"Protocol"}
-                  disabled
-                />
-
-                <Box className="field2" />
-
-                <Button
-                  className="field2"
-                  color="success"
-                  variant="contained"
-                  size="small"
-                  type="submit"
-                  disabled={!isValid}
-                >
-                  Save Changes
-                </Button>
-                <span> </span>
-                <Button
-                  className="field2"
-                  color="error"
-                  variant="contained"
-                  size="small"
-                  onClick={() => {
-                    state.deleteDevice();
-                  }}
-                >
-                  Delete Switch
-                </Button>
+              <Form className="form">
+                <div className="fields-container">
+                  <div className="field">
+                    <Field
+                      name="name"
+                      type="text"
+                      as={CssTextField}
+                      label="Host Name"
+                      error={Boolean(errors.name) && Boolean(touched.name)}
+                      helperText={Boolean(touched.name) && errors.name}
+                    />
+                  </div>
+                  <div className="field">
+                    <Field
+                      name="mac"
+                      type="text"
+                      as={CssTextField}
+                      label={"Mac Address"}
+                      error={Boolean(errors.mac) && Boolean(touched.mac)}
+                      helperText={Boolean(touched.mac) && errors.mac}
+                    />
+                  </div>
+                  <div className="field">
+                    <Field
+                      name="port"
+                      type={advancedSettings}
+                      as={CssTextField}
+                      label={"Port Number"}
+                      error={Boolean(errors.port) && Boolean(touched.port)}
+                      helperText={Boolean(touched.port) && errors.port}
+                      hidden={advancedSettings}
+                    />
+                  </div>
+                  <div className="field">
+                    <Field
+                      name="protocol"
+                      type={advancedSettings}
+                      as={CssTextField}
+                      placeholder="OVS (Default)"
+                      disabled
+                      label={"Protocol (OVS)"}
+                    />
+                  </div>
+                  <div className="field">
+                    {/** unlocks advanced settings */}
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      size="small"
+                      sx={styledbutton}
+                      onClick={() => {
+                        unlock();
+                        if (
+                          advancedSettings === "hidden" &&
+                          advanceSettingMessage === false
+                        ) {
+                          handleOpenAdvanceSettingMessage();
+                        }
+                      }}
+                    >
+                      Advanced Settings
+                    </Button>
+                  </div>
+                </div>
+                <div className="buttons-container">
+                  <div className="field">
+                    <Button
+                      color="success"
+                      variant="contained"
+                      size="small"
+                      type="submit"
+                      disabled={!isValid}
+                    >
+                      Save Changes
+                    </Button>
+                  </div>
+                  <div className="field">
+                    <Button
+                      color="error"
+                      variant="contained"
+                      size="small"
+                      onClick={() => {
+                        state.deleteDevice();
+                      }}
+                    >
+                      Delete Switch
+                    </Button>
+                  </div>
+                </div>
               </Form>
             )}
           </Formik>

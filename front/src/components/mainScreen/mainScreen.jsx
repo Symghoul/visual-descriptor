@@ -10,7 +10,7 @@ function MainScreen() {
       <div>
         <ToolsPanel />
       </div>
-      <div>
+      <div className="canva">
         <Canva />
       </div>
     </div>

@@ -176,6 +176,7 @@ async function exportDb(name) {
       hosts
     )}, "links":${JSON.stringify(links)}}`;
 
+    fs.writeFileSync(`/home/mininet/Documents/VND/${name}.json`, db);
     fs.writeFileSync(`./src/data/${name}.json`, db);
     temp = "Salió todo perfectamente";
     return temp;
@@ -309,15 +310,13 @@ function topocustom(topology, nameArchive) {
       return;
     }
     writeFileSync += ` ${element.symbol} = net.addSwitch( '${element.symbol}'`;
-    if(element.protocol !== undefined && element.protocol!=="")
+    if (element.protocol !== undefined && element.protocol !== "")
       writeFileSync += `, protocols='${element.protocol}'`;
-    if(element.port !== undefined && element.port!==0)
+    if (element.port !== undefined && element.port !== 0)
       writeFileSync += `, port=${element.port}`;
-    if(element.mac !== undefined && element.mac !== "")
+    if (element.mac !== undefined && element.mac !== "")
       writeFileSync += `, mac='${element.mac}'`;
     writeFileSync += `)\n`;
-
-    
   });
 
   topology.hosts.forEach((element) => {
@@ -371,6 +370,7 @@ function topocustom(topology, nameArchive) {
     ` setLogLevel( 'info' )\n` +
     ` topology()\n`;
 
+  fs.writeFileSync(`/home/mininet/Documents/VND/${nameArchive}.py`, writeFileSync);
   fs.writeFileSync(`./src/data/${nameArchive}.py`, writeFileSync);
 }
 
@@ -380,7 +380,7 @@ function topocustom(topology, nameArchive) {
  */
 function exectMininet(nameArchive) {
   exec(
-    `qterminal -e sudo python3 ./src/data/${nameArchive}.py`,
+    `xterm -e sudo mn -c ; qterminal -e sudo python3 ./src/data/${nameArchive}.py`,
     (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
