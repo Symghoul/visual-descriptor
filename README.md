@@ -7,7 +7,7 @@ After that, you must modify the vagrantfile in the vagrant directory.
 
 ### *<<And this is where i'd put a image... IF I HAD ONE¡¡¡¡¡>>* ###
 
-modifying it as below 
+modifying it as below (if it's needed)
 ```sh
 config.vm.box = "Symghoul/mininetVND"
 config.vm.box_version = "1.0.0"
