@@ -29,7 +29,7 @@ In this moment, the credentials are
 
 Once you are in, open a terminal on the desktop and execute the runApp.sh script 
 ```sh
-sudo sh runApp.sh
+sh runApp.sh
 ```
 
 ## How to use this tool ##
