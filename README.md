@@ -5,7 +5,7 @@ A repository to work in a visual descriptor to the tool Mininet
 Firstly, you must had the [Vagrant image](https://app.vagrantup.com/boxes/search?utf8=%E2%9C%93&sort=downloads&provider=&q=Symghoul) (for this version it is so heavy 4.68GB, but in the future the idea is distribute it to become the image lighter).
 After that, you could modify the vagrantfile in the vagrant directory.
 
-### *<<And this is where i'd put a image... IF I HAD ONE¡¡¡¡¡>>* ###
+![Vagrant image](./resources/readme/vagrant_image.png)
 
 modifying it as below (if it's needed)
 ```sh
@@ -27,10 +27,13 @@ In this moment, the credentials are
 - **User**: mininet
 - **password** : mininet
 
+![Mininet desktop](./resources/readme/Mininet_desktop.png)
+
 Once you are in, open a terminal on the desktop and execute the runApp.sh script 
 ```sh
 sh runApp.sh
 ```
+![Mininet_Terminal](./resources/readme/mininet_Terminal.png)
 
 ## How to use this tool ##
 Read the User Guide Mininet doc
