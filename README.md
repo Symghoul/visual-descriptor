@@ -2,8 +2,8 @@
 A repository to work in a visual descriptor to the tool Mininet
 
 ## How to get this tool
-Firstly, you must had the [Vagrant image](https://app.vagrantup.com/boxes/search?utf8=%E2%9C%93&sort=downloads&provider=&q=Symghoul) (for this versions it is so heavy 4.68GB, but in the future the idea is distribute it to become the image lighter).
-After that, you must modify the vagrantfile in the vagrant directory.
+Firstly, you must had the [Vagrant image](https://app.vagrantup.com/boxes/search?utf8=%E2%9C%93&sort=downloads&provider=&q=Symghoul) (for this version it is so heavy 4.68GB, but in the future the idea is distribute it to become the image lighter).
+After that, you could modify the vagrantfile in the vagrant directory.
 
 ### *<<And this is where i'd put a image... IF I HAD ONE¡¡¡¡¡>>* ###
 
