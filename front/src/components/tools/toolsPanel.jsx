@@ -21,6 +21,7 @@ function ToolsPanel() {
    * Checks which device is selected
    */
   useEffect(() => {
+    console.log(state.selectedDevice);
     setConfigDevice(state.selectedDevice);
   }, [state.selectedDevice]);
 
