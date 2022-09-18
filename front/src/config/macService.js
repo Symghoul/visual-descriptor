@@ -42,7 +42,6 @@ const mac = (takenMAC) => {
   // The for would stop once the adding process is finished
   for (let i = tempTakenMACarr.length - 1; i >= 0 && !exit; i--) {
     let hexDuo = tempTakenMACarr[i];
-    console.log();
     if (hexDuo === "FF") {
       a = "0";
       b = "0";

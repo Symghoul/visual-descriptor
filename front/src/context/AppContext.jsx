@@ -114,7 +114,7 @@ export const AppContextWrapper = (props) => {
 
     // check what kind of device it is
     if (device.type === "controller") {
-      deleteLinks(device); // deletes the links it had
+      await deleteLinks(device); // deletes the links it had
       //delete on state
       const arr = controllers.filter(
         (controller) => controller.indicator !== device.indicator
@@ -136,10 +136,10 @@ export const AppContextWrapper = (props) => {
       await axios.delete(`/api/hosts/${device.indicator}`);
       setHosts(arr);
     } else if (device.type === "link") {
+      setSelectedLink(null);
       const arr = links.filter((link) => link.indicator !== device.indicator);
       await axios.delete(`/api/links/${device.indicator}`);
       setLinks(arr);
-      setSelectedLink(null);
       updateSwitchesFromLinks(device.destination); //send the controller symbol
     }
     setSelectedDevice(null);
@@ -288,22 +288,24 @@ export const AppContextWrapper = (props) => {
    * @param {*} controllerSymbol symbol to search inside the switch
    */
   const updateSwitchesFromLinks = (controllerSymbol) => {
-    let switchId = "";
-    const updatedSwitch = switches.map((eachSwitch) => {
-      //find and change the intended switch
-      if (eachSwitch.controller === controllerSymbol) {
-        switchId = eachSwitch.symbol;
-        return { ...eachSwitch, controller: "notLinkedYet" };
-      } else {
-        return eachSwitch;
-      }
-    });
-    setSwitches(updatedSwitch);
-    //update on DB
-    const switchToUpdate = updatedSwitch.filter(
-      (eachSwitch) => eachSwitch.symbol === switchId
-    )[0];
-    axios.put(`/api/switches/${switchToUpdate.indicator}`, switchToUpdate);
+    if (controllerSymbol.charAt(0) === "c") {
+      let switchId = "";
+      const updatedSwitch = switches.map((eachSwitch) => {
+        //find and change the intended switch
+        if (eachSwitch.controller === controllerSymbol) {
+          switchId = eachSwitch.symbol;
+          return { ...eachSwitch, controller: "notLinkedYet" };
+        } else {
+          return eachSwitch;
+        }
+      });
+      setSwitches(updatedSwitch);
+      //update on DB
+      const switchToUpdate = updatedSwitch.filter(
+        (eachSwitch) => eachSwitch.symbol === switchId
+      )[0];
+      axios.put(`/api/switches/${switchToUpdate.indicator}`, switchToUpdate);
+    }
   };
 
   /**
