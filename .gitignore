@@ -4,6 +4,9 @@
 
 back/src/data
 
+### vagrant ###
+vagrant/.vagrant/*
+
 ### CypressIO ###
 # gitignore template for the CypressIO, browser test framework
 # website: https://www.cypress.io/
@@ -44,6 +47,7 @@ coverage
 
 # Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
+
 
 # Bower dependency directory (https://bower.io/)
 bower_components
