@@ -12,7 +12,6 @@ A repository to work in a visual descriptor to the tool Mininet
 **4.** After that, you could modify the vagrantfile in the vagrant directory. as below (if it's needed)
 ```sh
 config.vm.box = "Symghoul/mininetVND"
-config.vm.box_version = "1.0.0"
 ```
 
 **5.** Finally, write this and wait until it ends, vagrant will open the proviosioner on this case VirtualBox (All is modifiable, read the vagrantfile's instructions) 
