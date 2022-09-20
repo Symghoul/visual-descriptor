@@ -332,6 +332,7 @@ export const AppContextWrapper = (props) => {
    * @param {*} formData
    */
   const loadFromDB = async (formData) => {
+    startOver();
     await axios.get("/api/general/erase");
     await axios.post(`/api/general/load/`, formData);
 
