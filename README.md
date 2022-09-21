@@ -9,7 +9,7 @@ A repository to work in a visual descriptor to the tool Mininet
 **3.** (Optional) Download the [Vagrant image](https://app.vagrantup.com/boxes/search?utf8=%E2%9C%93&sort=downloads&provider=&q=Symghoul) (for this version it is so heavy 4.68GB, but in the future the idea is distribute it to become the image lighter).
 ![Vagrant image](./resources/readme/vagrant_image.png)
 
-**4.** After that, you could modify the vagrantfile in the vagrant directory. as below (if it's needed)
+**4.** (Optional) After that, you could modify the vagrantfile in the vagrant directory. as below (if it's needed)
 ```sh
 config.vm.box = "Symghoul/mininetVND"
 ```
