@@ -65,6 +65,7 @@ const LinkConfig = () => {
             handleSubmit(values);
           }}
           validationSchema={schema}
+          enableReinitialize
         >
           {({ errors, isValid, touched }) => (
             <Form className="form">
