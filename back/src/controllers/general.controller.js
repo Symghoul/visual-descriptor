@@ -42,7 +42,7 @@ generalController.getScript = async (req, res) => {
     }
 
     topocustom(topology, req.params.nameArchive);
-
+    //Comando para ejecutar el script junto a mininet
     exectMininet(req.params.nameArchive);
 
     res.status(200).json({ message: "Script running" });
