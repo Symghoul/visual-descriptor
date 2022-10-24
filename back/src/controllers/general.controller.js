@@ -16,7 +16,7 @@ let newHost;
 let newlink;
 
 /**
- * A function that is called when the user clicks on the button "Export" in the frontend.
+ * A function that is called when the user clicks on the button "Save" in the frontend.
  * @param {*} req Query param
  * @param {*} res Query param
  */
@@ -42,8 +42,7 @@ generalController.getScript = async (req, res) => {
     }
 
     topocustom(topology, req.params.nameArchive);
-    //Comando para ejecutar el script junto a mininet
-    exectMininet(req.params.nameArchive);
+
 
     res.status(200).json({ message: "Script running" });
   } catch (error) {
@@ -51,8 +50,15 @@ generalController.getScript = async (req, res) => {
   }
 };
 
+/* The above code is a function that is called when the user clicks on the button "Execute" in
+the web page. */
+generalController.execMininet = (req, res) =>{
+
+    exectMininet(req.params.nameArchive);
+}
+
 /**
- * A function that is called when the user clicks on the button "Strat again?" in the frontend.
+ * A function that is called when the user clicks on the button "Start again?" in the frontend.
  * @param {*} req Query param
  * @param {*} res Query param
  */
@@ -131,17 +137,6 @@ async function switch2Controller() {
     // linksS = await link.find({ source: `${c[i].symbol}` }); //delete this line
     linksD = await link.find({ destination: `${c[i].symbol}` });
     changer;
-
-    // for (let j = 0; j < linksS.length; j++) {
-    //   //search in the source's list of an i controller the switch connected to him and update it.
-    //   let adder = i + 1;
-    //   changer = linksS[j].destination; //Because it is searching on the source attribute, the switch is in the destination attribute
-
-    //   await switche.updateOne(
-    //     { indicator: `${changer.indicator}` },
-    //     { controller: `${c[i].symbol}` }
-    //   );
-    // }
 
     for (let j = 0; j < linksD.length; j++) {
       //search in the destination's list of an i controller the switch connected to him and update it.
