@@ -16,7 +16,7 @@ let newHost;
 let newlink;
 
 /**
- * A function that is called when the user clicks on the button "Export" in the frontend.
+ * A function that is called when the user clicks on the button "Save" in the frontend.
  * @param {*} req Query param
  * @param {*} res Query param
  */
@@ -42,8 +42,7 @@ generalController.getScript = async (req, res) => {
     }
 
     topocustom(topology, req.params.nameArchive);
-    //Comando para ejecutar el script junto a mininet
-    exectMininet(req.params.nameArchive);
+
 
     res.status(200).json({ message: "Script running" });
   } catch (error) {
@@ -51,8 +50,15 @@ generalController.getScript = async (req, res) => {
   }
 };
 
+/* The above code is a function that is called when the user clicks on the button "Execute" in
+the web page. */
+generalController.execMininet = (req, res) =>{
+
+    exectMininet(req.params.nameArchive);
+}
+
 /**
- * A function that is called when the user clicks on the button "Strat again?" in the frontend.
+ * A function that is called when the user clicks on the button "Start again?" in the frontend.
  * @param {*} req Query param
  * @param {*} res Query param
  */
