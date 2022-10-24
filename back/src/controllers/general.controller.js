@@ -138,17 +138,6 @@ async function switch2Controller() {
     linksD = await link.find({ destination: `${c[i].symbol}` });
     changer;
 
-    // for (let j = 0; j < linksS.length; j++) {
-    //   //search in the source's list of an i controller the switch connected to him and update it.
-    //   let adder = i + 1;
-    //   changer = linksS[j].destination; //Because it is searching on the source attribute, the switch is in the destination attribute
-
-    //   await switche.updateOne(
-    //     { indicator: `${changer.indicator}` },
-    //     { controller: `${c[i].symbol}` }
-    //   );
-    // }
-
     for (let j = 0; j < linksD.length; j++) {
       //search in the destination's list of an i controller the switch connected to him and update it.
       let adder = i + 1;
