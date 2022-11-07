@@ -375,7 +375,7 @@ function topocustom(topology, nameArchive) {
  */
 function exectMininet(nameArchive) {
   exec(
-    `xterm -e sudo mn -c ; qterminal -e sudo python3 ./src/data/${nameArchive}.py`,
+    `xterm -e sudo mn -c ; qterminal -e sudo python3 /home/mininet/Documents/VND/${nameArchive}.py`,
     (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
