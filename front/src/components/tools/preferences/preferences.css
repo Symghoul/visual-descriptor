@@ -91,3 +91,7 @@ li.MuiMenuItem-root{
   margin: 0;
   padding: 0;
 }
+
+.help-title{
+  text-align: center;
+}
