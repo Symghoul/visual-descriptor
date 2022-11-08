@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-import axios from "../../../config/axios";
 import AppContext from "../../../context/AppContext";
 import { ThemeProvider } from "@mui/material/styles";
 import { Button, Modal, Typography, Box, Menu, MenuItem } from "@mui/material";
@@ -13,80 +12,27 @@ import "./preferences.css";
 const Preferences = () => {
   const state = useContext(AppContext);
 
-  const [fileName, setFileName] = useState(null);
-  const [fieldFileName, setFieldFileName] = useState("");
-
+  //open menu list
   const [menuOpen, setMenuOpen] = useState(false);
   const handleFileMenuOpen = () => {
     setMenuOpen(true);
   };
-
   const handleFileMenuClose = () => {
     setMenuOpen(false);
   };
 
+  //load file modal
   const [loadedFile, setLoadedFile] = useState(null);
-  const handleCloseLoadFile = () => setLoadFile(false);
+  const [loadFile, setLoadFile] = useState(false);
+  const [openError, setOpenError] = useState(false);
   const handleOpenLoadFile = () => {
     state.setSelectedDevice(null);
     setLoadFile(true);
   };
-  const handleOpenError = () => setOpenError(true);
-  const handleCloseError = () => setOpenError(false);
-
-  //state
-  const [openExport, setOpenExport] = useState(false);
-  //handlers
-  const handleOpenExport = () => {
-    state.setSelectedDevice(null);
-    setOpenExport(true);
-  };
-  const handleCloseExport = () => {
-    setOpenExport(false);
-    if (fieldFileName === "") {
-      setFileName("DiagramDesign");
-    } else {
-      setFileName(fieldFileName);
-    }
-    state.setSelectedDevice(null);
-    setSuccess(true);
-  };
-  const handleCloseExport2 = () => {
-    setFieldFileName("");
-    setOpenExport(false);
-  };
-
-  //state
-  const [success, setSuccess] = useState(false);
-  //handlers
-  const handleCloseSuccess = () => setSuccess(false);
-
-  //state
-  const [openHelp, setOpenHelp] = useState(true);
-  //handlers
-  const handleOpenHelp = () => setOpenHelp(true);
-  const handleCloseHelp = () => setOpenHelp(false);
-
-  const [startOver, setStartOver] = useState(false);
-  const handleOpenStartOver = () => {
-    state.setSelectedDevice(null);
-    setStartOver(true);
-  };
-  const handleCloseStartOver = () => {
-    setStartOver(false);
-    state.startOver();
-  };
-  const handleCloseStartOver2 = () => setStartOver(false);
-
-  const [loadFile, setLoadFile] = useState(false);
-  const [openError, setOpenError] = useState(false);
-
-  const [bigError, setBigError] = useState(false);
-
+  const handleCloseLoadFile = () => setLoadFile(false);
   const handleFile = (e) => {
     setLoadedFile(e.target.files[0]);
   };
-
   const handleUpload = (e) => {
     if (loadedFile !== null) {
       let formData = new FormData();
@@ -98,21 +44,96 @@ const Preferences = () => {
       handleCloseLoadFile();
     }
   };
+  const handleOpenError = () => setOpenError(true);
+  const handleCloseError = () => setOpenError(false);
 
-  const exportFileAxios = async (fileName) => {
-    await axios.get(`/api/general/export/${fileName}`);
-  };
-
-  /**
-   * Updates the file name given by the user
-   */
-  useEffect(() => {
-    if (fileName !== "" && fileName !== null) {
-      exportFileAxios(fileName);
-      setFieldFileName("");
-      setFileName("");
+  //save file modal
+  const [fieldFileName, setFieldFileName] = useState("");
+  const [openSaveFile, setOpenSaveFile] = useState(false);
+  const handleOpenSaveFile = () => {
+    state.setSelectedDevice(null);
+    if (state.saveLocation.length > 0) {
+      state.saveFile(state.saveLocation);
+    } else {
+      setOpenSaveFile(true);
     }
-  }, [fileName]);
+  };
+  const handleCloseSaveFile = () => {
+    setOpenSaveFile(false);
+
+    //check if the location to save exists
+    const location = state.saveLocation;
+    if (location === "") {
+      if (fieldFileName === "") {
+        const defaultLocation = "unnamed";
+        state.setSaveLocation(defaultLocation);
+        state.saveFile(defaultLocation);
+      } else {
+        state.setSaveLocation(fieldFileName);
+        state.saveFile(fieldFileName);
+      }
+    }
+    state.setSelectedDevice(null);
+    setSuccess(true);
+  };
+  const handleCloseSaveFile2 = () => {
+    setFieldFileName("");
+    setOpenSaveFile(false);
+  };
+  useEffect(() => {
+    setFieldFileName("");
+  }, [state?.saveLocation]);
+
+  //success modal
+  const [success, setSuccess] = useState(false);
+  const handleCloseSuccess = () => setSuccess(false);
+
+  //help modal
+  const [openHelp, setOpenHelp] = useState(true);
+  const handleOpenHelp = () => setOpenHelp(true);
+  const handleCloseHelp = () => setOpenHelp(false);
+
+  //new modal
+  const [startOver, setStartOver] = useState(false);
+  const handleOpenStartOver = () => {
+    state.setSelectedDevice(null);
+    setStartOver(true);
+  };
+  const handleCloseStartOver = () => {
+    setStartOver(false);
+    state.startOver();
+  };
+  const handleCloseStartOver2 = () => setStartOver(false);
+
+  //run modal
+  const [runSuccessModal, setRunSuccessModal] = useState(false);
+  const handleOpenRunSuccessModal = () => {
+    setRunSuccessModal(true);
+  };
+  const handleCloseRunSuccessModal = () => {
+    setRunSuccessModal(false);
+  };
+  const [runFailModal, setRunFailModal] = useState(false);
+  const handleOpenRunFailModal = () => {
+    setRunFailModal(true);
+  };
+  const handleCloseRunFailModal = () => {
+    setRunFailModal(false);
+  };
+  const handleRunFailModalButton = () => {
+    handleCloseRunFailModal();
+    handleOpenSaveFile();
+  };
+  const handleRun = () => {
+    const saveLocation = state.saveLocation;
+    if (saveLocation.length > 0) {
+      handleOpenSaveFile();
+      handleOpenRunSuccessModal();
+      state.runMininet();
+    } else {
+      handleOpenRunFailModal();
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -148,8 +169,13 @@ const Preferences = () => {
                 </Button>
               </MenuItem>
               <MenuItem onClick={handleFileMenuClose}>
-                <Button id="btn-export" onClick={handleOpenExport}>
-                  Export
+                <Button id="btn-save" onClick={handleOpenSaveFile}>
+                  save
+                </Button>
+              </MenuItem>
+              <MenuItem onClick={handleFileMenuClose}>
+                <Button id="btn-run" onClick={handleRun}>
+                  run
                 </Button>
               </MenuItem>
             </Menu>
@@ -164,8 +190,8 @@ const Preferences = () => {
         {/**Modals */}
         <div>
           <Modal
-            open={openExport}
-            onClose={handleCloseExport2}
+            open={openSaveFile}
+            onClose={handleCloseSaveFile2}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
@@ -189,7 +215,7 @@ const Preferences = () => {
                   size="small"
                   variant="contained"
                   color="primary"
-                  onClick={handleCloseExport}
+                  onClick={handleCloseSaveFile}
                 >
                   Done!
                 </Button>
@@ -211,13 +237,13 @@ const Preferences = () => {
               alignItems="center"
             >
               <Typography id="modal-modal-title" variant="h6" component="h2">
-                Export Successful!
+                File Successfully saved!
               </Typography>
               <Typography id="modal-modal-title" variant="h6" component="h2">
                 You can find your files in:
               </Typography>
               <Typography id="modal-modal-title" variant="h6" component="h2">
-                Documents/VND
+                /home/mininet/Documents/VND
               </Typography>
             </Box>
           </Modal>
@@ -337,6 +363,58 @@ const Preferences = () => {
                   onClick={handleCloseStartOver}
                 >
                   Yes I am sure!
+                </Button>
+              </div>
+            </Box>
+          </Modal>
+        </div>
+        <div>
+          <Modal
+            open={runSuccessModal}
+            onClose={handleCloseRunSuccessModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box
+              sx={style}
+              display="flex"
+              flex-direction="column"
+              alignItems="center"
+            >
+              <div>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  Your topology will now run on a terminal
+                </Typography>
+              </div>
+            </Box>
+          </Modal>
+        </div>
+        <div>
+          <Modal
+            open={runFailModal}
+            onClose={handleCloseRunFailModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box
+              sx={style}
+              display="flex"
+              flex-direction="column"
+              alignItems="center"
+            >
+              <div>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  First save your work and try again
+                </Typography>
+              </div>
+              <div>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  onClick={handleRunFailModalButton}
+                >
+                  Okay!
                 </Button>
               </div>
             </Box>

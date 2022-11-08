@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "../config/axios";
 import mac from "../config/macService";
 
@@ -20,6 +20,7 @@ export const AppContextWrapper = (props) => {
   const [selectedLink, setSelectedLink] = useState(null);
   //const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
   const [error, setError] = useState("");
+  const [saveLocation, setSaveLocation] = useState("");
 
   /**
    * States to collect all the devices created by the user
@@ -320,6 +321,7 @@ export const AppContextWrapper = (props) => {
     setHosts([]);
     setSwitches([]);
     setLinks([]);
+    setSaveLocation("");
 
     symbol.current = 0;
     ipAddress.current = 0;
@@ -345,6 +347,14 @@ export const AppContextWrapper = (props) => {
     setSwitches(DBSwitches.data);
     setHosts(DBHosts.data);
     setLinks(DBLinks.data);
+  };
+
+  const saveFile = async (fileName) => {
+    await axios.get(`/api/general/getScript/${fileName}`);
+  };
+
+  const runMininet = async () => {
+    await axios.get(`/api/general/execMininet/${saveLocation}`);
   };
 
   // ----------- exported states and methods -----------
@@ -377,6 +387,11 @@ export const AppContextWrapper = (props) => {
     loadFromDB,
     error,
     setError,
+    saveFile,
+    runMininet,
+
+    saveLocation,
+    setSaveLocation,
   };
 
   return (
