@@ -39,6 +39,6 @@ sh runApp.sh
 ## How to use this tool ##
 Read the User Guide Mininet doc
 
-## Possibles mistakes ##
+## Possibles errors ##
 While you are designing your topology could be some problems saving the files, so, for that cases, export your topology and you will see that the terminal with mininet (the second terminal opened who starts with "adding X device" "adding (...)) will close abruptly (This is the main reason to recognize this error). Just **reload** the page and click on **File button** and click on **New** button and import your topology exported before. 
 
