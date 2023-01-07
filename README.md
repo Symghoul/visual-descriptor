@@ -6,7 +6,7 @@ A repository to work in a visual descriptor to the tool Mininet
 
 **2.** Open a _Terminal_ located at the vagrant directory
 
-**3.** (Optional) Download the [Vagrant image](https://app.vagrantup.com/boxes/search?utf8=%E2%9C%93&sort=downloads&provider=&q=Symghoul) (for this version it is so heavy 4.68GB, but in the future the idea is distribute it to become the image lighter).
+**3.** (Optional) Download the [Vagrant image](https://app.vagrantup.com/boxes/search?utf8=%E2%9C%93&sort=downloads&provider=&q=Symghoul).
 
 if you had pre-downloaded the box, use this command, modifying "package.box" with the custom name if it is modified.
 ```sh
