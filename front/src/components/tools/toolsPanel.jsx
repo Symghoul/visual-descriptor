@@ -22,7 +22,7 @@ function ToolsPanel() {
    */
   useEffect(() => {
     setConfigDevice(state.selectedDevice);
-  }, [state.selectedDevice]);
+  }, [state?.selectedDevice]);
 
   /**
    * Method that loads the correct form
