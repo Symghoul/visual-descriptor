@@ -52,9 +52,8 @@ generalController.getScript = async (req, res) => {
 
 /* The above code is a function that is called when the user clicks on the button "Execute" in
 the web page. */
-generalController.execMininet = (req, res) =>{
-
-    exectMininet(req.params.nameArchive);
+generalController.execMininet = (req, res) => {
+  exectMininet(req.params.nameArchive);
 }
 
 /**
