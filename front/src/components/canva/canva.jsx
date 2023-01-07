@@ -9,6 +9,9 @@ import Border from "./border";
 import axios from "../../config/axios";
 import "./canva.css";
 
+/**
+ * Style for modal
+ */
 const style = {
   position: "absolute",
   gap: 2,

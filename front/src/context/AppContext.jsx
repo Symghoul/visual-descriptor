@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "../config/axios";
 import mac from "../config/macService";
 
@@ -20,6 +20,7 @@ export const AppContextWrapper = (props) => {
   const [selectedLink, setSelectedLink] = useState(null);
   //const prevSelDevice = usePreviousSelectedDevice(selectedDevice);
   const [error, setError] = useState("");
+  const [saveLocation, setSaveLocation] = useState("");
 
   /**
    * States to collect all the devices created by the user
@@ -320,6 +321,7 @@ export const AppContextWrapper = (props) => {
     setHosts([]);
     setSwitches([]);
     setLinks([]);
+    setSaveLocation("");
 
     symbol.current = 0;
     ipAddress.current = 0;
@@ -345,6 +347,114 @@ export const AppContextWrapper = (props) => {
     setSwitches(DBSwitches.data);
     setHosts(DBHosts.data);
     setLinks(DBLinks.data);
+
+    const updatedSymbol = findBiggestSymbol(
+      DBControllers.data,
+      DBSwitches.data,
+      DBHosts.data
+    );
+    symbol.current = updatedSymbol;
+
+    const updatedIP = findBiggestIP(DBControllers.data, DBHosts.data);
+    ipAddress.current = updatedIP;
+
+    const updatedMAC = findBiggestMAC(DBSwitches.data, DBHosts.data);
+    macAddress.current = updatedMAC;
+
+    const updatedPort = findBiggestPort(DBControllers.data, DBSwitches.data);
+    portNumber.current = updatedPort - 3000;
+  };
+
+  const findBiggestSymbol = (controllersArray, switchesArray, hostsArray) => {
+    const biggestController = controllersArray
+      .sort((a, b) => {
+        return stringCompare(a.symbol, b.symbol) === 1 ? a : b;
+      })
+      .reverse();
+    const biggestSwitch = switchesArray
+      .sort((a, b) => {
+        return stringCompare(a.symbol, b.symbol) === 1 ? a : b;
+      })
+      .reverse();
+    const biggestHost = hostsArray
+      .sort((a, b) => {
+        return stringCompare(a.symbol, b.symbol) === 1 ? a : b;
+      })
+      .reverse();
+
+    const resultsArray = [
+      Number.parseInt(biggestController[0].symbol.charAt(1)),
+      Number.parseInt(biggestSwitch[0].symbol.charAt(1)),
+      Number.parseInt(biggestHost[0].symbol.charAt(1)),
+    ];
+
+    return resultsArray.sort().reverse()[0];
+  };
+
+  const findBiggestIP = (controllersArray, hostsArray) => {
+    const biggestController = controllersArray.sort((a, b) => {
+      return stringCompare(a.ip, b.ip) === 1 ? a : b;
+    });
+    const biggestHost = hostsArray.sort((a, b) => {
+      return stringCompare(a.ip, b.ip) === 1 ? a : b;
+    });
+
+    const resultsArray = [
+      Number.parseInt(biggestController[0].ip.split(".")[3]),
+      Number.parseInt(biggestHost[0].ip.split(".")[3]),
+    ];
+
+    return resultsArray.sort().reverse()[0];
+  };
+
+  const findBiggestMAC = (switchesArray, hostsArray) => {
+    const biggestSwitch = switchesArray.sort((a, b) => {
+      return stringCompare(a.mac, b.mac) === 1 ? a : b;
+    });
+    const biggestHost = hostsArray.sort((a, b) => {
+      return stringCompare(a.mac, b.mac) === 1 ? a : b;
+    });
+
+    const resultsArray = [biggestSwitch[0].mac, biggestHost[0].mac];
+
+    return resultsArray.sort().reverse()[0];
+  };
+
+  const findBiggestPort = (controllersArray, switchesArray) => {
+    const biggestController = controllersArray
+      .sort((a, b) => {
+        return a.port - b.port;
+      })
+      .reverse();
+    const biggestSwitch = switchesArray
+      .sort((a, b) => {
+        return a.port - b.port;
+      })
+      .reverse();
+
+    const resultsArray = [biggestController[0].port, biggestSwitch[0].port];
+
+    return resultsArray.sort().reverse()[0];
+  };
+
+  const stringCompare = (a, b) => {
+    const x = a;
+    const y = b;
+    if (x < y) {
+      return -1;
+    }
+    if (x > y) {
+      return 1;
+    }
+    return 0;
+  };
+
+  const saveFile = async (fileName) => {
+    await axios.get(`/api/general/getScript/${fileName}`);
+  };
+
+  const runMininet = async () => {
+    await axios.get(`/api/general/execMininet/${saveLocation}`);
   };
 
   // ----------- exported states and methods -----------
@@ -377,6 +487,11 @@ export const AppContextWrapper = (props) => {
     loadFromDB,
     error,
     setError,
+    saveFile,
+    runMininet,
+
+    saveLocation,
+    setSaveLocation,
   };
 
   return (

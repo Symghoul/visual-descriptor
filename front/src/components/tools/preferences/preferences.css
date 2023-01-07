@@ -60,7 +60,7 @@
   background-color: darkgray
 }
 
-#btn-export{
+#btn-save{
   background-color: lightgray;
   color: black;
   border-left: 1px darkgray solid;
@@ -73,7 +73,24 @@
   padding: 0;
 }
 
-#btn-export:hover{
+#btn-save:hover{
+  background-color: darkgray;
+}
+
+#btn-run{
+  background-color: lightgray;
+  color: black;
+  border-left: 1px darkgray solid;
+  border-right: 1px darkgray solid;
+  border-bottom: 1px darkgray solid;
+  border-radius: 0%;
+  max-height: 1.5rem;
+  width: fit-content;
+  margin: 0;
+  padding: 0;
+}
+
+#btn-run:hover{
   background-color: darkgray;
 }
 
@@ -90,4 +107,8 @@ ul.MuiList-root{
 li.MuiMenuItem-root{
   margin: 0;
   padding: 0;
+}
+
+.help-title{
+  text-align: center;
 }

@@ -73,16 +73,16 @@ const HostConfig = () => {
       state.setHosts(arr);
       state.setSelectedDevice(null);
     } else if (response.status === 401) {
-      const msg = "IP already exists";
-      handleOpenError(msg);
-    } else if (response.status === 403) {
-      const msg = "IP already exists within controllers domain";
+      const msg = "There is already a Host with this IP";
       handleOpenError(msg);
     } else if (response.status === 402) {
-      const msg = "Mac already exists in other host";
+      const msg = "There is already a Host with this MAC";
+      handleOpenError(msg);
+    } else if (response.status === 403) {
+      const msg = "There is already a Controller with this IP";
       handleOpenError(msg);
     } else if (response.status === 405) {
-      const msg = "There is a switch with this mac already";
+      const msg = "There is already a Switch with this MAC";
       handleOpenError(msg);
     }
   };
@@ -158,6 +158,7 @@ const HostConfig = () => {
               handleSubmit(values);
             }}
             validationSchema={schema}
+            enableReinitialize
           >
             {({ errors, isValid, touched }) => (
               <Form className="form">
